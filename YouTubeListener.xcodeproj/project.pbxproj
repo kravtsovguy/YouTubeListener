@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BAAE6D001FDFEF6F00438DF9 /* YouTubeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BAAE6CFF1FDFEF6F00438DF9 /* YouTubeParser.m */; };
+		BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */; };
 		BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356A1FDEAF740036B27F /* AppDelegate.m */; };
 		BABD356E1FDEAF740036B27F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356D1FDEAF740036B27F /* ViewController.m */; };
 		BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */; };
@@ -20,6 +21,8 @@
 /* Begin PBXFileReference section */
 		BAAE6CFE1FDFEF6F00438DF9 /* YouTubeParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YouTubeParser.h; sourceTree = "<group>"; };
 		BAAE6CFF1FDFEF6F00438DF9 /* YouTubeParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YouTubeParser.m; sourceTree = "<group>"; };
+		BAAE6D011FE1A3CD00438DF9 /* MEKPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerViewController.h; sourceTree = "<group>"; };
+		BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerViewController.m; sourceTree = "<group>"; };
 		BABD35661FDEAF740036B27F /* YouTubeListener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeListener.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABD35691FDEAF740036B27F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BABD356A1FDEAF740036B27F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -79,6 +82,8 @@
 				BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */,
 				BAAE6CFE1FDFEF6F00438DF9 /* YouTubeParser.h */,
 				BAAE6CFF1FDFEF6F00438DF9 /* YouTubeParser.m */,
+				BAAE6D011FE1A3CD00438DF9 /* MEKPlayerViewController.h */,
+				BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */,
 			);
 			path = YouTubeListener;
 			sourceTree = "<group>";
@@ -155,6 +160,7 @@
 			files = (
 				BAAE6D001FDFEF6F00438DF9 /* YouTubeParser.m in Sources */,
 				BABD356E1FDEAF740036B27F /* ViewController.m in Sources */,
+				BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */,
 				BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */,
 				BABD357C1FDEAF740036B27F /* main.m in Sources */,
 				BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */,
