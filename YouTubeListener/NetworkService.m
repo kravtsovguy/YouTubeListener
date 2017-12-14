@@ -34,28 +34,18 @@
     self.urlSession = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:self delegateQueue:nil];
 }
 
--(void)startImageLoading
+-(NSURLSessionDownloadTask *)loadDataFromURL:(NSURL *)url
 {
     if (!self.urlSession)
     {
         [self configurateUrlSessionWithParams:nil];
     }
     
-    self.downloadTask = [self.urlSession downloadTaskWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", @"4BltTurluAg"]]];
+    self.downloadTask = [self.urlSession downloadTaskWithURL:url];
     
     [self.downloadTask resume];
-}
-
--(void)testYoutube
-{
-    if (!self.urlSession)
-    {
-        [self configurateUrlSessionWithParams:nil];
-    }
     
-    self.downloadTask = [self.urlSession downloadTaskWithURL:[NSURL URLWithString:@"https://www.youtube.com/watch?v=4BltTurluAg"]];
-    
-    [self.downloadTask resume];
+    return self.downloadTask;
 }
 
 -(void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
@@ -64,8 +54,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        if (self.output)
-            [self.output loadingIsDoneWithDataRecieved:data];
+        if (self.output && [self.output respondsToSelector:@selector(loadingIsDoneWithDataRecieved:withTask:withService:)])
+            [self.output loadingIsDoneWithDataRecieved:data withTask:downloadTask withService:self];
         
     });
 }
@@ -77,8 +67,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        if (self.output)
-            [self.output loadingContinuesWithProgress:progress];
+        if (self.output && [self.output respondsToSelector:@selector(loadingContinuesWithProgress:withTask:withService:)])
+            [self.output loadingContinuesWithProgress:progress withTask:downloadTask withService:self];
         
     });
 }

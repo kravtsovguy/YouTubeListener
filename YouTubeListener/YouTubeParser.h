@@ -8,16 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM (NSUInteger, RMYouTubeExtractorVideoQuality) {
+    YouTubeParserVideoQualitySmall240  = 36,
+    YouTubeParserVideoQualityMedium360 = 18,
+    YouTubeParserVideoQualityHD720     = 22,
+};
+
 @protocol YouTubeParserDelegate <NSObject>
 
--(void) videoInfoDidLoad: (NSDictionary*) info forVideoId: (NSString*) videoId;
+@required
+-(void) infoDidLoad: (NSDictionary*) info forVideo: (NSString*) videoId;
 
 @end
 
 @interface YouTubeParser : NSObject
 
-+(NSDictionary*) getYouTubeVideoUrls: (NSString*)videoURL;
-
 @property (nonatomic, weak) id<YouTubeParserDelegate> delegate;
+
+-(void) loadVideoInfo: (NSString*) videoURL;
 
 @end

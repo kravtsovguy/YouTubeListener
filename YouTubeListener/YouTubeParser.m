@@ -7,120 +7,88 @@
 //
 
 #import "YouTubeParser.h"
+#import "NetworkService.h"
 
-@interface YouTubeParser()
+@interface YouTubeParser() <NetworkServiceOutputProtocol>
 
-+(NSArray*) getYouTubeVideoInfo: (NSString*)code;
-+(NSArray*) filterYouTubeVideoInfo: (NSArray*)info;
+@property (nonatomic, strong) NSString *currentVideoId;
+@property (nonatomic, strong) NetworkService *networkServiceInfo;
 
 @end
 
 @implementation YouTubeParser
 
-+(NSDictionary*) getYouTubeVideoUrls: (NSString*)videoURL
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _networkServiceInfo = [NetworkService new];
+        [_networkServiceInfo configurateUrlSessionWithParams:nil];
+        _networkServiceInfo.output = self;
+    }
+    return self;
+}
+
+-(void) loadVideoInfo: (NSString*) videoURL
 {
     NSString *code = [[videoURL componentsSeparatedByString:@"="][1] componentsSeparatedByString:@"&"][0];
-    NSArray *info = [self getYouTubeVideoInfo:code];
-    info = [self filterYouTubeVideoInfo:info];
+    self.currentVideoId = code;
     
-    NSMutableDictionary *urls = [NSMutableDictionary new];
-    for (NSDictionary *params in info)
-    {
-        if ([params[@"type"] containsString:@"video"])
-        {
-            NSURL *url = [NSURL URLWithString:params[@"url"]];
-            if ([params[@"itag"] isEqualToString:@"22"])
-                urls[@"720p"] = url;
-            
-            if ([params[@"itag"] isEqualToString:@"18"])
-                urls[@"360p"] = url;
-            
-            if ([params[@"itag"] isEqualToString:@"36"])
-                urls[@"240p"] = url;
-            
-            if ([params[@"itag"] isEqualToString:@"17"])
-                urls[@"144p"] = url;
-            
-            //urls[params[@"quality"]] = [NSURL URLWithString:params[@"url"]];
-        }
-        else
-        {
-            urls[@"audio"] = [NSURL URLWithString:params[@"url"]];
-        }
-    }
-    
-    return urls;
-}
-
-+(NSArray*) filterYouTubeVideoInfo: (NSArray*)info
-{
-    NSMutableArray *filteredInfo = [NSMutableArray new];
-    for (NSDictionary *params in info)
-    {
-        if ([params[@"type"] containsString:@"mp4"])
-            [filteredInfo addObject:params];
-    }
-    
-    return filteredInfo;
-}
-
-+(NSArray*) getYouTubeVideoInfo: (NSString*)code
-{
-    NSMutableArray *info = [NSMutableArray new];
-    NSMutableDictionary *allInfo = [NSMutableDictionary new];
-    
-    NSError *error;
-    NSStringEncoding encoding;
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@", code]];
-    NSString *content = [[NSString alloc] initWithContentsOfURL:url
-                                                   usedEncoding:&encoding
-                                                          error:&error];
-    //NSLog(@"%@", content);
+    [self.networkServiceInfo loadDataFromURL:url];
+}
+
+-(void) loadingIsDoneWithDataRecieved:(NSData *)dataRecieved withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
+{
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        NSString *content = [[NSString alloc] initWithData:dataRecieved encoding:NSUTF8StringEncoding];
+        NSDictionary *info = [self parseQueryContent:content];
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(infoDidLoad:forVideo:)])
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate infoDidLoad:info forVideo:self.currentVideoId];
+            });
+        }
+    });
+}
+
+-(NSDictionary*) parseQueryContent: (NSString*) content
+{
+    NSMutableDictionary *result = [NSMutableDictionary new];
+    NSDictionary *info = [self dictionaryWithQueryString:content];
+    result[@"title"] = info[@"title"];
+    result[@"author"] = info[@"author"];
+    result[@"length_seconds"] = info[@"length_seconds"];
+    result[@"view_count"] = info[@"view_count"];
+    result[@"thumbnail_big"] = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", self.currentVideoId]];
+    result[@"thumbnail_small"] = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", self.currentVideoId]];
+    result[@"urls"] = [NSMutableDictionary new];
+    NSMutableDictionary *urls = result[@"urls"];
     
-    //content = [content stringByRemovingPercentEncoding];
-    //content = [content stringByReplacingOccurrencesOfString:@"+" withString:@" "];
-    
-    allInfo[@"thumbnail_big"] = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", code]];
-    allInfo[@"thumbnail_small"] = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", code]];
-    
-    NSArray *components = [content componentsSeparatedByString:@"&"];
-    for (NSString *component in components)
+    NSArray *streamQueries = [[info[@"url_encoded_fmt_stream_map"] componentsSeparatedByString:@","] mutableCopy];
+    for (NSString *streamQuery in streamQueries)
     {
-        if([component containsString:@"url_encoded_fmt_stream_map="]) //adaptive_fmts
-        {
-            content = [[component componentsSeparatedByString:@"url_encoded_fmt_stream_map="][1] stringByRemovingPercentEncoding];
-        }
-        if([component containsString:@"title="])
-        {
-            allInfo[@"title"] = [[component componentsSeparatedByString:@"title="][1] stringByRemovingPercentEncoding];
-        }
-        
-        if([component containsString:@"author="])
-        {
-            allInfo[@"author"] = [[component componentsSeparatedByString:@"author="][1] stringByRemovingPercentEncoding];
-        }
-        
-        if([component containsString:@"length_seconds="])
-        {
-            allInfo[@"length_seconds"] = [[component componentsSeparatedByString:@"length_seconds="][1] stringByRemovingPercentEncoding];
-        }
+        NSDictionary *params = [self dictionaryWithQueryString:streamQuery];
+        urls[@([params[@"itag"] integerValue])] = [NSURL URLWithString:params[@"url"]];
     }
     
-    components = [content componentsSeparatedByString:@","];
-    
-    for (NSString *component in components)
-    {
-        NSArray *properties = [component componentsSeparatedByString:@"&"];
-        NSMutableDictionary *params = [NSMutableDictionary new];
-        for (NSString *propertyObject in properties)
-        {
-            NSArray *property = [propertyObject componentsSeparatedByString:@"="];
-            params[property[0]] = [property[1] stringByRemovingPercentEncoding];
+    return result;
+}
+
+-(NSDictionary*) dictionaryWithQueryString: (NSString*) string
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
+    NSArray *fields = [string componentsSeparatedByString:@"&"];
+    for (NSString *field in fields) {
+        NSArray *pair = [field componentsSeparatedByString:@"="];
+        if (pair.count == 2) {
+            NSString *key = pair[0];
+            NSString *value = [[pair[1] stringByRemovingPercentEncoding] stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+            dictionary[key] = value;
         }
-        
-        [info addObject:params];
     }
-    return info;
+    return dictionary;
 }
 
 @end

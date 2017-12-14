@@ -18,9 +18,12 @@
 @import AssetsLibrary;
 @import MediaPlayer;
 
-@interface ViewController ()
+@interface ViewController () <YouTubeParserDelegate, NetworkServiceOutputProtocol>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
+@property (nonatomic, strong) YouTubeParser *ytb;
+@property (nonatomic, strong) NetworkService *networkService;
+@property (nonatomic, strong) NSDictionary *videoInfo;
 
 @end
 
@@ -31,28 +34,49 @@
     
     self.view.backgroundColor = UIColor.whiteColor;
     
-    NSDictionary *urls = [YouTubeParser getYouTubeVideoUrls:@"https://www.youtube.com/watch?v=4BltTurluAg"];
+    self.networkService = [NetworkService new];
+    [self.networkService configurateUrlSessionWithParams:nil];
+    self.networkService.output = self;
+    
+    self.ytb = [YouTubeParser new];
+    self.ytb.delegate = self;
+    [self.ytb loadVideoInfo:@"https://www.youtube.com/watch?v=4BltTurluAg"];
 
     self.playerController = [MEKPlayerViewController new];
     self.playerController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 300);
-    self.playerController.player = [AVPlayer playerWithURL:urls[@"360p"]];
-    
-    UIImage *artworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", @"4BltTurluAg"]]]];
 
-    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkImage.size requestHandler:^UIImage * _Nonnull(CGSize size) {
-        return artworkImage;
-    }];
-    
-    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : @"Title",
-                                          MPMediaItemPropertyArtist : @"Artist",
-                                          MPMediaItemPropertyArtwork : albumArt};
-    
-    //AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:urls[@"360p"]];
-    [self.playerController.player play];
-    
     [self addChildViewController:self.playerController];
     [self.view addSubview:self.playerController.view];
 }
+
+-(void)loadingIsDoneWithDataRecieved:(NSData *)dataRecieved withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
+{
+    UIImage *artworkImage = [UIImage imageWithData:dataRecieved];
+    
+    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkImage.size requestHandler:^UIImage * _Nonnull(CGSize size) {
+        return artworkImage;
+    }];
+
+    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo[@"title"],
+                                          MPMediaItemPropertyArtist : self.videoInfo[@"author"],
+                                          MPMediaItemPropertyArtwork : albumArt
+                                          };
+}
+
+- (void)infoDidLoad:(NSDictionary *)info forVideo:(NSString *)videoId {
+    
+    self.videoInfo = info;
+    
+    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo[@"title"],
+                                          MPMediaItemPropertyArtist : self.videoInfo[@"author"]
+                                          };
+    
+    self.playerController.player = [AVPlayer playerWithURL:info[@"urls"][@(YouTubeParserVideoQualityHD720)]];
+    [self.playerController.player play];
+    
+    [self.networkService loadDataFromURL:self.videoInfo[@"thumbnail_small"]];
+}
+
 //
 //-(void)viewDidAppear:(BOOL)animated{
 //    [super viewDidAppear:animated];
@@ -68,16 +92,6 @@
 //    [super viewWillDisappear:animated];
 ////    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 ////    [self resignFirstResponder];
-//}
-
-//-(void) playPlayer
-//{
-//    [self.player play];
-//}
-//
-//-(void) pausePlayer
-//{
-//    [self.player pause];
 //}
 
 @end

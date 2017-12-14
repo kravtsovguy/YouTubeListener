@@ -8,20 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol NetworkServiceOutputProtocol <NSObject>
-
-@optional
-
--(void)loadingContinuesWithProgress: (double) progress;
--(void)loadingIsDoneWithDataRecieved: (NSData *) dataRecieved;
-
-@end
-
 @protocol NetworkServiceInputProtocol <NSObject>
 @optional
 
 - (void)configurateUrlSessionWithParams: (NSDictionary *)params;
-- (void)startImageLoading;
-- (void)testYoutube;
+- (NSURLSessionDownloadTask*)loadDataFromURL: (NSURL*) url;
+
+@end
+
+@protocol NetworkServiceOutputProtocol <NSObject>
+
+@optional
+
+-(void)loadingContinuesWithProgress: (double) progress withTask:(NSURLSessionDownloadTask*) task withService: (id<NetworkServiceInputProtocol>) service;
+-(void)loadingIsDoneWithDataRecieved: (NSData *) dataRecieved withTask:(NSURLSessionDownloadTask*) task withService: (id<NetworkServiceInputProtocol>) service;
 
 @end
