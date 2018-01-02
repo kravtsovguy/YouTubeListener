@@ -23,6 +23,7 @@
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) YouTubeParser *ytb;
 @property (nonatomic, strong) NetworkService *networkService;
+@property (nonatomic, strong) NSURLSessionDownloadTask *imageTask;
 @property (nonatomic, strong) NSDictionary *videoInfo;
 
 @end
@@ -40,8 +41,16 @@
     
     self.ytb = [YouTubeParser new];
     self.ytb.delegate = self;
-    [self.ytb loadVideoInfo:@"https://www.youtube.com/watch?v=4BltTurluAg"];
-
+    
+   // NSString *latest = @"";//@"https://www.youtube.com/watch?v=IVGfrkcqh4g";@"https://www.youtube.com/watch?v=1ALScePc9Go";[UIPasteboard generalPasteboard].string;
+    NSString *url = @"https://www.youtube.com/watch?v=IVGfrkcqh4g";//@"https://www.youtube.com/watch?v=4BltTurluAg";
+    
+    NSString *latest = [UIPasteboard generalPasteboard].string;
+    if (latest.length > 0)
+        url = latest;
+    
+    [self.ytb loadVideoInfo:url];
+    
     self.playerController = [MEKPlayerViewController new];
     self.playerController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 300);
 
@@ -51,16 +60,26 @@
 
 -(void)loadingIsDoneWithDataRecieved:(NSData *)dataRecieved withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
 {
-    UIImage *artworkImage = [UIImage imageWithData:dataRecieved];
-    
-    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkImage.size requestHandler:^UIImage * _Nonnull(CGSize size) {
-        return artworkImage;
-    }];
+    if (task == self.imageTask)
+    {
+        UIImage *artworkImage = [UIImage imageWithData:dataRecieved];
+        
+        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkImage.size requestHandler:^UIImage * _Nonnull(CGSize size) {
+            return artworkImage;
+        }];
 
-    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo[@"title"],
-                                          MPMediaItemPropertyArtist : self.videoInfo[@"author"],
-                                          MPMediaItemPropertyArtwork : albumArt
-                                          };
+        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo[@"title"],
+                                              MPMediaItemPropertyArtist : self.videoInfo[@"author"],
+                                              MPMediaItemPropertyArtwork : albumArt
+                                              };
+    }
+    
+    
+}
+
+-(void)loadingContinuesWithProgress:(double)progress withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
+{
+    NSLog(@"progress: %f", progress);
 }
 
 - (void)infoDidLoad:(NSDictionary *)info forVideo:(NSString *)videoId {
@@ -71,10 +90,12 @@
                                           MPMediaItemPropertyArtist : self.videoInfo[@"author"]
                                           };
     
-    self.playerController.player = [AVPlayer playerWithURL:info[@"urls"][@(YouTubeParserVideoQualityHD720)]];
+    self.playerController.player = [AVPlayer playerWithURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualityHD720)]];
     [self.playerController.player play];
     
-    [self.networkService loadDataFromURL:self.videoInfo[@"thumbnail_small"]];
+    self.imageTask = [self.networkService loadDataFromURL:self.videoInfo[@"thumbnail_small"]];
+    
+    //[self.networkService loadDataFromURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualitySmall144)]];
 }
 
 //
