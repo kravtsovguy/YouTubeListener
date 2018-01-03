@@ -25,7 +25,14 @@
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
     self.window = [UIWindow new];
-    self.window.rootViewController = [ViewController new];
+    
+    ViewController *vc = [ViewController new];
+    vc.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:1];
+    
+    UITabBarController *tabBarController = [UITabBarController new];
+    tabBarController.viewControllers = @[vc];
+    
+    self.window.rootViewController = tabBarController;
     [self.window makeKeyAndVisible];
     
     return YES;
