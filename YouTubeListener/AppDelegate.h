@@ -15,6 +15,7 @@
 
 @property (readonly, strong) NSPersistentContainer *persistentContainer;
 
+- (void)openVideoController;
 - (void)saveContext;
 
 

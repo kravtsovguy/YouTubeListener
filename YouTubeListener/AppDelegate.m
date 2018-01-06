@@ -9,8 +9,11 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 #import <AVFoundation/AVFoundation.h>
+#import "MEKSearchViewController.h"
 
-@interface AppDelegate ()
+@interface AppDelegate () <UIScrollViewDelegate>
+
+@property (nonatomic, strong) UITabBarController *tabBarController;
 
 @end
 
@@ -26,16 +29,123 @@
     
     self.window = [UIWindow new];
     
-    ViewController *vc = [ViewController new];
+    MEKSearchViewController *vc = [MEKSearchViewController new];
     vc.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:1];
     
-    UITabBarController *tabBarController = [UITabBarController new];
-    tabBarController.viewControllers = @[vc];
-    
-    self.window.rootViewController = tabBarController;
+    self.tabBarController = [UITabBarController new];
+    self.tabBarController.viewControllers = @[vc];
+    self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     
     return YES;
+}
+
+-(void)openVideoController
+{
+    CGRect frame = self.tabBarController.view.frame;
+    
+    UIView *view = self.tabBarController.view.subviews[0];
+    view.layer.masksToBounds = YES;
+    
+    UIView *darkView = [[UIView alloc] initWithFrame:frame];
+    darkView.backgroundColor = UIColor.blackColor;
+    darkView.alpha = 0;
+    //darkView.translatesAutoresizingMaskIntoConstraints = NO;
+    darkView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [view addSubview:darkView];
+    
+    //view.frame = CGRectOffset(view.frame, 50, 50);
+    
+    [view setNeedsUpdateConstraints];
+    
+    //view.layer.anchorPoint = CGPointMake(0, 0);
+    //darkView.layer.anchorPoint = CGPointMake(0, 0);
+
+    [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        //self.view.layer.backgroundColor = UIColor.blackColor.CGColor;
+        darkView.alpha = 0.5;
+        view.layer.cornerRadius = 20;
+        
+        self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.tabBarController.tabBar.frame));
+        
+        view.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
+
+        //view.layer.transform = CATransform3DMakeScale(0.9, 0.9, 1.0);
+        //view.transform = CGAffineTransformMakeScale(0.9, 0.9);
+        //self.view.superview.layer.sublayerTransform = CATransform3DMakeScale(0.9, 0.9, 1.0);
+        //self.view.layer.sublayerTransform = CATransform3DMakeScale(0.9, 0.9, 1.0);
+    } completion:nil];
+    
+    
+    ViewController *vc = [ViewController new];
+
+    [self.tabBarController addChildViewController:vc];
+    [vc.view setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    vc.view.layer.cornerRadius = 20;
+    vc.view.layer.masksToBounds = YES;
+    //[self.tabBarController.view addSubview:vc.view];
+    [vc didMoveToParentViewController:self.tabBarController];
+    
+    CGFloat size = 400;
+    //CGFloat tabBarHeight = self.tabBarController.tabBar.frame.size.height;
+    UIScrollView *sv = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(frame), CGRectGetWidth(frame), size)];
+    //sv.backgroundColor = UIColor.grayColor;
+    sv.showsVerticalScrollIndicator = NO;
+    sv.contentSize = CGSizeMake(CGRectGetWidth(frame), size + 1);//self.view.frame.size.height * 1.1);
+    sv.clipsToBounds = NO;
+    sv.delegate = self;
+    //sv.scrollEnabled = YES;
+    //sv.bounces = NO;
+    //[sv setContentOffset:CGPointZero animated:YES];
+    [sv addSubview:vc.view];
+
+    [self.tabBarController.view insertSubview:sv atIndex:1];
+    //[self.tabBarController.view.subviews[0] addSubview:sv];
+    
+    [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        //self.view.layer.backgroundColor = UIColor.blackColor.CGColor;
+        sv.transform = CGAffineTransformMakeTranslation(0, - size);
+    } completion:nil];
+
+//    [sv setContentOffset:CGPointMake(0, -CGRectGetHeight(sv.frame)) animated:NO];
+//    CGFloat pageWidth  = sv.frame.size.width;
+//    CGFloat pageHeight = sv.frame.size.height;
+//    CGRect rect = CGRectMake(0, 0, pageWidth, pageHeight);
+//    [sv scrollRectToVisible:rect animated:YES];
+    
+}
+
+
+- (void)goDownPlayer
+{
+    
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView.contentOffset.y > 100)
+    {
+        [scrollView setContentOffset:CGPointMake(0, 100) animated:NO];
+        
+        CGFloat pageWidth  = scrollView.frame.size.width;
+        CGFloat pageHeight = scrollView.frame.size.height;
+        CGRect rect = CGRectMake(0, 0, pageWidth, pageHeight);
+        [scrollView scrollRectToVisible:rect animated:YES];
+    }
+    
+    NSLog(@"contentOffset: %f", scrollView.contentOffset.y);
+    
+    if (scrollView.contentOffset.y < -80)
+    {
+        NSLog(@"DOWN");
+        [self goDownPlayer];
+    }
+    
+//    UIView *view = self.tabBarController.view.subviews[0];
+//    [view setNeedsUpdateConstraints];
+//    CGFloat y = scrollView.contentOffset.y;
+//    CGFloat delta = - ((1 - 0.95)* y / 100);
+//    delta = 0.00;
+//    view.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.5 + delta, 0.5 + delta, 1.0);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

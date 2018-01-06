@@ -13,6 +13,7 @@
 #import <MediaPlayer/MPMoviePlayerController.h>
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
+#import <Masonry/Masonry.h>
 
 @import AVFoundation;
 @import AVKit;
@@ -37,6 +38,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //[self.view setFrame:CGRectMake(5, 0, self.view.frame.size.width - 10, 400)];
+    
     self.view.backgroundColor = UIColor.whiteColor;
     
     self.networkService = [NetworkService new];
@@ -49,27 +52,33 @@
    // NSString *latest = @"";//@"https://www.youtube.com/watch?v=IVGfrkcqh4g";@"https://www.youtube.com/watch?v=1ALScePc9Go";[UIPasteboard generalPasteboard].string;
     NSString *url = @"https://www.youtube.com/watch?v=IVGfrkcqh4g";//@"https://www.youtube.com/watch?v=4BltTurluAg";
     
-    NSString *latest = [UIPasteboard generalPasteboard].string;
-    if (latest.length > 0)
-        url = latest;
-    
-     [self.ytb loadVideoInfo:url];
+//    NSString *latest = [UIPasteboard generalPasteboard].string;
+//    if (latest.length > 0)
+//        url = latest;
+//    
+    [self.ytb loadVideoInfo:url];
     
     self.playerController = [MEKPlayerViewController new];
-    self.playerController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 300);
+    //self.playerController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 300);
 
     [self addChildViewController:self.playerController];
     [self.view addSubview:self.playerController.view];
+    
+    [self.playerController.view mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view.mas_top);
+        make.left.equalTo(self.view.mas_left);
+        make.right.equalTo(self.view.mas_right);
+        make.height.equalTo(@300);
+    }];
     
     //self.progressBar = [[MEKProgressBar alloc] initWithFrame:CGRectMake(20, 400, 50, 50)];
     //[self.view addSubview:self.progressBar];
 
     
-    self.downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(100, 400, 50, 50)];
-    //self.downloadButton.userInteractionEnabled = YES;
-    [self.downloadButton addTarget:self action:@selector(downloadPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.downloadButton];
-    
+//    self.downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(10, 350, 50, 50)];
+//    [self.downloadButton addTarget:self action:@selector(downloadPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:self.downloadButton];
+//
 
 //    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 //    NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -80,6 +89,18 @@
 //    self.playerController.player = [AVPlayer playerWithURL:urlMovie];
 //    [self.playerController.player play];
 }
+
+//- (void)updateViewConstraints {
+//    [self.playerController.view mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(self.view.mas_left);
+//        make.right.equalTo(self.view.mas_right);
+//        make.width.equalTo(self.view.mas_width);
+//        make.height.equalTo(@300);
+//    }];
+//
+//    //according to apple super should be called at end of method
+//    [super updateViewConstraints];
+//}
 
 -(void) downloadPressed:(UIButton *)button
 {
@@ -138,12 +159,19 @@
                                           };
     
     self.playerController.player = [AVPlayer playerWithURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualityHD720)]];
+    self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
     [self.playerController.player play];
     
     self.imageTask = [self.networkService loadDataFromURL:self.videoInfo[@"thumbnail_small"]];
     
     //self.videoTask = [self.networkService loadDataFromURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualitySmall144)]];
 }
+
+//-(void)viewDidAppear:(BOOL)animated
+//{
+//    [super viewDidAppear:animated];
+//    [self.view setNeedsUpdateConstraints];
+//}
 
 //
 //-(void)viewDidAppear:(BOOL)animated{
