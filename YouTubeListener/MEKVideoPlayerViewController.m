@@ -47,11 +47,17 @@
 
 @implementation MEKVideoPlayerViewController
 
+- (instancetype)init
+{
+    return [self initWithURL:[NSURL URLWithString:@"https://www.youtube.com/watch?v=rNhfrFASCGE"]];
+}
+
 - (instancetype)initWithURL:(NSURL *)url
 {
     self = [super init];
     if (self) {
         self.url = url;
+        [self maximizeWithDuration:0];
     }
     return self;
 }
@@ -66,7 +72,7 @@
     
     self.authorLabel = [UILabel new];
     self.authorLabel.numberOfLines = 1;
-    self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];//[UIFont fontWithName:@"Helvetica-Semibold" size:17];
+    self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
     [self.view addSubview:self.authorLabel];
     
     self.closeButton = [UIButton new];
@@ -108,9 +114,6 @@
     
     self.ytb = [YouTubeParser new];
     self.ytb.delegate = self;
-    
-   // NSString *latest = @"";//@"https://www.youtube.com/watch?v=IVGfrkcqh4g";@"https://www.youtube.com/watch?v=1ALScePc9Go";
-    //NSString *url = @"https://www.youtube.com/watch?v=IVGfrkcqh4g";//@"https://www.youtube.com/watch?v=4BltTurluAg";
     
     [self.ytb loadVideoInfo:self.url.absoluteString];
     

@@ -47,6 +47,10 @@
     //[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     
     [self updateControlCenter];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self becomeFirstResponder];
+    });
 }
 
 -(void)setPlayingInfo:(NSDictionary *)playingInfo
@@ -108,10 +112,6 @@
 - (void)updateControlCenter
 {
     NSMutableDictionary *playingInfo = [[NSMutableDictionary alloc] initWithDictionary:self.playingInfo ?: [NSDictionary new]];
-    
-//    [playingInfo setObject:@"1" forKey:MPMediaItemPropertyTitle];
-//    [playingInfo setObject:@"3" forKey:MPMediaItemPropertyArtist];
-//    [playingInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
     
     if (self.player)
     {

@@ -80,10 +80,6 @@
     
     AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
     [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
-    
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//        [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
-//    });
 }
 
 - (void)backgroundTapped
