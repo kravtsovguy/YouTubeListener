@@ -8,12 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol MEKVideoPlayerViewControllerDelegate <NSObject>
+
+@optional
+- (void)videoPlayerViewControllerClosed;
+
+@end
+
 @interface MEKVideoPlayerViewController : UIViewController
 
-@property (nonatomic, strong) NSURL *currentURL;
+@property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> delegate;
 
--(void) minimizeWithHeight: (CGFloat) height;
--(void) maximize;
+- (instancetype)initWithURL: (NSURL*) url;
+-(void) minimizeWithDuration: (NSTimeInterval) duration withHeight: (CGFloat) height;
+-(void) maximizeWithDuration: (NSTimeInterval) duration;
 
 @end
 

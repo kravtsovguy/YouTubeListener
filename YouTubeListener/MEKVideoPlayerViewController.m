@@ -40,18 +40,24 @@
 @property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) MEKDowloadButton *downloadButton;
 
+@property (nonatomic, strong) NSURL *url;
 @property (nonatomic, assign) BOOL maximized;
 
 @end
 
 @implementation MEKVideoPlayerViewController
 
+- (instancetype)initWithURL:(NSURL *)url
+{
+    self = [super init];
+    if (self) {
+        self.url = url;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    //[self.view setFrame:CGRectMake(5, 0, self.view.frame.size.width - 10, 400)];
-    
-    self.maximized = YES;
     
     self.titleLabel = [UILabel new];
     self.titleLabel.numberOfLines = 0;
@@ -66,6 +72,7 @@
     self.closeButton = [UIButton new];
     [self.closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
     self.closeButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    [self.closeButton addTarget:self action:@selector(closeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.closeButton];
     
     self.addButton = [UIButton new];
@@ -80,9 +87,20 @@
     [self.downloadButton addTarget:self action:@selector(downloadPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.downloadButton];
     
+
+    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    self.blurEffectView.alpha = 0;
+    self.blurEffectView.frame = self.view.bounds;
+    self.blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
+    //self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view insertSubview:self.blurEffectView atIndex:0];
+    
     
     self.view.backgroundColor = UIColor.whiteColor;
     self.view.layer.borderWidth = 0.5;
+    self.view.layer.cornerRadius = 10;
+    self.view.layer.masksToBounds = YES;
     
     self.networkService = [NetworkService new];
     [self.networkService configurateUrlSessionWithParams:nil];
@@ -91,44 +109,22 @@
     self.ytb = [YouTubeParser new];
     self.ytb.delegate = self;
     
-   // NSString *latest = @"";//@"https://www.youtube.com/watch?v=IVGfrkcqh4g";@"https://www.youtube.com/watch?v=1ALScePc9Go";[UIPasteboard generalPasteboard].string;
-    NSString *url = @"https://www.youtube.com/watch?v=IVGfrkcqh4g";//@"https://www.youtube.com/watch?v=4BltTurluAg";
+   // NSString *latest = @"";//@"https://www.youtube.com/watch?v=IVGfrkcqh4g";@"https://www.youtube.com/watch?v=1ALScePc9Go";
+    //NSString *url = @"https://www.youtube.com/watch?v=IVGfrkcqh4g";//@"https://www.youtube.com/watch?v=4BltTurluAg";
     
-//    NSString *latest = [UIPasteboard generalPasteboard].string;
-//    if (latest.length > 0)
-//        url = latest;
-//    
-    [self.ytb loadVideoInfo:url];
+    [self.ytb loadVideoInfo:self.url.absoluteString];
     
     self.playerController = [MEKPlayerViewController new];
-    //self.playerController.view.backgroundColor = UIColor.clearColor;
-    //self.playerController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 300);
-
     [self addChildViewController:self.playerController];
     [self.view addSubview:self.playerController.view];
-    
-    self.videoWidth = CGRectGetWidth(self.view.frame);
-    self.videoHeight = self.videoWidth * 9 / 16;
-    
-//    [self.playerController.view mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self.view.mas_top);
-//        make.left.equalTo(self.view.mas_left);
-//        self.videoWidthConstraint = make.width.equalTo(self.view.mas_width);
-//        self.videoHeightConstraint = make.height.equalTo(@300);
-//    }];
-    
-    //self.progressBar = [[MEKProgressBar alloc] initWithFrame:CGRectMake(20, 400, 50, 50)];
-    //[self.view addSubview:self.progressBar];
+}
 
-
-//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    NSString *documentsDirectory = [paths objectAtIndex:0];
-//    NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:@"movie.mp4"];
-//    NSURL* urlMovie = [NSURL fileURLWithPath:dataPath];
-//
-//    //NSData *nsdata = [NSData dataWithContentsOfFile:dataPath options:NSDataReadingMappedIfSafe error:nil];
-//    self.playerController.player = [AVPlayer playerWithURL:urlMovie];
-//    [self.playerController.player play];
+- (void)closeButtonPressed: (UIButton*) button
+{
+    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
+    {
+        [self.delegate videoPlayerViewControllerClosed];
+    }
 }
 
 - (void)updateViewConstraints {
@@ -210,8 +206,30 @@
     [super updateViewConstraints];
 }
 
+- (void)maximizeUI
+{
+    self.view.layer.cornerRadius = 10;
+    self.view.backgroundColor = UIColor.whiteColor;
+    self.blurEffectView.alpha = 0;
+    self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
+    self.titleLabel.numberOfLines = 0;
+    
+    self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
+}
 
--(void)maximize
+- (void)minimizeUI
+{
+    self.view.layer.cornerRadius = 0;
+    self.view.backgroundColor = UIColor.clearColor;
+    self.blurEffectView.alpha = 1;
+    self.titleLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightRegular];
+    self.titleLabel.numberOfLines = 1;
+    
+    self.authorLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightLight];
+}
+
+
+- (void)maximizeWithDuration:(NSTimeInterval)duration
 {
     self.maximized = YES;
     
@@ -221,22 +239,16 @@
     [self.view setNeedsUpdateConstraints];
     [self.view updateConstraintsIfNeeded];
     
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+    [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
         [self.view layoutIfNeeded];
     } completion:nil];
     
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        self.view.backgroundColor = UIColor.whiteColor;
-        self.blurEffectView.alpha = 0;
-        self.titleLabel.font = [UIFont fontWithName:@"Helvetica" size:17];
-        self.titleLabel.numberOfLines = 0;
-        
-        self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
-        //self.authorLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:17];
+    [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        [self maximizeUI];
     } completion:nil];
 }
 
--(void)minimizeWithHeight:(CGFloat)height
+- (void)minimizeWithDuration:(NSTimeInterval)duration withHeight:(CGFloat)height
 {
     self.maximized = NO;
     
@@ -246,31 +258,12 @@
     [self.view setNeedsUpdateConstraints];
     [self.view updateConstraintsIfNeeded];
     
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+    [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
         [self.view layoutIfNeeded];
     } completion:nil];
     
-    
-    if (!self.blurEffectView)
-    {
-        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        self.blurEffectView = blurEffectView;
-        blurEffectView.alpha = 0;
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-        blurEffectView.frame = self.view.bounds;
-        //blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.view insertSubview:blurEffectView atIndex:0];
-        //[self.view addSubview:blurEffectView];
-    }
-    
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        self.view.backgroundColor = UIColor.clearColor;
-        self.blurEffectView.alpha = 1;
-        self.titleLabel.font = [UIFont fontWithName:@"Helvetica" size:11];
-        self.titleLabel.numberOfLines = 1;
-        
-        self.authorLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:11];
+    [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        [self minimizeUI];
     } completion:nil];
 }
 

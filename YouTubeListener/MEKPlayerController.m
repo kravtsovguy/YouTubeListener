@@ -11,15 +11,23 @@
 #import "AppDelegate.h"
 
 
-static const CGFloat MEKPlayerViewSize = 320;
+static const CGFloat MEKPlayerViewMaximizedSize = 320;
+static const CGFloat MEKPlayerViewMinimizedSize = 60;
+static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
-@interface MEKPlayerController () <UIScrollViewDelegate>
+@interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
-@property (nonatomic, strong) UIView *darkView;
+@property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MEKVideoPlayerViewController *playerViewController;
 
+- (void)maximizePlayer;
+- (void)minimizePlayer;
+- (void)closePlayer;
+
 - (UITabBarController*)tabBarController;
+- (UIView*)tabBarMainView;
+- (CGRect)mainFrame;
 
 @end
 
@@ -30,169 +38,227 @@ static const CGFloat MEKPlayerViewSize = 320;
     return ((AppDelegate*)[UIApplication sharedApplication].delegate).tabBarController;
 }
 
--(void)openPlayer
+-(UIView *)tabBarMainView
 {
-    CGRect frame = self.tabBarController.view.frame;
+    return self.tabBarController.view.subviews[0];
+}
+
+- (CGRect)mainFrame
+{
+    return self.tabBarController.view.frame;
+}
+
+- (BOOL)isOpened
+{
+    return self.playerViewController != nil;
+}
+
+- (MEKPlayerVisibleState)visibleState
+{
+    CGFloat frameHeight = CGRectGetHeight(self.mainFrame);
+    CGFloat tabbarHeight = CGRectGetHeight(self.tabBarController.tabBar.frame);
+    CGFloat y = CGRectGetMinY(self.scrollView.frame);
     
-    UIView *view = self.tabBarController.view.subviews[0];
-    
-    if (!self.playerViewController)
+    if (y == frameHeight - MEKPlayerViewMaximizedSize)
     {
-        view.layer.masksToBounds = YES;
-        
-        UIView *darkView = [[UIView alloc] initWithFrame:frame];
-        self.darkView = darkView;
-        
-        darkView.backgroundColor = UIColor.blackColor;
-        darkView.alpha = 0;
-        //darkView.translatesAutoresizingMaskIntoConstraints = NO;
-        darkView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [view addSubview:darkView];
+        return MEKPlayerVisibleStateMaximized;
     }
-    //view.frame = CGRectOffset(view.frame, 50, 50);
     
-    [view setNeedsUpdateConstraints];
-    //[view updateConstraintsIfNeeded];
-    
-    //view.layer.anchorPoint = CGPointMake(0, 0);
-    //darkView.layer.anchorPoint = CGPointMake(0, 0);
-    
-    [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        //self.view.layer.backgroundColor = UIColor.blackColor.CGColor;
-        self.darkView.alpha = 0.5;
-        view.layer.cornerRadius = 10;
-        self.playerViewController.view.layer.cornerRadius = 10;
-        
-        self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.tabBarController.tabBar.frame));
-        
-        view.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
-        
-        //view.layer.transform = CATransform3DMakeScale(0.9, 0.9, 1.0);
-        //view.transform = CGAffineTransformMakeScale(0.9, 0.9);
-        //self.view.superview.layer.sublayerTransform = CATransform3DMakeScale(0.9, 0.9, 1.0);
-        //self.view.layer.sublayerTransform = CATransform3DMakeScale(0.9, 0.9, 1.0);
-    } completion:nil];
-    
-    if (!self.playerViewController)
+    if (y == frameHeight - tabbarHeight - MEKPlayerViewMinimizedSize)
     {
-        MEKVideoPlayerViewController *vc = [MEKVideoPlayerViewController new];
-        self.playerViewController = vc;
-        
-        [self.tabBarController addChildViewController:vc];
-        [vc.view setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        vc.view.layer.cornerRadius = 10;
-        vc.view.layer.masksToBounds = YES;
-        //[self.tabBarController.view addSubview:vc.view];
-        [vc didMoveToParentViewController:self.tabBarController];
-        
-        //CGFloat size = 400;
-        //CGFloat tabBarHeight = self.tabBarController.tabBar.frame.size.height;
-        UIScrollView *sv = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(frame), CGRectGetWidth(frame), MEKPlayerViewSize)];
-        self.scrollView = sv;
-        
-        //sv.backgroundColor = UIColor.grayColor;
-        sv.showsVerticalScrollIndicator = NO;
-        sv.contentSize = CGSizeMake(CGRectGetWidth(frame), MEKPlayerViewSize + 1);//self.view.frame.size.height * 1.1);
-        sv.clipsToBounds = NO;
-        sv.delegate = self;
-        //sv.scrollEnabled = YES;
-        //sv.bounces = NO;
-        //[sv setContentOffset:CGPointZero animated:YES];
-        [sv addSubview:vc.view];
-        
-        [self.tabBarController.view insertSubview:sv atIndex:1];
-        //[self.tabBarController.view.subviews[0] addSubview:sv];
+        return MEKPlayerVisibleStateMinimized;
     }
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        //self.view.layer.backgroundColor = UIColor.blackColor.CGColor;
-        //self.scrollView.frame = CGRectMake(0, CGRectGetHeight(frame) -  MEKPlayerViewSize, CGRectGetWidth(self.scrollView.frame), CGRectGetHeight(self.scrollView.frame));
-        self.scrollView.transform = CGAffineTransformMakeTranslation(0, - MEKPlayerViewSize);
-    } completion:nil];
     
-    //    [sv setContentOffset:CGPointMake(0, -CGRectGetHeight(sv.frame)) animated:NO];
-    //    CGFloat pageWidth  = sv.frame.size.width;
-    //    CGFloat pageHeight = sv.frame.size.height;
-    //    CGRect rect = CGRectMake(0, 0, pageWidth, pageHeight);
-    //    [sv scrollRectToVisible:rect animated:YES];
+    return MEKPlayerVisibleStateNone;
+}
+
+- (void)closePlayer
+{
+    [self.playerViewController.view removeFromSuperview];
+    [self.playerViewController removeFromParentViewController];
+    self.playerViewController = nil;
+}
+
+- (void)initPlayerViewControllerWithURL:(NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state
+{
+    if (self.playerViewController)
+        return;
     
+    self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithURL:videoURL];
+    
+    if (state == MEKPlayerVisibleStateMinimized)
+    {
+        [self.playerViewController minimizeWithDuration:0 withHeight:MEKPlayerViewMinimizedSize];
+    }
+    
+    if (state == MEKPlayerVisibleStateMaximized)
+    {
+        [self.playerViewController maximizeWithDuration:0];
+    }
+        
+    
+    self.playerViewController.delegate = self;
+    
+    
+    [self.tabBarController addChildViewController:self.playerViewController];
+    [self.playerViewController didMoveToParentViewController:self.tabBarController];
+    
+    [self.scrollView addSubview:self.playerViewController.view];
+}
+
+- (void)initScrollView
+{
+    if (self.scrollView)
+        return;
+    
+    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.mainFrame), CGRectGetWidth(self.mainFrame), MEKPlayerViewMaximizedSize)];
+    
+    self.scrollView.showsVerticalScrollIndicator = NO;
+    self.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.mainFrame), MEKPlayerViewMaximizedSize + 1);
+    self.scrollView.clipsToBounds = NO;
+    self.scrollView.delegate = self;
+    
+    [self.tabBarController.view insertSubview:self.scrollView aboveSubview:self.tabBarMainView];
+}
+
+- (void)initOverlayView
+{
+    if (self.overlayView)
+        return;
+    
+    self.overlayView = [[UIView alloc] initWithFrame:self.mainFrame];
+    self.overlayView.backgroundColor = UIColor.blackColor;
+    self.overlayView.alpha = 0;
+    //self.darkView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(minimize)];
+    [self.overlayView addGestureRecognizer:tap];
+    
+    [self.tabBarMainView addSubview:self.overlayView];
+}
+
+-(void)openURL:(NSURL *)videoURL
+{
+    [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMaximized];
+}
+
+-(void)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
+{
+    if (self.isOpened)
+    {
+        [self closePlayer];
+    }
+    
+    [self initOverlayView];
+    [self initScrollView];
+    [self initPlayerViewControllerWithURL:videoURL withVisibleState:state];
+    
+    if (state == MEKPlayerVisibleStateMaximized)
+        [self maximizePlayer];
+    
+    if (state == MEKPlayerVisibleStateMinimized)
+        [self minimizePlayer];
+}
+
+- (void)fixContentInScrollView: (UIScrollView*) scrollView AtOffset: (CGPoint) offset
+{
+    [scrollView setContentOffset:offset animated:NO];
+    
+    CGRect rect = CGRectMake(0, 0, CGRectGetWidth(scrollView.frame), CGRectGetHeight(scrollView.frame));
+    [scrollView scrollRectToVisible:rect animated:YES];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (scrollView.contentOffset.y > 100)
-    {
-        [scrollView setContentOffset:CGPointMake(0, 100) animated:NO];
-        
-        CGRect rect = CGRectMake(0, 0, CGRectGetWidth(scrollView.frame), CGRectGetHeight(scrollView.frame));
-        [scrollView scrollRectToVisible:rect animated:YES];
-        
-        [self.playerViewController maximize];
-        [self openPlayer];
-    }
     
     NSLog(@"contentOffset: %f", scrollView.contentOffset.y);
     
-    if (scrollView.contentOffset.y < -80)
+    if (scrollView.contentOffset.y > 100)
     {
-        NSLog(@"DOWN");
-        [scrollView setContentOffset:CGPointMake(0, -80) animated:NO];
-        
-        CGRect rect = CGRectMake(0, 0, CGRectGetWidth(scrollView.frame), CGRectGetHeight(scrollView.frame));
-        [scrollView scrollRectToVisible:rect animated:YES];
-        
-        
-        [self minimizePlayer];
+        [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, 100)];
+
+        [self maximize];
     }
     
-    //    UIView *view = self.tabBarController.view.subviews[0];
-    //    [view setNeedsUpdateConstraints];
-    //    CGFloat y = scrollView.contentOffset.y;
-    //    CGFloat delta = - ((1 - 0.95)* y / 100);
-    //    delta = 0.00;
-    //    view.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.5 + delta, 0.5 + delta, 1.0);
+    if (scrollView.contentOffset.y < -80)
+    {
+        [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, -80)];
+        
+        [self minimize];
+    }
 }
 
--(void)closePlayer
+-(void)videoPlayerViewControllerClosed
 {
-    
+    [self close];
 }
 
--(void)minimizePlayer
+-(void)close
 {
+    if (!self.isOpened)
+        return;
     
-    [self.playerViewController minimizeWithHeight:60];
+    [self minimizePlayer];
     
-    //CGRect frame = self.tabBarController.view.frame;
-    CGFloat tabBarHeight = CGRectGetHeight(self.tabBarController.tabBar.frame);
-    UIView *view = self.tabBarController.view.subviews[0];
-    
-    //[view setNeedsUpdateConstraints];
-    
-    
-    //self.scrollView.transform = CGAffineTransformMakeTranslation(0, -MEKPlayerViewSize - self.scrollView.contentOffset.y );
-    //[self.scrollView setContentOffset:CGPointZero];
-    
-    
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        //self.view.layer.backgroundColor = UIColor.blackColor.CGColor;
-        self.darkView.alpha = 0.0;
-        view.layer.cornerRadius = 0;
+    [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        self.scrollView.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished) {
+        [self closePlayer];
+    }];
+}
 
-        self.playerViewController.view.layer.cornerRadius = 0;
+- (void)minimizePlayerUI
+{
+    self.overlayView.alpha = 0.0;
+    
+    self.tabBarController.tabBar.transform = CGAffineTransformIdentity;
+    
+    self.tabBarMainView.layer.transform = CATransform3DIdentity;
+    self.tabBarMainView.layer.cornerRadius = 0;
+    
+    self.scrollView.transform = CGAffineTransformMakeTranslation(0, -CGRectGetHeight(self.tabBarController.tabBar.frame) - MEKPlayerViewMinimizedSize);
+}
 
-        self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(0, 0);
+- (void)maximizePlayerUI
+{
+    self.overlayView.alpha = 0.5;
+    
+    self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.tabBarController.tabBar.frame));
+    
+    self.tabBarMainView.layer.cornerRadius = 10;
+    self.tabBarMainView.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
+    
+    self.scrollView.transform = CGAffineTransformMakeTranslation(0, - MEKPlayerViewMaximizedSize);
+}
 
-        view.layer.transform = CATransform3DMakeScale(1, 1, 1.0);
-        self.scrollView.transform = CGAffineTransformMakeTranslation(0, -tabBarHeight - 60);
-        
-        //self.scrollView.frame = CGRectMake(0, CGRectGetHeight(frame) - tabBarHeight - 50, CGRectGetWidth(self.scrollView.frame), CGRectGetHeight(self.scrollView.frame));
-        
-        //self.playerViewController.view.transform = CGAffineTransformMakeTranslation(0, 250);
+- (void)minimizePlayer
+{
+    [self.tabBarMainView setNeedsUpdateConstraints];
+    
+    [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        [self minimizePlayerUI];
     } completion:nil];
 }
 
--(void)maximizePlayer
+- (void)maximizePlayer
 {
+    [self.tabBarMainView setNeedsUpdateConstraints];
     
+    [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        [self maximizePlayerUI];
+    } completion:nil];
+}
+
+-(void)minimize
+{
+    [self.playerViewController minimizeWithDuration:MEKPlayerViewAnimationDuration withHeight:MEKPlayerViewMinimizedSize];
+    [self minimizePlayer];
+}
+
+-(void)maximize
+{
+    [self.playerViewController maximizeWithDuration:MEKPlayerViewAnimationDuration];
+    [self maximizePlayer];
 }
 
 @end

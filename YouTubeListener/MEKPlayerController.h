@@ -8,11 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
+    MEKPlayerVisibleStateNone = 0,
+    MEKPlayerVisibleStateMinimized = 1,
+    MEKPlayerVisibleStateMaximized = 2,
+};
+
 @interface MEKPlayerController : NSObject
 
-- (void)openPlayer;
-- (void)closePlayer;
-- (void)minimizePlayer;
-- (void)maximizePlayer;
+@property (nonatomic, readonly) BOOL isOpened;
+@property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
+
+- (void)openURL: (NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state;
+- (void)openURL: (NSURL*) videoURL;
+- (void)close;
+- (void)minimize;
+- (void)maximize;
 
 @end

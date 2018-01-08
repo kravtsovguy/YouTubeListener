@@ -67,48 +67,24 @@
 {
     [self.view endEditing:YES];
     
-//    self.view.layer.masksToBounds = YES;
-//    
-//    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-//    //UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:blurEffect];
-//    UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-//    blurEffectView.alpha = 0;
-//    //always fill the view
-//    blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-//    blurEffectView.frame = self.view.bounds;
-//    //blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-//    //[self.view insertSubview:blurEffectView atIndex:0];
-//    //[self.view addSubview:blurEffectView];
- 
+    NSURL *url;
+    
+    if (self.searchTextField.text.length == 0)
+    {
+        url = [NSURL URLWithString:@"https://www.youtube.com/watch?v=IVGfrkcqh4g"];
+    }
+    else
+    {
+        url = [NSURL URLWithString:self.searchTextField.text];
+    }
+    
     AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [appDelegate.player openPlayer];
+    [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+//        [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
+//    });
 }
-
-
-//
-//// pass a param to describe the state change, an animated flag and a completion block matching UIView animations completion
-//- (void)setTabBarVisible:(BOOL)visible animated:(BOOL)animated completion:(void (^)(BOOL))completion {
-//
-//    // bail if the current state matches the desired state
-//    if ([self tabBarIsVisible] == visible) return (completion)? completion(YES) : nil;
-//
-//    // get a frame calculation ready
-//    CGRect frame = self.tabBarController.tabBar.frame;
-//    CGFloat height = frame.size.height;
-//    CGFloat offsetY = (visible)? -height : height;
-//
-//    // zero duration means no animation
-//    CGFloat duration = (animated)? 0.5 : 0.0;
-//
-//    [UIView animateWithDuration:duration animations:^{
-//        self.tabBarController.tabBar.frame = CGRectOffset(frame, 0, offsetY);
-//    } completion:completion];
-//}
-//
-////Getter to know the current state
-//- (BOOL)tabBarIsVisible {
-//    return self.tabBarController.tabBar.frame.origin.y < CGRectGetMaxY(self.view.frame);
-//}
 
 - (void)backgroundTapped
 {
