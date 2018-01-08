@@ -31,6 +31,7 @@
     self.searchTextField.textAlignment = NSTextAlignmentCenter;
     self.searchTextField.textColor = UIColor.blueColor;
     self.searchTextField.delegate = self;
+    self.searchTextField.text = @"https://youtu.be/rNhfrFASCGE";
     //self.searchTextField.backgroundColor = UIColor.grayColor;
     [self.view addSubview:self.searchTextField];
     
@@ -67,16 +68,7 @@
 {
     [self.view endEditing:YES];
     
-    NSURL *url;
-    
-    if (self.searchTextField.text.length == 0)
-    {
-        url = [NSURL URLWithString:@"https://www.youtube.com/watch?v=IVGfrkcqh4g"];
-    }
-    else
-    {
-        url = [NSURL URLWithString:self.searchTextField.text];
-    }
+    NSURL *url = [NSURL URLWithString:self.searchTextField.text];
     
     AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
     [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
