@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		254A68A94F8596DABAEE698A /* libPods-YouTubeListener.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */; };
+		BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49AB512000A8CE00D6578D /* MEKPlayerController.m */; };
 		BAAE6D001FDFEF6F00438DF9 /* YouTubeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BAAE6CFF1FDFEF6F00438DF9 /* YouTubeParser.m */; };
 		BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */; };
 		BAB51E441FFB4C85005F24F8 /* MEKProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB51E431FFB4C85005F24F8 /* MEKProgressBar.m */; };
 		BAB51E471FFC9382005F24F8 /* MEKDowloadButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB51E461FFC9382005F24F8 /* MEKDowloadButton.m */; };
 		BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356A1FDEAF740036B27F /* AppDelegate.m */; };
-		BABD356E1FDEAF740036B27F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356D1FDEAF740036B27F /* ViewController.m */; };
+		BABD356E1FDEAF740036B27F /* MEKVideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356D1FDEAF740036B27F /* MEKVideoPlayerViewController.m */; };
 		BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */; };
 		BABD35761FDEAF740036B27F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BABD35751FDEAF740036B27F /* Assets.xcassets */; };
 		BABD35791FDEAF740036B27F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BABD35771FDEAF740036B27F /* LaunchScreen.storyboard */; };
@@ -27,6 +28,8 @@
 		6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YouTubeListener.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C8818282E684B6B6C6CCA85 /* Pods-YouTubeListener.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener.release.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener/Pods-YouTubeListener.release.xcconfig"; sourceTree = "<group>"; };
 		AE9604B7FD3A8F3C409C1CFB /* Pods-YouTubeListener.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener/Pods-YouTubeListener.debug.xcconfig"; sourceTree = "<group>"; };
+		BA49AB502000A8CE00D6578D /* MEKPlayerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerController.h; sourceTree = "<group>"; };
+		BA49AB512000A8CE00D6578D /* MEKPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerController.m; sourceTree = "<group>"; };
 		BAAE6CFE1FDFEF6F00438DF9 /* YouTubeParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YouTubeParser.h; sourceTree = "<group>"; };
 		BAAE6CFF1FDFEF6F00438DF9 /* YouTubeParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YouTubeParser.m; sourceTree = "<group>"; };
 		BAAE6D011FE1A3CD00438DF9 /* MEKPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerViewController.h; sourceTree = "<group>"; };
@@ -38,8 +41,8 @@
 		BABD35661FDEAF740036B27F /* YouTubeListener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeListener.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABD35691FDEAF740036B27F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BABD356A1FDEAF740036B27F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		BABD356C1FDEAF740036B27F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		BABD356D1FDEAF740036B27F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BABD356C1FDEAF740036B27F /* MEKVideoPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKVideoPlayerViewController.h; sourceTree = "<group>"; };
+		BABD356D1FDEAF740036B27F /* MEKVideoPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKVideoPlayerViewController.m; sourceTree = "<group>"; };
 		BABD35731FDEAF740036B27F /* YouTubeListener.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = YouTubeListener.xcdatamodel; sourceTree = "<group>"; };
 		BABD35751FDEAF740036B27F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BABD35781FDEAF740036B27F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -109,8 +112,8 @@
 				BABD35851FDEBF610036B27F /* NetworkServiceProtocol.h */,
 				BABD35691FDEAF740036B27F /* AppDelegate.h */,
 				BABD356A1FDEAF740036B27F /* AppDelegate.m */,
-				BABD356C1FDEAF740036B27F /* ViewController.h */,
-				BABD356D1FDEAF740036B27F /* ViewController.m */,
+				BABD356C1FDEAF740036B27F /* MEKVideoPlayerViewController.h */,
+				BABD356D1FDEAF740036B27F /* MEKVideoPlayerViewController.m */,
 				BABD35751FDEAF740036B27F /* Assets.xcassets */,
 				BABD35771FDEAF740036B27F /* LaunchScreen.storyboard */,
 				BABD357A1FDEAF740036B27F /* Info.plist */,
@@ -126,6 +129,8 @@
 				BAB51E461FFC9382005F24F8 /* MEKDowloadButton.m */,
 				BABDAC061FFCE9FA004C67E2 /* MEKSearchViewController.h */,
 				BABDAC071FFCE9FA004C67E2 /* MEKSearchViewController.m */,
+				BA49AB502000A8CE00D6578D /* MEKPlayerController.h */,
+				BA49AB512000A8CE00D6578D /* MEKPlayerController.m */,
 			);
 			path = YouTubeListener;
 			sourceTree = "<group>";
@@ -257,13 +262,14 @@
 			files = (
 				BABDAC081FFCE9FA004C67E2 /* MEKSearchViewController.m in Sources */,
 				BAAE6D001FDFEF6F00438DF9 /* YouTubeParser.m in Sources */,
-				BABD356E1FDEAF740036B27F /* ViewController.m in Sources */,
+				BABD356E1FDEAF740036B27F /* MEKVideoPlayerViewController.m in Sources */,
 				BAB51E471FFC9382005F24F8 /* MEKDowloadButton.m in Sources */,
 				BAB51E441FFB4C85005F24F8 /* MEKProgressBar.m in Sources */,
 				BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */,
 				BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */,
 				BABD357C1FDEAF740036B27F /* main.m in Sources */,
 				BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */,
+				BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */,
 				BABD35841FDEBF470036B27F /* NetworkService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

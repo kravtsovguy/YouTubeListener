@@ -8,8 +8,6 @@
 
 #import "MEKDowloadButton.h"
 
-const static CGFloat StopViewSize = 20;
-
 @interface MEKDowloadButton ()
 
 @property (nonatomic, strong) UIView *stopView;
@@ -19,6 +17,11 @@ const static CGFloat StopViewSize = 20;
 
 @implementation MEKDowloadButton
 
+- (instancetype)init
+{
+    return [self initWithFrame:CGRectMake(0, 0, 50, 50)];
+}
+
 -(instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -26,11 +29,14 @@ const static CGFloat StopViewSize = 20;
     {
         self.progressBar = [[MEKProgressBar alloc] initWithFrame:self.bounds];
         self.progressBar.userInteractionEnabled = NO;
+        self.progressBar.hidden = YES;
         [self addSubview:self.progressBar];
+        
+        CGFloat stopViewSize = CGRectGetHeight(frame) / 3;
 
-        _stopView = [[UIView alloc] initWithFrame:CGRectMake((self.frame.size.width - StopViewSize)/ 2, (self.frame.size.height - StopViewSize)/ 2, StopViewSize, StopViewSize)];
-        _stopView.backgroundColor = UIColor.blueColor;
-        _stopView.layer.cornerRadius = StopViewSize / 4;
+        _stopView = [[UIView alloc] initWithFrame:CGRectMake((self.frame.size.width - stopViewSize)/ 2, (self.frame.size.height - stopViewSize)/ 2, stopViewSize, stopViewSize)];
+        _stopView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        _stopView.layer.cornerRadius = stopViewSize / 4;
         _stopView.layer.masksToBounds = YES;
         _stopView.userInteractionEnabled = NO;
         _stopView.hidden = YES;
@@ -39,7 +45,7 @@ const static CGFloat StopViewSize = 20;
         _image = [UIImage imageNamed:@"download"];
         [self setImage:_image forState:UIControlStateNormal];
 
-        self.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        //self.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
         self.tintColor = [UIColor blueColor];
     }
     
@@ -53,11 +59,13 @@ const static CGFloat StopViewSize = 20;
     if (_isLoading)
     {
         [self setImage:nil forState:UIControlStateNormal];
+        self.progressBar.hidden = NO;
         self.stopView.hidden = NO;
     }
     else
     {
         [self setImage:self.image forState:UIControlStateNormal];
+        self.progressBar.hidden = YES;
         self.stopView.hidden = YES;
     }
 }

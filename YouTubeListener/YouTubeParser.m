@@ -40,7 +40,7 @@
     
     self.currentVideoId = code;
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@", code]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@&hl=ru_RU", code]];
     [self.networkServiceInfo loadDataFromURL:url];
 }
 

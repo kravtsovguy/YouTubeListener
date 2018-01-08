@@ -29,7 +29,7 @@
         _startAngle = M_PI * 1.5;
         _endAngle = _startAngle + (M_PI * 2);
         _progress = 0.0;
-        _radius = 5;
+        _radius = CGRectGetHeight(frame) * 0.1;
         //CGFloat frameRadius = self.frame.size.width / 2;
         
         self.backgroundColor = UIColor.clearColor;
@@ -43,7 +43,7 @@
         
         _progressLayer = [[CAShapeLayer alloc] init];
         [_progressLayer setPath:bezierPath.CGPath];
-        [_progressLayer setStrokeColor:UIColor.blueColor.CGColor];
+        [_progressLayer setStrokeColor:[UIColor.redColor colorWithAlphaComponent:0.7].CGColor];
         [_progressLayer setFillColor:UIColor.clearColor.CGColor];
         [_progressLayer setLineWidth:_radius];
         [_progressLayer setStrokeEnd:_progress];

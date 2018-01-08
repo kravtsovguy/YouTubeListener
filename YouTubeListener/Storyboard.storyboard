@@ -44,6 +44,18 @@
                                 <rect key="frame" x="46" y="278" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </scrollView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fFo-sW-N1c">
+                                <rect key="frame" x="67" y="232" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5WU-eb-Dhy">
+                                <rect key="frame" x="51" y="121" width="79" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button" backgroundImage="plus"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="YEt-9c-Ky1"/>
@@ -52,7 +64,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="le7-Y9-ira" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-98" y="-738"/>
+            <point key="canvasLocation" x="-98.400000000000006" y="-738.08095952023996"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="M7J-VX-ouP">
@@ -73,4 +85,7 @@
             <point key="canvasLocation" x="-1052" y="-406"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="plus" width="24" height="24"/>
+    </resources>
 </document>
