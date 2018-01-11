@@ -25,7 +25,7 @@
             </objects>
             <point key="canvasLocation" x="-98" y="-73"/>
         </scene>
-        <!--Item 1-->
+        <!--View Controller-->
         <scene sceneID="gQt-9U-onX">
             <objects>
                 <viewController id="QLF-Ym-HMh" sceneMemberID="viewController">
@@ -56,11 +56,15 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button" backgroundImage="plus"/>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="uuM-Es-15M">
+                                <rect key="frame" x="46" y="469" width="228" height="122"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="YEt-9c-Ky1"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 1" id="k7F-2g-7hV"/>
+                    <tabBarItem key="tabBarItem" systemItem="mostViewed" id="k7F-2g-7hV"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="le7-Y9-ira" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -86,6 +90,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="placeholder" width="300" height="300"/>
         <image name="plus" width="24" height="24"/>
     </resources>
 </document>

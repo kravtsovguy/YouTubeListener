@@ -8,11 +8,13 @@
 
 #import "YouTubeParser.h"
 #import "NetworkService.h"
+#import "AppDelegate.h"
 
 @interface YouTubeParser() <NetworkServiceOutputProtocol>
 
 @property (nonatomic, strong) NSString *currentVideoId;
 @property (nonatomic, strong) NetworkService *networkServiceInfo;
+@property (nonatomic, readonly) MEKVideoItemsController *controller;
 
 @end
 
@@ -27,6 +29,14 @@
         _networkServiceInfo.output = self;
     }
     return self;
+}
+
+-(MEKVideoItemsController *)controller
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    MEKVideoItemsController *controller = ((AppDelegate*)(application.delegate)).videoItemsController;
+    
+    return controller;
 }
 
 -(void) loadVideoInfo: (NSString*) videoURL
@@ -78,6 +88,16 @@
         NSDictionary *params = [self dictionaryWithQueryString:streamQuery];
         urls[@([params[@"itag"] integerValue])] = [NSURL URLWithString:params[@"url"]];
     }
+    
+    VideoItemMO *item = [self.controller getEmptyVideoItem];
+    item.videoId = info[@"vid"];
+    item.title = info[@"title"];
+    item.author = info[@"author"];
+    item.length = ((NSString*)info[@"length_seconds"]).doubleValue;
+    item.thumbnailSmall = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", item.videoId]];
+    item.thumbnailBig = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", item.videoId]];
+    item.urls = result[@"urls"];
+    item.added = [NSDate new];
     
     return result;
 }

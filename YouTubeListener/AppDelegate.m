@@ -10,6 +10,7 @@
 #import "MEKVideoPlayerViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "MEKSearchViewController.h"
+#import "MEKPlaylistsViewController.h"
 
 @interface AppDelegate () <UIScrollViewDelegate>
 
@@ -25,18 +26,27 @@
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
+    //[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+    
     self.window = [UIWindow new];
+    self.window.tintColor = [[UIColor redColor] colorWithAlphaComponent:0.7];
     
     MEKSearchViewController *vc = [MEKSearchViewController new];
-    vc.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:1];
+    vc.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
     
-    [UITabBar appearance].tintColor = UIColor.redColor;
+    MEKPlaylistsViewController *pvc = [MEKPlaylistsViewController new];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:pvc];
+    navController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
+    [navController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
+    
+    //[UITabBar appearance].tintColor = UIColor.redColor;
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[vc];
+    self.tabBarController.viewControllers = @[vc, navController];
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     
     self.player = [MEKPlayerController new];
+    self.videoItemsController = [MEKVideoItemsController new];
     
     return YES;
 }

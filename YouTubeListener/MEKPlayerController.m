@@ -118,7 +118,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     self.scrollView.clipsToBounds = NO;
     self.scrollView.delegate = self;
     
-    [self.tabBarController.view insertSubview:self.scrollView aboveSubview:self.tabBarMainView];
+    [self.tabBarController.view insertSubview:self.scrollView aboveSubview:self.overlayView];
 }
 
 - (void)initOverlayView
@@ -135,7 +135,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(minimize)];
     [self.overlayView addGestureRecognizer:tap];
     
-    [self.tabBarMainView addSubview:self.overlayView];
+    [self.tabBarController.view insertSubview:self.overlayView aboveSubview:self.tabBarMainView];
 }
 
 -(void)openURL:(NSURL *)videoURL
@@ -213,7 +213,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     
     self.tabBarController.tabBar.transform = CGAffineTransformIdentity;
     
-    self.tabBarMainView.layer.transform = CATransform3DIdentity;
+    //self.tabBarMainView.layer.transform = CATransform3DIdentity;
     self.tabBarMainView.layer.cornerRadius = 0;
     
     self.scrollView.transform = CGAffineTransformMakeTranslation(0, -CGRectGetHeight(self.tabBarController.tabBar.frame) - MEKPlayerViewMinimizedSize);
@@ -226,7 +226,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.tabBarController.tabBar.frame));
     
     self.tabBarMainView.layer.cornerRadius = 10;
-    self.tabBarMainView.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
+    //self.tabBarMainView.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
     
     self.scrollView.transform = CGAffineTransformMakeTranslation(0, - MEKPlayerViewMaximizedSize);
 }

@@ -78,6 +78,7 @@
     self.closeButton = [UIButton new];
     [self.closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
     self.closeButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    self.closeButton.imageEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
     [self.closeButton addTarget:self action:@selector(closeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.closeButton];
     
@@ -171,17 +172,17 @@
     [self.closeButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         if (self.maximized)
         {
-            make.top.equalTo(self.view.mas_top).with.offset(20);
-            make.right.equalTo(self.view.mas_right).with.offset(20);
-            make.width.equalTo(@20);
-            make.height.equalTo(@20);
+            make.top.equalTo(self.view.mas_top).with.offset(0);
+            make.right.equalTo(self.view.mas_right).with.offset(60);
+            make.width.equalTo(@60);
+            make.height.equalTo(@60);
         }
         else
         {
-            make.top.equalTo(self.view.mas_top).with.offset(20);
-            make.right.equalTo(self.view.mas_right).with.offset(-20);
-            make.width.equalTo(@20);
-            make.height.equalTo(@20);
+            make.top.equalTo(self.view.mas_top).with.offset(0);
+            make.right.equalTo(self.view.mas_right).with.offset(0);
+            make.width.equalTo(@60);
+            make.height.equalTo(@60);
         }
     }];
     
@@ -194,14 +195,7 @@
     
     [self.downloadButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.titleLabel.mas_bottom).with.offset(5);
-        if (self.maximized)
-        {
-            make.right.equalTo(self.view.mas_right).with.offset(-20);
-        }
-        else
-        {
-            make.right.equalTo(self.view.mas_right).with.offset(100);
-        }
+        make.right.equalTo(self.view.mas_right).with.offset(self.maximized ? -20 : 100);
         make.width.equalTo(@30);
         make.height.equalTo(@30);
     }];
