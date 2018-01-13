@@ -38,9 +38,9 @@
 
 - (NSString*)ch_getPathForUrl: (NSURL*)url
 {
-    NSString * documentsDirectoryPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *urlName = [self ch_getNameFromUrl:url];
-    NSString *path = [documentsDirectoryPath stringByAppendingPathComponent:urlName];
+    path = [path stringByAppendingPathComponent:urlName];
     return path;
 }
 
@@ -65,14 +65,12 @@
         UIImage *image = [UIImage imageWithData:data];
         dispatch_async(dispatch_get_main_queue(), ^{
             
-                self.image = image;
-                
-                CATransition *transition = [CATransition animation];
-                transition.duration = 0.3f;
-                transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-                transition.type = kCATransitionFade;
-                
-                [self.layer addAnimation:transition forKey:nil];
+            [UIView transitionWithView:self
+                              duration:0.3f
+                               options:UIViewAnimationOptionTransitionCrossDissolve
+                            animations:^{
+                                self.image = image;
+                            } completion:nil];
             
         });
     });
