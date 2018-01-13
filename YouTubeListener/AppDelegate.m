@@ -35,13 +35,17 @@
     vc.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
     
     MEKPlaylistsViewController *pvc = [MEKPlaylistsViewController new];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:pvc];
-    navController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
-    [navController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
+    UINavigationController *navControllerPlaylists = [[UINavigationController alloc] initWithRootViewController:pvc];
+    navControllerPlaylists.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
+    [navControllerPlaylists.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
+    
+    UIViewController *blankVC = [UIViewController new];
+    UINavigationController *navControllerDownloads = [[UINavigationController alloc] initWithRootViewController:blankVC];
+    navControllerDownloads.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
     
     //[UITabBar appearance].tintColor = UIColor.redColor;
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[vc, navController];
+    self.tabBarController.viewControllers = @[vc, navControllerPlaylists, navControllerDownloads];
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     

@@ -8,6 +8,7 @@
 
 #import "MEKVideoItemTableViewCell.h"
 #import <Masonry/Masonry.h>
+#import "UIImageView+Cache.h"
 
 @interface MEKVideoItemTableViewCell ()
 
@@ -129,6 +130,8 @@
         df.dateFormat = @"HH:mm:ss";
     
     self.durationLabel.text = [df stringFromDate:date];
+    
+    [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig];
 }
 
 +(CGFloat)height

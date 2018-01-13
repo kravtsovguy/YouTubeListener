@@ -98,6 +98,16 @@
     [self addVideoItem:item toPlaylist:recent];
 }
 
+-(VideoItemMO *)getFirstVideoItemForPlaylist:(PlaylistMO *)playlist
+{
+    if (!playlist)
+        return nil;
+    
+    NSString *videoId = playlist.items.firstObject;
+    VideoItemMO *item = [self getVideoItemForId:videoId];
+    return item;
+}
+
 -(NSArray<PlaylistMO *> *)getPlaylists
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]  initWithEntityName:@"Playlist"];
@@ -199,6 +209,9 @@
 
 -(VideoItemMO *)getVideoItemForId:(NSString *)videoId
 {
+    if (!videoId)
+        return nil;
+    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]  initWithEntityName:@"VideoItem"];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"videoId == %@", videoId];
     

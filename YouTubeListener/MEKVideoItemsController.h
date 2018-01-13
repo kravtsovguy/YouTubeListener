@@ -20,6 +20,8 @@
 - (PlaylistMO*)getRecentPlaylist;
 - (PlaylistMO*)getPlaylistForName: (NSString*) name;
 - (VideoItemMO*)getVideoItemForId: (NSString*) videoId;
+- (VideoItemMO*)getFirstVideoItemForPlaylist: (PlaylistMO*) playlist;
+
 - (BOOL)containsVideoItem: (VideoItemMO*) item forPlaylist: (PlaylistMO*) playlist;
 
 - (NSArray<VideoItemMO*>*)getVideoItems;

@@ -81,10 +81,6 @@
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    
-    [self loadPlaylists];
-    
-    //self.tableView.tableHeaderView = [[MEKPlaylistTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"1233"];
 
 //    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 100)];
 //    header.backgroundColor = UIColor.redColor;
@@ -95,15 +91,12 @@
     {
         self.tableView.sectionHeaderHeight = 0;
     }
-    
-    [self.tableView reloadData];
 }
 
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [self loadPlaylists];
 }
 
@@ -112,11 +105,15 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)loadPlaylists
+- (void)updateData
 {
     self.recentPlaylist = [self.controller getRecentPlaylist];
     self.playlists = [self.controller getPlaylists];
-    //[self.tableView reloadSections:[[NSIndexSet alloc] initWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)loadPlaylists
+{
+    [self updateData];
     [self.tableView reloadData];
 }
 
@@ -156,7 +153,8 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     PlaylistMO *playlist = self.playlists[indexPath.row];
-    [cell setWithPlaylist:playlist];
+    
+    [cell setWithPlaylist:playlist andVideoItem:[self.controller getFirstVideoItemForPlaylist:playlist]];
     
     return cell;
 }
@@ -209,7 +207,7 @@
         self.sectionCell = cell;
     }
     
-    [self.sectionCell setWithPlaylist:self.recentPlaylist];
+    [self.sectionCell setWithPlaylist:self.recentPlaylist andVideoItem:[self.controller getFirstVideoItemForPlaylist:self.recentPlaylist]];
     return self.sectionCell;
 }
 

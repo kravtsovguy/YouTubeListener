@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		254A68A94F8596DABAEE698A /* libPods-YouTubeListener.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */; };
+		BA4942CF200AB2EB007D8819 /* UIImageView+Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4942CE200AB2EB007D8819 /* UIImageView+Cache.m */; };
 		BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49AB512000A8CE00D6578D /* MEKPlayerController.m */; };
 		BA70A6652005EAE3002AE1B4 /* MEKPlaylistsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */; };
 		BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */; };
@@ -37,6 +38,8 @@
 		6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YouTubeListener.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C8818282E684B6B6C6CCA85 /* Pods-YouTubeListener.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener.release.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener/Pods-YouTubeListener.release.xcconfig"; sourceTree = "<group>"; };
 		AE9604B7FD3A8F3C409C1CFB /* Pods-YouTubeListener.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener/Pods-YouTubeListener.debug.xcconfig"; sourceTree = "<group>"; };
+		BA4942CD200AB2EB007D8819 /* UIImageView+Cache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Cache.h"; sourceTree = "<group>"; };
+		BA4942CE200AB2EB007D8819 /* UIImageView+Cache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Cache.m"; sourceTree = "<group>"; };
 		BA49AB502000A8CE00D6578D /* MEKPlayerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerController.h; sourceTree = "<group>"; };
 		BA49AB512000A8CE00D6578D /* MEKPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerController.m; sourceTree = "<group>"; };
 		BA70A6632005EAE3002AE1B4 /* MEKPlaylistsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlaylistsViewController.h; sourceTree = "<group>"; };
@@ -208,6 +211,8 @@
 				BA49AB512000A8CE00D6578D /* MEKPlayerController.m */,
 				BA70A6862006655C002AE1B4 /* MEKVideoItemsController.h */,
 				BA70A6872006655C002AE1B4 /* MEKVideoItemsController.m */,
+				BA4942CD200AB2EB007D8819 /* UIImageView+Cache.h */,
+				BA4942CE200AB2EB007D8819 /* UIImageView+Cache.m */,
 			);
 			path = YouTubeListener;
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 				BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */,
 				BABD357C1FDEAF740036B27F /* main.m in Sources */,
 				BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */,
+				BA4942CF200AB2EB007D8819 /* UIImageView+Cache.m in Sources */,
 				BA70A6802005FEE2002AE1B4 /* VideoItemMO+CoreDataClass.m in Sources */,
 				BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */,
 				BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */,

@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "PlaylistMO+CoreDataClass.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @interface MEKPlaylistTableViewCell : UITableViewCell
 
-- (void)setWithPlaylist: (PlaylistMO*) playlist;
+- (void)setWithPlaylist: (PlaylistMO*) playlist andVideoItem: (VideoItemMO*) item;
 + (CGFloat)height;
 
 @end

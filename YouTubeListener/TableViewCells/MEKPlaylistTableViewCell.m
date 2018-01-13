@@ -8,6 +8,7 @@
 
 #import "MEKPlaylistTableViewCell.h"
 #import <Masonry/Masonry.h>
+#import "UIImageView+Cache.h"
 
 @interface MEKPlaylistTableViewCell()
 
@@ -18,30 +19,6 @@
 @end
 
 @implementation MEKPlaylistTableViewCell
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _titleImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"placeholder"]];
-        _titleImageView.contentMode = UIViewContentModeScaleAspectFill;
-        _titleImageView.clipsToBounds = YES;
-        _titleImageView.layer.cornerRadius = 5;
-        _titleImageView.layer.masksToBounds = YES;
-        [self.contentView addSubview:_titleImageView];
-        
-        _nameLabel = [UILabel new];
-        _nameLabel.text = @"Playlist's name";
-        _nameLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
-        [self.contentView addSubview:_nameLabel];
-        
-        _countLabel = [UILabel new];
-        _countLabel.text = @"10 Videos";
-        _countLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightLight];
-        [self.contentView addSubview:_countLabel];
-    }
-    return self;
-}
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -94,10 +71,13 @@
     [super updateConstraints];
 }
 
--(void)setWithPlaylist:(PlaylistMO *)playlist
+-(void)setWithPlaylist:(PlaylistMO *)playlist andVideoItem:(VideoItemMO *)item
 {
     self.nameLabel.text = playlist.name;
     self.countLabel.text = [NSString stringWithFormat:@"%li videos", playlist.items.count];
+    
+    if (item)
+        [self.titleImageView ch_downloadImageFromUrl:item.thumbnailBig];
 }
 
 +(CGFloat)height

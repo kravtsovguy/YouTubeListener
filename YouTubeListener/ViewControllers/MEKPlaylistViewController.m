@@ -60,15 +60,23 @@
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     [self loadItems];
+}
+
+- (void)updateData
+{
+    self.videoItems = [self.controller getVideoItemsForPlaylist:self.playlist];
 }
 
 - (void)loadItems
 {
-    self.videoItems = [self.controller getVideoItemsForPlaylist:self.playlist];
-    //self.playlist = [self.controller getPlaylistForName:self.playlist.name];
-    [self.tableView reloadSections:[[NSIndexSet alloc] initWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self updateData];
+    [self.tableView reloadData];
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
