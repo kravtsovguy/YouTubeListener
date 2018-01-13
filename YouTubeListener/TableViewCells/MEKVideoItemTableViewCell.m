@@ -82,11 +82,13 @@
     [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView.mas_top).with.offset(10);
         make.left.equalTo(self.thumbnailImageView.mas_right).with.offset(10);
+        make.right.equalTo(self.contentView.mas_right).with.offset(-10);
     }];
     
     [self.authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.titleLabel.mas_bottom).with.offset(5);
         make.left.equalTo(self.thumbnailImageView.mas_right).with.offset(10);
+        make.right.equalTo(self.contentView.mas_right).with.offset(-10);
     }];
     
     [self.durationView mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -115,6 +117,18 @@
     
     self.titleLabel.text = item.title;
     self.authorLabel.text = item.author;
+    
+    NSDate *date = [[NSDate alloc] initWithTimeIntervalSince1970:item.length];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    df.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+    df.dateFormat = @"mm:ss";
+    
+    NSInteger length = item.length;
+    NSInteger hours = length / 60 / 60;
+    if (hours > 0)
+        df.dateFormat = @"HH:mm:ss";
+    
+    self.durationLabel.text = [df stringFromDate:date];
 }
 
 +(CGFloat)height

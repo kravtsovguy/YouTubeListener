@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "VideoItemMO+CoreDataClass.h"
 
 typedef NS_ENUM (NSUInteger, YouTubeParserVideoQuality) {
     YouTubeParserVideoQualitySmall144  = 17,
@@ -18,7 +19,7 @@ typedef NS_ENUM (NSUInteger, YouTubeParserVideoQuality) {
 @protocol YouTubeParserDelegate <NSObject>
 
 @required
--(void) infoDidLoad: (NSDictionary*) info forVideo: (NSString*) videoId;
+-(void) infoDidLoad: (VideoItemMO*) info forVideo: (NSString*) videoId;
 
 @end
 

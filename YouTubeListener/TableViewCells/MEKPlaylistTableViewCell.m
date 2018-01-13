@@ -19,6 +19,30 @@
 
 @implementation MEKPlaylistTableViewCell
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _titleImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"placeholder"]];
+        _titleImageView.contentMode = UIViewContentModeScaleAspectFill;
+        _titleImageView.clipsToBounds = YES;
+        _titleImageView.layer.cornerRadius = 5;
+        _titleImageView.layer.masksToBounds = YES;
+        [self.contentView addSubview:_titleImageView];
+        
+        _nameLabel = [UILabel new];
+        _nameLabel.text = @"Playlist's name";
+        _nameLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
+        [self.contentView addSubview:_nameLabel];
+        
+        _countLabel = [UILabel new];
+        _countLabel.text = @"10 Videos";
+        _countLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightLight];
+        [self.contentView addSubview:_countLabel];
+    }
+    return self;
+}
+
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];

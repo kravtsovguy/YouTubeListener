@@ -12,9 +12,18 @@
 
 @interface MEKVideoItemsController : NSObject
 
-- (void)addPlaylistWithName: (NSString*) name;
+- (void)renamePlaylist: (PlaylistMO*) playlist toName: (NSString*) name;
+- (PlaylistMO*)addPlaylistWithName: (NSString*) name;
 - (void)addVideoItem: (VideoItemMO*) item toPlaylist: (PlaylistMO*) playlist;
+- (void)addVideoItemToRecentPlaylist: (VideoItemMO*) item;
 - (NSArray<PlaylistMO*>*)getPlaylists;
+- (PlaylistMO*)getRecentPlaylist;
+- (PlaylistMO*)getPlaylistForName: (NSString*) name;
+- (VideoItemMO*)getVideoItemForId: (NSString*) videoId;
+- (BOOL)containsVideoItem: (VideoItemMO*) item forPlaylist: (PlaylistMO*) playlist;
+
+- (NSArray<VideoItemMO*>*)getVideoItems;
+- (NSArray<VideoItemMO*>*)getVideoItemsForPlaylist: (PlaylistMO*) playlist;
 
 - (PlaylistMO*)getEmptyPlaylist;
 - (void)savePlaylist: (PlaylistMO*) playlist;
@@ -23,5 +32,5 @@
 - (VideoItemMO*)getEmptyVideoItem;
 - (void)saveVideoItem: (VideoItemMO*) item;
 - (void)deleteVideoItem: (VideoItemMO*) item;
-
+- (void)deleteVideoItem: (VideoItemMO*) item fromPlaylist: (PlaylistMO*) playlist;
 @end

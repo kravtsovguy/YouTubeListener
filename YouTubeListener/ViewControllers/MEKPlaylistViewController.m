@@ -60,21 +60,31 @@
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
+    
+    [self loadItems];
+}
+
+- (void)loadItems
+{
+    self.videoItems = [self.controller getVideoItemsForPlaylist:self.playlist];
+    //self.playlist = [self.controller getPlaylistForName:self.playlist.name];
+    [self.tableView reloadSections:[[NSIndexSet alloc] initWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     
     MEKVideoItemTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKVideoItemTableViewCell" forIndexPath:indexPath];
     
-   // VideoItemMO *item = self.playlist.items[indexPath.row];
+    VideoItemMO *item = self.videoItems[indexPath.row];
     
-    [cell setWithPlaylist:nil];
+    [cell setWithPlaylist:item];
     
     return cell;
 }
 
-- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.videoItems.count;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -85,6 +95,20 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    VideoItemMO *item = self.videoItems[indexPath.row];
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", item.videoId]];
+    
+    AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
+    
+}
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        [self.controller deleteVideoItem:self.videoItems[indexPath.row] fromPlaylist:self.playlist];
+        [self loadItems];
+    }
 }
 
 @end

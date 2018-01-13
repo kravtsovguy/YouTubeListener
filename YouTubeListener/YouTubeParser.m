@@ -34,7 +34,13 @@
 -(MEKVideoItemsController *)controller
 {
     UIApplication *application = [UIApplication sharedApplication];
-    MEKVideoItemsController *controller = ((AppDelegate*)(application.delegate)).videoItemsController;
+    __block AppDelegate *delegate;
+
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        delegate = ((AppDelegate*)(application.delegate));
+    });
+    
+    MEKVideoItemsController *controller = delegate.videoItemsController;
     
     return controller;
 }
@@ -58,7 +64,7 @@
 {
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
         NSString *content = [[NSString alloc] initWithData:dataRecieved encoding:NSUTF8StringEncoding];
-        NSDictionary *info = [self parseQueryContent:content];
+        VideoItemMO *info = [self parseQueryContent:content];
         
         if (self.delegate && [self.delegate respondsToSelector:@selector(infoDidLoad:forVideo:)])
         {
@@ -69,7 +75,7 @@
     });
 }
 
--(NSDictionary*) parseQueryContent: (NSString*) content
+-(VideoItemMO*) parseQueryContent: (NSString*) content
 {
     NSMutableDictionary *result = [NSMutableDictionary new];
     NSDictionary *info = [self dictionaryWithQueryString:content];
@@ -89,17 +95,23 @@
         urls[@([params[@"itag"] integerValue])] = [NSURL URLWithString:params[@"url"]];
     }
     
-    VideoItemMO *item = [self.controller getEmptyVideoItem];
-    item.videoId = info[@"vid"];
-    item.title = info[@"title"];
-    item.author = info[@"author"];
-    item.length = ((NSString*)info[@"length_seconds"]).doubleValue;
-    item.thumbnailSmall = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", item.videoId]];
-    item.thumbnailBig = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", item.videoId]];
+    VideoItemMO *item = [self.controller getVideoItemForId:self.currentVideoId];
+    if (!item)
+    {
+        item = [self.controller getEmptyVideoItem];
+        item.videoId = self.currentVideoId;
+        item.title = info[@"title"];
+        item.author = info[@"author"];
+        item.length = ((NSString*)info[@"length_seconds"]).doubleValue;
+        item.thumbnailSmall = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", item.videoId]];
+        item.thumbnailBig = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", item.videoId]];
+
+    }
+    
     item.urls = result[@"urls"];
     item.added = [NSDate new];
     
-    return result;
+    return item;
 }
 
 -(NSDictionary*) dictionaryWithQueryString: (NSString*) string

@@ -17,6 +17,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
+@property (nonatomic, readonly) MEKVideoItemsController *controller;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MEKVideoPlayerViewController *playerViewController;
@@ -32,6 +33,14 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 @end
 
 @implementation MEKPlayerController
+
+-(MEKVideoItemsController *)controller
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    MEKVideoItemsController *controller = ((AppDelegate*)(application.delegate)).videoItemsController;
+    
+    return controller;
+}
 
 -(UITabBarController *)tabBarController
 {
@@ -85,6 +94,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
         return;
     
     self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithURL:videoURL];
+    self.playerViewController.delegate = self;
     
     if (state == MEKPlayerVisibleStateMinimized)
     {
@@ -95,9 +105,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     {
         [self.playerViewController maximizeWithDuration:0];
     }
-        
-    
-    self.playerViewController.delegate = self;
     
     
     [self.tabBarController addChildViewController:self.playerViewController];
@@ -186,6 +193,17 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
         
         [self minimize];
     }
+}
+
+-(void)videoPlayerViewControllerAddVideoItem:(VideoItemMO *)item toPlaylist:(PlaylistMO *)playlist
+{
+    if (!playlist)
+    {
+        [self.controller addVideoItemToRecentPlaylist:item];
+        return;
+    }
+    
+    [self.controller addVideoItem:item toPlaylist:playlist];
 }
 
 -(void)videoPlayerViewControllerClosed

@@ -14,13 +14,14 @@
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
 #import <Masonry/Masonry.h>
+#import "MEKPlaylistsViewController.h"
 
 @import AVFoundation;
 @import AVKit;
 @import AssetsLibrary;
 @import MediaPlayer;
 
-@interface MEKVideoPlayerViewController () <YouTubeParserDelegate, NetworkServiceOutputProtocol>
+@interface MEKVideoPlayerViewController () <YouTubeParserDelegate, NetworkServiceOutputProtocol, MEKPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
@@ -28,7 +29,7 @@
 @property (nonatomic, strong) NetworkService *networkService;
 @property (nonatomic, strong) NSURLSessionDownloadTask *imageTask;
 @property (nonatomic, strong) NSURLSessionDownloadTask *videoTask;
-@property (nonatomic, strong) NSDictionary *videoInfo;
+@property (nonatomic, strong) VideoItemMO *videoInfo;
 
 @property (nonatomic, assign) CGFloat videoWidth;
 @property (nonatomic, assign) CGFloat videoHeight;
@@ -86,12 +87,13 @@
     //self.addButton.backgroundColor = UIColor.blueColor;
     [self.addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
     self.addButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    [self.addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.addButton];
     
     self.downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     //self.downloadButton.backgroundColor = UIColor.blueColor;
     self.downloadButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
-    [self.downloadButton addTarget:self action:@selector(downloadPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.downloadButton];
     
 
@@ -123,11 +125,39 @@
     [self.view addSubview:self.playerController.view];
 }
 
+- (void)addButtonPressed:(UIButton *)button
+{
+    MEKPlaylistsViewController *playlistsController = [[MEKPlaylistsViewController alloc] initModal];
+    playlistsController.delegate = self;
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
+    
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
+-(void)downloadButtonPressed:(UIButton *)button
+{
+    self.downloadButton.isLoading = YES;
+    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerDownloadVideoItem:withQuality:)])
+    {
+        [self.delegate videoPlayerViewControllerDownloadVideoItem:self.videoInfo withQuality:YouTubeParserVideoQualitySmall144];
+    }
+    //self.videoTask = [self.networkService loadDataFromURL:self.videoInfo.urls[@(YouTubeParserVideoQualitySmall144)]];
+}
+
 - (void)closeButtonPressed: (UIButton*) button
 {
     if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
     {
         [self.delegate videoPlayerViewControllerClosed];
+    }
+}
+
+-(void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
+{
+    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerAddVideoItem:toPlaylist:)])
+    {
+        [self.delegate videoPlayerViewControllerAddVideoItem:self.videoInfo toPlaylist:playlist];
     }
 }
 
@@ -264,11 +294,7 @@
     } completion:nil];
 }
 
--(void) downloadPressed:(UIButton *)button
-{
-    self.downloadButton.isLoading = YES;
-    self.videoTask = [self.networkService loadDataFromURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualitySmall144)]];
-}
+
 
 -(void)loadingIsDoneWithDataRecieved:(NSData *)dataRecieved withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
 {
@@ -280,8 +306,8 @@
             return artworkImage;
         }];
 
-        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo[@"title"],
-                                              MPMediaItemPropertyArtist : self.videoInfo[@"author"],
+        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
+                                              MPMediaItemPropertyArtist : self.videoInfo.author,
                                               MPMediaItemPropertyArtwork : albumArt
                                               };
     }
@@ -312,24 +338,29 @@
     }
 }
 
-- (void)infoDidLoad:(NSDictionary *)info forVideo:(NSString *)videoId {
-    
+- (void)infoDidLoad:(VideoItemMO *)info forVideo:(NSString *)videoId
+{
     self.videoInfo = info;
     
-    self.titleLabel.text = self.videoInfo[@"title"];
-    self.authorLabel.text = self.videoInfo[@"author"];
+    self.titleLabel.text = self.videoInfo.title;
+    self.authorLabel.text = self.videoInfo.author;
     
-    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo[@"title"],
-                                          MPMediaItemPropertyArtist : self.videoInfo[@"author"]
+    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
+                                          MPMediaItemPropertyArtist : self.videoInfo.author
                                           };
     
-    self.playerController.player = [AVPlayer playerWithURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualityHD720)]];
+    self.playerController.player = [AVPlayer playerWithURL:self.videoInfo.urls[@(YouTubeParserVideoQualityHD720)]];
     self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
     [self.playerController.player play];
     
-    self.imageTask = [self.networkService loadDataFromURL:self.videoInfo[@"thumbnail_small"]];
+    self.imageTask = [self.networkService loadDataFromURL:self.videoInfo.thumbnailSmall];
     
     //self.videoTask = [self.networkService loadDataFromURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualitySmall144)]];
+    
+    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerAddVideoItem:toPlaylist:)])
+    {
+        [self.delegate videoPlayerViewControllerAddVideoItem:self.videoInfo toPlaylist:nil];
+    }
 }
 
 //-(void)viewDidAppear:(BOOL)animated

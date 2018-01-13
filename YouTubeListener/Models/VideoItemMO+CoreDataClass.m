@@ -11,6 +11,4 @@
 
 @implementation VideoItemMO
 
-@synthesize urls;
-
 @end

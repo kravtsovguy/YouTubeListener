@@ -2,7 +2,7 @@
 //  VideoItemMO+CoreDataProperties.h
 //  YouTubeListener
 //
-//  Created by Matvey Kravtsov on 10/01/2018.
+//  Created by Matvey Kravtsov on 13/01/2018.
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 //
@@ -16,13 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSFetchRequest<VideoItemMO *> *)fetchRequest;
 
-@property (nullable, nonatomic, copy) NSString *title;
+@property (nullable, nonatomic, copy) NSDate *added;
 @property (nullable, nonatomic, copy) NSString *author;
 @property (nonatomic) double length;
-@property (nullable, nonatomic, copy) NSURL *thumbnailSmall;
 @property (nullable, nonatomic, copy) NSURL *thumbnailBig;
+@property (nullable, nonatomic, copy) NSURL *thumbnailSmall;
+@property (nullable, nonatomic, copy) NSString *title;
 @property (nullable, nonatomic, copy) NSString *videoId;
-@property (nullable, nonatomic, copy) NSDate *added;
+@property (nullable, nonatomic, retain) NSDictionary *urls;
 
 @end
 

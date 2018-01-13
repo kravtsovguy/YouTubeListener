@@ -10,8 +10,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class VideoItemMO;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PlaylistMO : NSManagedObject

@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItemMO : NSManagedObject
 
-@property (nullable, nonatomic, copy) NSDictionary *urls;
-
 @end
 
 NS_ASSUME_NONNULL_END

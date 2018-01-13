@@ -7,11 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VideoItemMO+CoreDataClass.h"
+#import "PlaylistMO+CoreDataClass.h"
+#import "YouTubeParser.h"
 
 @protocol MEKVideoPlayerViewControllerDelegate <NSObject>
 
 @optional
 - (void)videoPlayerViewControllerClosed;
+- (void)videoPlayerViewControllerAddVideoItem: (VideoItemMO*) item toPlaylist: (PlaylistMO*) playlist;
+- (void)videoPlayerViewControllerDownloadVideoItem: (VideoItemMO*) item withQuality: (YouTubeParserVideoQuality) quality;
 
 @end
 

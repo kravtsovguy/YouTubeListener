@@ -2,7 +2,7 @@
 //  VideoItemMO+CoreDataProperties.m
 //  YouTubeListener
 //
-//  Created by Matvey Kravtsov on 10/01/2018.
+//  Created by Matvey Kravtsov on 13/01/2018.
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 //
@@ -15,12 +15,13 @@
 	return [[NSFetchRequest alloc] initWithEntityName:@"VideoItem"];
 }
 
-@dynamic title;
+@dynamic added;
 @dynamic author;
 @dynamic length;
-@dynamic thumbnailSmall;
 @dynamic thumbnailBig;
+@dynamic thumbnailSmall;
+@dynamic title;
 @dynamic videoId;
-@dynamic added;
+@dynamic urls;
 
 @end

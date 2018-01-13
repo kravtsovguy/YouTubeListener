@@ -7,7 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PlaylistMO+CoreDataClass.h"
+
+@protocol MEKPlaylistsViewControllerDelegate <NSObject>
+
+@optional
+- (void)playlistsViewControllerDidChoosePlaylist: (PlaylistMO*) playlist;
+
+@end
 
 @interface MEKPlaylistsViewController : UIViewController
+
+@property (nonatomic, weak) id<MEKPlaylistsViewControllerDelegate> delegate;
+
+-(instancetype)initModal;
 
 @end
