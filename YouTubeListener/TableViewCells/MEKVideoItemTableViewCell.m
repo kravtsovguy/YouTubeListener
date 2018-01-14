@@ -9,6 +9,7 @@
 #import "MEKVideoItemTableViewCell.h"
 #import <Masonry/Masonry.h>
 #import "UIImageView+Cache.h"
+#import "MEKDowloadButton.h"
 
 @interface MEKVideoItemTableViewCell ()
 
@@ -19,12 +20,17 @@
 @property (nonatomic, strong) UIView *durationView;
 @property (nonatomic, strong) UILabel *durationLabel;
 
+@property (nonatomic, strong) UIButton *addButton;
+@property (nonatomic, strong) MEKDowloadButton *downloadButton;
+
+@property (nonatomic, strong) VideoItemMO *item;
+
 @end
 
 @implementation MEKVideoItemTableViewCell
 
 
--(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self)
@@ -53,7 +59,7 @@
         _durationView = [UIView new];
         _durationView.layer.cornerRadius = 2;
         _durationView.layer.masksToBounds = YES;
-        _durationView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.5];
+        _durationView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
         [_thumbnailImageView addSubview:_durationView];
         
         _durationLabel = [UILabel new];
@@ -61,6 +67,17 @@
         _durationLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _durationLabel.text = @"12:06";
         [_durationView addSubview:_durationLabel];
+        
+        _addButton = [UIButton new];
+        [_addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
+        _addButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        [_addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:_addButton];
+        
+        _downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+        _downloadButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        [_downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:_downloadButton];
         
     }
     
@@ -104,17 +121,33 @@
         make.bottom.equalTo(self.durationView.mas_bottom).with.offset(-5);
     }];
     
+    [self.addButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.authorLabel.mas_bottom).with.offset(5);
+        make.left.equalTo(self.authorLabel.mas_left);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
+    
+    [self.downloadButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.addButton.mas_top);
+        make.left.equalTo(self.addButton.mas_right).with.offset(10);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
+    
     
     
     [super updateConstraints];
 }
 
--(void)setWithPlaylist:(VideoItemMO *)item
+- (void)setWithPlaylist:(VideoItemMO *)item
 {
     if (!item)
     {
         return;
     }
+    
+    self.item = item;
     
     self.titleLabel.text = item.title;
     self.authorLabel.text = item.author;
@@ -134,15 +167,25 @@
     [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig];
 }
 
-+(CGFloat)height
++ (CGFloat)height
 {
-    return 110;
+    return 120;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
+- (void)addButtonPressed:(UIButton *)button
+{
+    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylistPressed:)])
+    {
+        [self.delegate videoItemAddToPlaylistPressed:self.item];
+    }
+}
 
-    // Configure the view for the selected state
+- (void)downloadButtonPressed:(UIButton *)button
+{
+    if ([self.delegate respondsToSelector:@selector(videoItemDownloadPressed:)])
+    {
+        [self.delegate videoItemDownloadPressed:self.item];
+    }
 }
 
 @end

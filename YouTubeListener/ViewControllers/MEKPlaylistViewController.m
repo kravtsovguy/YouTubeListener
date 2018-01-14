@@ -11,20 +11,24 @@
 #import "AppDelegate.h"
 #import <Masonry/Masonry.h>
 #import "MEKVideoItemTableViewCell.h"
+#import "MEKPlaylistsViewController.h"
 
-@interface MEKPlaylistViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface MEKPlaylistViewController () <UITableViewDelegate, UITableViewDataSource, MEKVideoItemTableViewCellDelegate, MEKPlaylistsViewControllerDelegate>
 
+@property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, strong) PlaylistMO *playlist;
+@property (nonatomic, weak) VideoItemMO *currentItem;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *videoItems;
 @property (nonatomic, readonly) BOOL isEditable;
+
 
 @end
 
 @implementation MEKPlaylistViewController
 
 
--(instancetype)initWithPlaylist:(PlaylistMO *)playlist
+- (instancetype)initWithPlaylist:(PlaylistMO *)playlist
 {
     self = [super init];
     if (self)
@@ -35,9 +39,17 @@
     return self;
 }
 
--(BOOL)isEditable
+- (BOOL)isEditable
 {
     return ![self.playlist.name isEqualToString:[PlaylistMO recentPlaylistName]];
+}
+
+- (MEKPlayerController *)playerController
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
+    MEKPlayerController *player = appDelegate.player;
+    return player;
 }
 
 - (void)viewDidLoad {
@@ -79,6 +91,7 @@
     
     MEKVideoItemTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKVideoItemTableViewCell" forIndexPath:indexPath];
     
+    cell.delegate = self;
     VideoItemMO *item = self.videoItems[indexPath.row];
     
     [cell setWithPlaylist:item];
@@ -104,8 +117,7 @@
     
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", item.videoId]];
     
-    AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
+    [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -127,6 +139,28 @@
     }];
     
     return @[deleteAction];
+}
+
+- (void)videoItemAddToPlaylistPressed:(VideoItemMO *)item
+{
+    self.currentItem = item;
+    
+    MEKPlaylistsViewController *playlistsController = [[MEKPlaylistsViewController alloc] initModal];
+    playlistsController.delegate = self;
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
+    
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
+- (void)videoItemDownloadPressed:(VideoItemMO *)item
+{
+    
+}
+
+- (void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
+{
+    [playlist addVideoItem:self.currentItem];
 }
 
 @end
