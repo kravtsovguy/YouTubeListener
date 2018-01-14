@@ -295,41 +295,6 @@
     } completion:nil];
 }
 
-
-
--(void)loadingIsDoneWithDataRecieved:(NSData *)dataRecieved withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
-{
-    if (task == self.imageTask)
-    {
-        UIImage *artworkImage = [UIImage imageWithData:dataRecieved];
-        
-        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkImage.size requestHandler:^UIImage * _Nonnull(CGSize size) {
-            return artworkImage;
-        }];
-
-        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
-                                              MPMediaItemPropertyArtist : self.videoInfo.author,
-                                              MPMediaItemPropertyArtwork : albumArt
-                                              };
-    }
-    
-    if (task == self.videoTask)
-    {
-        // Use GCD's background queue
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-            // Generate the file path
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
-            NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:@"movie.mp4"];
-            
-            // Save it into file system
-            [dataRecieved writeToFile:dataPath atomically:YES];
-        });
-    }
-    
-    
-}
-
 -(void)loadingContinuesWithProgress:(double)progress withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
 {
     if (task == self.videoTask)
@@ -375,28 +340,4 @@
         [self.delegate videoPlayerViewControllerAddVideoItem:self.videoInfo toPlaylist:nil];
     }
 }
-
-//-(void)viewDidAppear:(BOOL)animated
-//{
-//    [super viewDidAppear:animated];
-//    [self.view setNeedsUpdateConstraints];
-//}
-
-//
-//-(void)viewDidAppear:(BOOL)animated{
-//    [super viewDidAppear:animated];
-////    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-////    [self becomeFirstResponder];
-//
-//    //[self playPlayer];
-//}
-//
-//- (void)viewWillDisappear:(BOOL)animated
-//{
-//    //[self pausePlayer];
-//    [super viewWillDisappear:animated];
-////    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
-////    [self resignFirstResponder];
-//}
-
 @end

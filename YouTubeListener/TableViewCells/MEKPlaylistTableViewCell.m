@@ -77,7 +77,14 @@
     self.countLabel.text = [NSString stringWithFormat:@"%li videos", playlist.items.count];
     
     if (item)
+    {
         [self.titleImageView ch_downloadImageFromUrl:item.thumbnailBig];
+    }
+    else
+    {
+        self.titleImageView.image = [UIImage imageNamed:@"placeholder"];
+    }
+    
 }
 
 +(CGFloat)height

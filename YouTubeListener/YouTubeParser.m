@@ -14,7 +14,7 @@
 
 @property (nonatomic, strong) NSString *currentVideoId;
 @property (nonatomic, strong) NetworkService *networkServiceInfo;
-@property (nonatomic, readonly) MEKVideoItemsController *controller;
+@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 
 @end
 
@@ -31,18 +31,14 @@
     return self;
 }
 
--(MEKVideoItemsController *)controller
+- (NSManagedObjectContext*) coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
-    __block AppDelegate *delegate;
-
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        delegate = ((AppDelegate*)(application.delegate));
-    });
+    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
     
-    MEKVideoItemsController *controller = delegate.videoItemsController;
+    NSManagedObjectContext *context = container.viewContext;
     
-    return controller;
+    return context;
 }
 
 -(void) loadVideoInfo: (NSString*) videoURL
@@ -95,10 +91,10 @@
         urls[@([params[@"itag"] integerValue])] = [NSURL URLWithString:params[@"url"]];
     }
     
-    VideoItemMO *item = [self.controller getVideoItemForId:self.currentVideoId];
+    VideoItemMO *item = [VideoItemMO getVideoItemForId:self.currentVideoId withContext:self.coreDataContext];
     if (!item)
     {
-        item = [self.controller getEmptyVideoItem];
+        item = [VideoItemMO getEmptyWithContext:self.coreDataContext];
         item.videoId = self.currentVideoId;
         item.title = info[@"title"];
         item.author = info[@"author"];

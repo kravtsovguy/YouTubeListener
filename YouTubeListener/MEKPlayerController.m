@@ -17,7 +17,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
-@property (nonatomic, readonly) MEKVideoItemsController *controller;
+@property (nonatomic, strong) PlaylistMO *recentPlaylist;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MEKVideoPlayerViewController *playerViewController;
@@ -34,12 +34,15 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @implementation MEKPlayerController
 
--(MEKVideoItemsController *)controller
+- (instancetype)initWithRecentPlaylist:(PlaylistMO *)recentPlaylist
 {
-    UIApplication *application = [UIApplication sharedApplication];
-    MEKVideoItemsController *controller = ((AppDelegate*)(application.delegate)).videoItemsController;
+    self = [super init];
+    if (self)
+    {
+        _recentPlaylist = recentPlaylist;
+    }
     
-    return controller;
+    return self;
 }
 
 -(UITabBarController *)tabBarController
@@ -199,11 +202,11 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 {
     if (!playlist)
     {
-        [self.controller addVideoItemToRecentPlaylist:item];
+        [self.recentPlaylist addVideoItem:item];
         return;
     }
     
-    [self.controller addVideoItem:item toPlaylist:playlist];
+    [playlist addVideoItem:item];
 }
 
 -(void)videoPlayerViewControllerClosed

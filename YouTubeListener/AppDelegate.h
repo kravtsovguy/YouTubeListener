@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import "MEKPlayerController.h"
-#import "MEKVideoItemsController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -17,7 +16,6 @@
 @property (nonatomic, strong) UITabBarController *tabBarController;
 
 @property (nonatomic, strong) MEKPlayerController *player;
-@property (nonatomic, strong) MEKVideoItemsController *videoItemsController;
 
 @property (readonly, strong) NSPersistentContainer *persistentContainer;
 

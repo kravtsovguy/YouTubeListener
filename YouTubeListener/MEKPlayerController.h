@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PlaylistMO+CoreDataClass.h"
 
 typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
     MEKPlayerVisibleStateNone = 0,
@@ -18,6 +19,8 @@ typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
 
 @property (nonatomic, readonly) BOOL isOpened;
 @property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
+
+- (instancetype)initWithRecentPlaylist: (PlaylistMO*) recentPlaylist;
 
 - (void)openURL: (NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state;
 - (void)openURL: (NSURL*) videoURL;

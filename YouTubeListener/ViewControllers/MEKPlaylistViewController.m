@@ -10,12 +10,10 @@
 #import "VideoItemMO+CoreDataClass.h"
 #import "AppDelegate.h"
 #import <Masonry/Masonry.h>
-#import "MEKVideoItemsController.h"
 #import "MEKVideoItemTableViewCell.h"
 
 @interface MEKPlaylistViewController () <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, readonly) MEKVideoItemsController *controller;
 @property (nonatomic, strong) PlaylistMO *playlist;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *videoItems;
@@ -39,15 +37,7 @@
 
 -(BOOL)isEditable
 {
-    return ![self.playlist.name isEqualToString:@"Recent"];
-}
-
--(MEKVideoItemsController *)controller
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    MEKVideoItemsController *controller = ((AppDelegate*)(application.delegate)).videoItemsController;
-    
-    return controller;
+    return ![self.playlist.name isEqualToString:[PlaylistMO recentPlaylistName]];
 }
 
 - (void)viewDidLoad {
@@ -76,7 +66,7 @@
 
 - (void)updateData
 {
-    self.videoItems = [self.controller getVideoItemsForPlaylist:self.playlist];
+    self.videoItems = [self.playlist getVideoItems];
 }
 
 - (void)loadItems
@@ -127,7 +117,7 @@
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        [self.controller deleteVideoItem:self.videoItems[indexPath.row] fromPlaylist:self.playlist];
+        [self.playlist deleteVideoItem:self.videoItems[indexPath.row]];
         
         NSMutableArray *items = self.videoItems.mutableCopy;
         [items removeObjectAtIndex:indexPath.row];

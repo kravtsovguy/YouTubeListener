@@ -49,8 +49,8 @@
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     
-    self.player = [MEKPlayerController new];
-    self.videoItemsController = [MEKVideoItemsController new];
+    PlaylistMO *recentPlaylist = [PlaylistMO getRecentPlaylistWithContext:self.persistentContainer.viewContext];
+    self.player = [[MEKPlayerController alloc] initWithRecentPlaylist:recentPlaylist];
     
     return YES;
 }

@@ -14,6 +14,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItemMO : NSManagedObject
 
++ (NSString*)entityName;
+
+// Creation
++ (VideoItemMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
+
+// Instance Accessors
++ (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
++ (NSArray<VideoItemMO*>*)getVideoItemsWithContext: (NSManagedObjectContext*) context;
+
+// Basic
+- (BOOL)saveObject;
+- (BOOL)deleteObject;
+
 @end
 
 NS_ASSUME_NONNULL_END

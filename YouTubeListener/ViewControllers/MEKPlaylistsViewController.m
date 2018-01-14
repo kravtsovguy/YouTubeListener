@@ -12,11 +12,10 @@
 #import "PlaylistMO+CoreDataClass.h"
 #import "AppDelegate.h"
 #import "MEKPlaylistViewController.h"
-#import "MEKVideoItemsController.h"
 
 @interface MEKPlaylistsViewController () <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, readonly) MEKVideoItemsController *controller;
+@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *playlists;
 @property (nonatomic, assign) BOOL isModal;
@@ -49,12 +48,14 @@
     return self;
 }
 
--(MEKVideoItemsController *)controller
+- (NSManagedObjectContext*) coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
-    MEKVideoItemsController *controller = ((AppDelegate*)(application.delegate)).videoItemsController;
+    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
     
-    return controller;
+    NSManagedObjectContext *context = container.viewContext;
+    
+    return context;
 }
 
 - (void)viewDidLoad {
@@ -107,8 +108,8 @@
 
 - (void)updateData
 {
-    self.recentPlaylist = [self.controller getRecentPlaylist];
-    self.playlists = [self.controller getPlaylists];
+    self.recentPlaylist = [PlaylistMO getRecentPlaylistWithContext:self.coreDataContext];
+    self.playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
 }
 
 - (void)loadPlaylists
@@ -125,7 +126,9 @@
     
     UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault
                                                    handler:^(UIAlertAction * action) {
-                                                       [self.controller addPlaylistWithName:alert.textFields[0].text];
+                                                       
+                                                       [PlaylistMO playlistWithName:alert.textFields[0].text withContext:self.coreDataContext];
+                                                       
                                                        [self loadPlaylists];
                                                    }];
     
@@ -152,9 +155,9 @@
     {
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
-    PlaylistMO *playlist = self.playlists[indexPath.row];
     
-    [cell setWithPlaylist:playlist andVideoItem:[self.controller getFirstVideoItemForPlaylist:playlist]];
+    PlaylistMO *playlist = self.playlists[indexPath.row];
+    [cell setWithPlaylist:playlist andVideoItem:[playlist getFirstVideoItem]];
     
     return cell;
 }
@@ -207,7 +210,7 @@
         self.sectionCell = cell;
     }
     
-    [self.sectionCell setWithPlaylist:self.recentPlaylist andVideoItem:[self.controller getFirstVideoItemForPlaylist:self.recentPlaylist]];
+    [self.sectionCell setWithPlaylist:self.recentPlaylist andVideoItem:[self.recentPlaylist getFirstVideoItem]];
     return self.sectionCell;
 }
 
@@ -228,7 +231,7 @@
                                                    handler:^(UIAlertAction * action) {
                                                        [self.tableView setEditing:NO];
                                                        
-                                                       [self.controller renamePlaylist:playlist toName:alert.textFields[0].text];
+                                                       [playlist rename:alert.textFields[0].text];
 
                                                        [self loadPlaylists];
                                                    }];
@@ -264,7 +267,8 @@
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
 
-        [self.controller deletePlaylist: self.playlists [indexPath.row]];
+        PlaylistMO *playlist = self.playlists [indexPath.row];
+        [playlist deleteObject];
         
         NSMutableArray *playlists = self.playlists.mutableCopy;
         [playlists removeObjectAtIndex:indexPath.row];
