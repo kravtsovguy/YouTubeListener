@@ -9,7 +9,26 @@
 
 #import "PlaylistMO+CoreDataClass.h"
 
+@interface PlaylistMO()
+
++ (NSArray<PlaylistMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
+
+@end
+
 @implementation PlaylistMO
+
++ (NSArray<PlaylistMO *>*)executeFetchRequest:(NSFetchRequest *)request withContext:(NSManagedObjectContext *)context
+{
+    NSError *error = nil;
+    NSArray *result = [context executeFetchRequest:request error:&error];
+    
+    if (!result)
+    {
+        NSLog(@"error: %@", error.localizedDescription);
+    }
+    
+    return result;
+}
 
 + (NSString *)entityName
 {
@@ -119,13 +138,7 @@
     NSSortDescriptor *nameDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)];
     fetchRequest.sortDescriptors = @[nameDescriptor];
     
-    NSError *error = nil;
-    NSArray *result = [context executeFetchRequest:fetchRequest error:&error];
-    
-    if (!result)
-    {
-        NSLog(@"error: %@", error.localizedDescription);
-    }
+    NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
     
     return result;
 }
@@ -143,16 +156,9 @@
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"name == [c] %@", name];
-    
-    NSError *error = nil;
-    NSArray *result = [context executeFetchRequest:fetchRequest error:&error];
-    
-    if (!result)
-    {
-        NSLog(@"error: %@", error.localizedDescription);
-    }
-    
-    PlaylistMO *playlist = result.count > 0 ? result[0] : nil;
+
+    NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
+    PlaylistMO *playlist = result.firstObject;
     
     return playlist;
 }

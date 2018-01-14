@@ -9,7 +9,26 @@
 
 #import "VideoItemMO+CoreDataClass.h"
 
+@interface VideoItemMO()
+
++ (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
+
+@end
+
 @implementation VideoItemMO
+
++ (NSArray<VideoItemMO *>*)executeFetchRequest:(NSFetchRequest *)request withContext:(NSManagedObjectContext *)context
+{
+    NSError *error = nil;
+    NSArray *result = [context executeFetchRequest:request error:&error];
+    
+    if (!result)
+    {
+        NSLog(@"error: %@", error.localizedDescription);
+    }
+    
+    return result;
+}
 
 + (NSString *)entityName
 {
@@ -33,29 +52,15 @@
     NSFetchRequest *fetchRequest = [self fetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"videoId == %@", videoId];
     
-    NSError *error = nil;
-    NSArray *result = [context executeFetchRequest:fetchRequest error:&error];
-    
-    if (!result)
-    {
-        NSLog(@"error: %@", error.localizedDescription);
-    }
-    
-    VideoItemMO *item = result.count > 0 ? result[0] : nil;
+    NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
+    VideoItemMO *item = result.firstObject;
     
     return item;
 }
 
 + (NSArray<VideoItemMO*>*)getVideoItemsWithContext:(NSManagedObjectContext *)context
 {
-    NSError *error = nil;
-    NSArray *result = [context executeFetchRequest:self.fetchRequest error:&error];
-    
-    if (!result)
-    {
-        NSLog(@"error: %@", error.localizedDescription);
-    }
-    
+    NSArray *result = [self executeFetchRequest:[self fetchRequest] withContext:context];
     return result;
 }
 
