@@ -15,6 +15,7 @@
 #import "MEKDowloadButton.h"
 #import <Masonry/Masonry.h>
 #import "MEKPlaylistsViewController.h"
+#import "UIImage+Cache.h"
 
 @import AVFoundation;
 @import AVKit;
@@ -349,11 +350,23 @@
                                           MPMediaItemPropertyArtist : self.videoInfo.author
                                           };
     
+    [UIImage ch_downloadImageFromUrl:self.videoInfo.thumbnailSmall completion:^(UIImage *image) {
+        
+        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size requestHandler:^UIImage * _Nonnull(CGSize size) {
+            return image;
+        }];
+        
+        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
+                                              MPMediaItemPropertyArtist : self.videoInfo.author,
+                                              MPMediaItemPropertyArtwork : albumArt
+                                              };
+    }];
+    
     self.playerController.player = [AVPlayer playerWithURL:self.videoInfo.urls[@(YouTubeParserVideoQualityHD720)]];
     self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
     [self.playerController.player play];
     
-    self.imageTask = [self.networkService loadDataFromURL:self.videoInfo.thumbnailSmall];
+        //self.imageTask = [self.networkService loadDataFromURL:self.videoInfo.thumbnailSmall];
     
     //self.videoTask = [self.networkService loadDataFromURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualitySmall144)]];
     

@@ -19,6 +19,7 @@
 @property (nonatomic, strong) PlaylistMO *playlist;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *videoItems;
+@property (nonatomic, readonly) BOOL isEditable;
 
 @end
 
@@ -34,6 +35,11 @@
     }
     
     return self;
+}
+
+-(BOOL)isEditable
+{
+    return ![self.playlist.name isEqualToString:@"Recent"];
 }
 
 -(MEKVideoItemsController *)controller
@@ -110,13 +116,27 @@
     
     AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
     [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
-    
 }
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.controller deleteVideoItem:self.videoItems[indexPath.row] fromPlaylist:self.playlist];
-        [self loadItems];
+
+- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if (!self.isEditable)
+    {
+        return @[];
     }
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        
+        [self.controller deleteVideoItem:self.videoItems[indexPath.row] fromPlaylist:self.playlist];
+        
+        NSMutableArray *items = self.videoItems.mutableCopy;
+        [items removeObjectAtIndex:indexPath.row];
+        self.videoItems = items;
+        
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }];
+    
+    return @[deleteAction];
 }
 
 @end

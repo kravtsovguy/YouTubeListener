@@ -29,7 +29,7 @@
     self.searchTextField = [UITextField new];
     self.searchTextField.placeholder = @"YouTube URL";
     self.searchTextField.textAlignment = NSTextAlignmentCenter;
-    self.searchTextField.textColor = UIColor.blueColor;
+    self.searchTextField.textColor = [UIColor.blueColor colorWithAlphaComponent:0.7];
     self.searchTextField.delegate = self;
     self.searchTextField.text = @"https://youtu.be/rNhfrFASCGE";
     //self.searchTextField.backgroundColor = UIColor.grayColor;
@@ -38,7 +38,7 @@
     self.searchButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.searchButton setTitle:@"GO" forState:UIControlStateNormal];
     self.searchButton.tintColor = UIColor.whiteColor;
-    self.searchButton.backgroundColor = UIColor.redColor;
+    self.searchButton.backgroundColor = [UIColor.redColor colorWithAlphaComponent:0.7];
     [self.searchButton addTarget:self action:@selector(goButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     self.searchButton.layer.cornerRadius = 10;
     self.searchButton.layer.masksToBounds = YES;

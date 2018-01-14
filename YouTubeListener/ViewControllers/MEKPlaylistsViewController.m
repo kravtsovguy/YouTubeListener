@@ -247,25 +247,9 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (editingStyle == UITableViewCellEditingStyleDelete) {
-//        [self.controller deletePlaylist: self.playlists [indexPath.row]];
-//        [self loadPlaylists];
-//    }
-//}
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"More" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-//        // maybe show an action sheet with more options
-//        [self.tableView setEditing:NO];
-//    }];
-//    moreAction.backgroundColor = [UIColor lightGrayColor];
-//
-//    UITableViewRowAction *blurAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Blur" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-//        [self.tableView setEditing:NO];
-//    }];
-//    blurAction.backgroundEffect = [UIVibrancyEffect effectForBlurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
-//
+    
     if (self.isModal)
     {
         return @[];
@@ -274,10 +258,9 @@
     UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
         [self renamePlaylist:self.playlists [indexPath.row]];
-        
-        //[self.tableView setEditing:NO];
+
     }];
-    moreAction.backgroundColor = [[UIColor blueColor] colorWithAlphaComponent:0.7];
+    moreAction.backgroundColor = [UIColor lightGrayColor];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
 
