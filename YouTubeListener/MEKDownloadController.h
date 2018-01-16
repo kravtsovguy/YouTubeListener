@@ -11,9 +11,9 @@
 @protocol MEKDownloadControllerDelegate <NSObject>
 
 @optional
-- (void)downloadControllerProgress: (double) progress forKey: (NSString*) key;
-- (void)downloadControllerDidFinishWithTempUrl: (NSURL*) url forKey:(NSString *) key;
-- (void)downloadControllerDidFinishWithError: (NSError*) error forKey:(NSString *) key;
+- (void)downloadControllerProgress: (double) progress forKey: (NSString*) key withParams: (NSDictionary*) params;;
+- (void)downloadControllerDidFinishWithTempUrl: (NSURL*) url forKey:(NSString *) key withParams: (NSDictionary*) params;
+- (void)downloadControllerDidFinishWithError: (NSError*) error forKey:(NSString *) key withParams: (NSDictionary*) params;
 
 @end
 
@@ -22,7 +22,7 @@
 @property (nonatomic, weak) id<MEKDownloadControllerDelegate> delegate;
 
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background;
-- (void)downloadDataFromURL: (NSURL*) url forKey: (NSString*) key;
+- (void)downloadDataFromURL: (NSURL*) url forKey: (NSString*) key withParams: (NSDictionary*) params;
 - (void)cancelDownloadForKey: (NSString*) key;
 - (double)getProgressForKey: (NSString*) key;
 

@@ -10,6 +10,13 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+typedef NS_ENUM (NSUInteger, VideoItemQuality) {
+    VideoItemQualitySmall144  = 17,
+    VideoItemQualitySmall240  = 36,
+    VideoItemQualityMedium360 = 18,
+    VideoItemQualityHD720 = 22,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItemMO : NSManagedObject
@@ -28,12 +35,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)deleteObject;
 
 // Downloading
-//- (void)downloadWithQuality:(YouTubeParserVideoQuality) quality WithDownloadController: (MEKDownloadController*) downloadController;
-//- (void)cancelDownloadWithDownloadController: (MEKDownloadController*) downloadController;
-- (BOOL)saveTempPathURL: (NSURL*) url;
-- (BOOL)removeDownload;
+- (BOOL)saveTempPathURL: (NSURL*) url withQuality: (VideoItemQuality) quality;
+- (BOOL)removeDownloadAll;
+- (BOOL)removeDownloadWithQuality: (VideoItemQuality) quality;
+- (BOOL)hasDownloadedWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloaded;
-- (NSURL*)getPathUrl;
+- (NSArray <NSNumber*>*)getQualityOfDownloads;
+- (NSURL*)getPathUrlWithQuality: (VideoItemQuality) quality;
 
 @end
 

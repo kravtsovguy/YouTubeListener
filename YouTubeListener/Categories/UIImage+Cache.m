@@ -15,7 +15,7 @@
     NSString *path = [self ch_getPathForUrl:url];
     
     NSError *error = nil;
-    if (![data writeToFile:path options:NSAtomicWrite error:&error])
+    if (![data writeToFile:path options:NSDataWritingAtomic error:&error])
     {
         NSLog(@"Error Writing File : %@",error.localizedDescription);
     }
@@ -39,6 +39,16 @@
 {
     NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *urlName = [self ch_getNameFromUrl:url];
+    path = [path stringByAppendingPathComponent:@"images"];
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if (![fm fileExistsAtPath:path isDirectory:nil])
+    {
+        NSError *error;
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
+    }
+    
     path = [path stringByAppendingPathComponent:urlName];
     return path;
 }

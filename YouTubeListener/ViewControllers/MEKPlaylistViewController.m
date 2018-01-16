@@ -178,7 +178,8 @@
 {
     if (item.urls)
     {
-        [self.downloadController downloadDataFromURL:item.urls[@(YouTubeParserVideoQualitySmall144)] forKey:item.videoId];
+        NSNumber *quality = @(VideoItemQualityMedium360);
+        [self.downloadController downloadDataFromURL:item.urls[quality] forKey:item.videoId withParams:@{@"quality" : quality}];
     }
     else
     {
@@ -196,7 +197,7 @@
     [playlist addVideoItem:self.currentItem];
 }
 
-- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key
+- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         for (MEKVideoItemTableViewCell *cell in self.tableView.visibleCells)
@@ -211,11 +212,13 @@
     });
 }
 
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"videoId == %@", key];
     VideoItemMO *item = [self.videoItems filteredArrayUsingPredicate:predicate].firstObject;
-    [item saveTempPathURL:url];
+    
+    NSNumber *quality = params[@"quality"];
+    [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
 }
 
 - (void)youtubeParserItemDidLoad:(VideoItemMO *)item

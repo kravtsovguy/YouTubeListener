@@ -11,7 +11,8 @@
 @interface MEKDownloadController () <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong) NSURLSession *urlSession;
-@property (nonatomic, copy) NSMutableDictionary *keys;
+@property (nonatomic, copy) NSMutableDictionary *tasks;
+@property (nonatomic, copy) NSMutableDictionary *params;
 @property (nonatomic, assign) BOOL backgroundMode;
 
 @end
@@ -22,7 +23,8 @@
 {
     self = [super init];
     if (self) {
-        _keys = [NSMutableDictionary new];
+        _tasks = [NSMutableDictionary new];
+        _params = [NSMutableDictionary new];
     }
     return self;
 }
@@ -58,25 +60,30 @@
     self.urlSession = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:self delegateQueue:[NSOperationQueue new]];
 }
 
-- (void)downloadDataFromURL:(NSURL *)url forKey:(NSString *)key
+- (void)downloadDataFromURL:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     NSURLSessionDownloadTask *task = [self.urlSession downloadTaskWithURL:url];
     task.taskDescription = key;
-    self.keys[key] = task;
+    self.tasks[key] = task;
+    if (params)
+    {
+        self.params[key] = params;
+    }
+    
     [task resume];
 }
 
 - (void)cancelDownloadForKey:(NSString *)key
 {
-    NSURLSessionDownloadTask *task = self.keys[key];
+    NSURLSessionDownloadTask *task = self.tasks[key];
     [task cancel];
     
-    [self.keys removeObjectForKey:key];
+    [self.tasks removeObjectForKey:key];
 }
 
 - (double)getProgressForKey:(NSString *)key
 {
-    NSURLSessionDownloadTask *task = self.keys[key];
+    NSURLSessionDownloadTask *task = self.tasks[key];
     if (!task)
         return 0;
     
@@ -87,17 +94,23 @@
 
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location
 {
-    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithTempUrl:forKey:)])
+    NSString *key = downloadTask.taskDescription;
+    NSDictionary *params = self.params[key];
+    
+    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithTempUrl:forKey:withParams:)])
     {
-        [self.delegate downloadControllerDidFinishWithTempUrl:location forKey:downloadTask.taskDescription];
+        [self.delegate downloadControllerDidFinishWithTempUrl:location forKey:key withParams:params];
     }
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithError:forKey:)])
+    NSString *key = task.taskDescription;
+    NSDictionary *params = self.params[key];
+    
+    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithError:forKey:withParams:)])
     {
-        [self.delegate downloadControllerDidFinishWithError:error forKey:task.taskDescription];
+        [self.delegate downloadControllerDidFinishWithError:error forKey:key withParams:params];
     }
 }
 
@@ -108,12 +121,15 @@
         return;
     }
     
+    NSString *key = downloadTask.taskDescription;
+    NSDictionary *params = self.params[key];
+    
     double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
     NSLog(@"progress: %f", progress);
     
-    if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:)])
+    if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {
-        [self.delegate downloadControllerProgress:progress forKey:downloadTask.taskDescription];
+        [self.delegate downloadControllerProgress:progress forKey:key withParams:params];
     }
 }
 

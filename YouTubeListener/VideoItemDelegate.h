@@ -17,7 +17,7 @@
 - (void)videoItemAddToPlaylist: (VideoItemMO*) item;
 - (void)videoItemAddToPlaylist: (VideoItemMO*) item playlist: (PlaylistMO*) playlist;
 - (void)videoItemDownload: (VideoItemMO*) item;
-- (void)videoItemDownload: (VideoItemMO*) item withQuality: (YouTubeParserVideoQuality) quality;
+- (void)videoItemDownload: (VideoItemMO*) item withQuality: (VideoItemQuality) quality;
 - (void)videoItemCancelDownload: (VideoItemMO*) item;
 
 @end

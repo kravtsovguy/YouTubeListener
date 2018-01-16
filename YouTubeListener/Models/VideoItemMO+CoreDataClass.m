@@ -83,15 +83,30 @@
     return [self saveObject];
 }
 
-- (NSURL *)getPathUrl
+- (NSString *)getPathDirectory
 {
     NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     path = [path stringByAppendingPathComponent:self.videoId];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:path isDirectory:nil])
+    {
+        NSError *error;
+        [fileManager createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
+    }
+    
+    return path;
+}
+
+- (NSURL *)getPathUrlWithQuality:(VideoItemQuality)quality
+{
+    NSString * path = [self getPathDirectory];
+    path = [path stringByAppendingPathComponent:@(quality).stringValue];
     path = [path stringByAppendingPathExtension:@"mp4"];
     return [NSURL fileURLWithPath:path];
 }
 
-- (BOOL)saveTempPathURL:(NSURL *)url
+- (BOOL)saveTempPathURL:(NSURL *)url withQuality:(VideoItemQuality)quality
 {
     if (!url)
     {
@@ -101,14 +116,24 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSError *error;
-    BOOL isMoved = [fileManager moveItemAtURL:url toURL:[self getPathUrl] error:&error];
+    BOOL isMoved = [fileManager moveItemAtURL:url toURL:[self getPathUrlWithQuality:quality] error:&error];
     
     return isMoved;
 }
 
-- (BOOL)removeDownload
+- (BOOL)removeDownloadAll
 {
-    if ([self hasDownloaded])
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSError *error;
+    BOOL isRemoved = [fileManager removeItemAtPath:[self getPathDirectory] error:&error];
+    
+    return isRemoved;
+}
+
+- (BOOL)removeDownloadWithQuality:(VideoItemQuality)quality
+{
+    if ([self hasDownloadedWithQuality:quality])
     {
         return NO;
     }
@@ -116,18 +141,42 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSError *error;
-    BOOL isRemoved = [fileManager removeItemAtURL:[self getPathUrl] error:&error];
+    BOOL isRemoved = [fileManager removeItemAtURL:[self getPathUrlWithQuality:quality] error:&error];
     
     return isRemoved;
 }
 
-- (BOOL)hasDownloaded
+- (NSArray<NSString *> *)getQualityOfDownloads
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *path = [self getPathDirectory];
     
-    BOOL isExists = [fileManager fileExistsAtPath:[self getPathUrl].path];
+    NSError *error;
+    NSArray *files = [fileManager contentsOfDirectoryAtPath:path error:&error];
     
-    return isExists;
+    NSMutableArray *qualities = [NSMutableArray new];
+    
+    for (NSString *file in files)
+    {
+        NSString *quality = [file componentsSeparatedByString:@"."].firstObject;
+        [qualities addObject:@(quality.integerValue)];
+    }
+    
+    return qualities;
+}
+
+- (BOOL)hasDownloadedWithQuality:(VideoItemQuality)quality
+{
+    NSArray *qualities = [self getQualityOfDownloads];
+    BOOL isDownloaded = [qualities indexOfObject:@(quality).stringValue] != NSNotFound;
+    
+    return isDownloaded;
+}
+
+- (BOOL)hasDownloaded
+{
+    NSArray *qualities = [self getQualityOfDownloads];
+    return qualities.count > 0;
 }
 
 

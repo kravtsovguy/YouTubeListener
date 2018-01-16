@@ -62,10 +62,10 @@
     
     NSURL *infoUrl = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@&hl=ru_RU", code]];
     
-    [self.downloadController downloadDataFromURL:infoUrl forKey:code];
+    [self.downloadController downloadDataFromURL:infoUrl forKey:code withParams:nil];
 }
 
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     NSString *content = [NSString stringWithContentsOfFile:url.path encoding:NSUTF8StringEncoding error:nil];
     VideoItemMO *item = [self parseQueryContent:content];

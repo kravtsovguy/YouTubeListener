@@ -209,15 +209,16 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     });
 }
 
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     if (![key isEqualToString:self.playerViewController.currentItem.videoId])
         return;
     
-    [self.playerViewController.currentItem saveTempPathURL:url];
+    NSNumber *quality = params[@"quality"];
+    [self.playerViewController.currentItem saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
 }
 
-- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key
+- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     if (![key isEqualToString:self.playerViewController.currentItem.videoId])
         return;
@@ -230,10 +231,10 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     [self.downloadController cancelDownloadForKey:item.videoId];
 }
 
-- (void)videoItemDownload:(VideoItemMO *)item withQuality:(YouTubeParserVideoQuality)quality
+- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
 {
     self.downloadController.delegate = self;
-    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId];
+    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
 }
 
 -(void)videoItemAddToPlaylist:(VideoItemMO *)item

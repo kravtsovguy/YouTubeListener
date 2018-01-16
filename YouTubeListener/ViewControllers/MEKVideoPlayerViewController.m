@@ -137,7 +137,7 @@
         self.downloadButton.loading = YES;
         if ([self.delegate respondsToSelector:@selector(videoItemDownload:withQuality:)])
         {
-            [self.delegate videoItemDownload:self.currentItem withQuality:YouTubeParserVideoQualitySmall144];
+            [self.delegate videoItemDownload:self.currentItem withQuality:VideoItemQualityMedium360];
         }
     }
     else
@@ -328,8 +328,9 @@
                                               };
     }];
     
-    NSURL *url = self.videoInfo.urls[@(YouTubeParserVideoQualityHD720)];
-    
+    NSURL *url = self.videoInfo.urls[@(VideoItemQualityHD720)];
+//    NSString *quality = [self.videoInfo getQualityOfDownloads].firstObject;
+//    url = [self.videoInfo getPathUrlWithQuality:quality.integerValue];
     self.playerController.player = [AVPlayer playerWithURL:url];
     self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
     [self.playerController.player play];
