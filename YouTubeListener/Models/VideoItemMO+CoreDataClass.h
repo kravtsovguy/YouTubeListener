@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString*)entityName;
 
++ (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
+
 // Creation
 + (VideoItemMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
 
@@ -30,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (VideoItemMO*)getVideoItemForURL: (NSURL*) videoURL withContext: (NSManagedObjectContext*) context;
 + (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
 + (NSArray<VideoItemMO*>*)getVideoItemsWithContext: (NSManagedObjectContext*) context;
++ (NSArray<VideoItemMO*>*)getRecentVideoItemsWithContext: (NSManagedObjectContext*) context;
 
 // Basic
 - (BOOL)saveObject;

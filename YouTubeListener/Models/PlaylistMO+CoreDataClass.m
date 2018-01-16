@@ -11,8 +11,6 @@
 
 @interface PlaylistMO()
 
-+ (NSArray<PlaylistMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
-
 @end
 
 @implementation PlaylistMO
@@ -38,6 +36,11 @@
 + (NSString *)recentPlaylistName
 {
     return @"Recent";
+}
+
++ (NSString *)downloadsPlaylistName
+{
+    return @"DOWNLOADS";
 }
 
 // Creation
@@ -134,22 +137,12 @@
 + (NSArray<PlaylistMO*>*)getPlaylistsWithContext: (NSManagedObjectContext*) context
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"name <> [c] %@", [PlaylistMO recentPlaylistName]];
     NSSortDescriptor *nameDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)];
     fetchRequest.sortDescriptors = @[nameDescriptor];
     
     NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
     
     return result;
-}
-
-+ (PlaylistMO*)getRecentPlaylistWithContext: (NSManagedObjectContext*) context
-{
-    PlaylistMO *recent = [self getPlaylistForName:[PlaylistMO recentPlaylistName] withContext:context];
-    if (!recent)
-        recent = [self playlistWithName:[PlaylistMO recentPlaylistName] withContext:context];
-    
-    return recent;
 }
 
 + (PlaylistMO*)getPlaylistForName: (NSString*) name withContext: (NSManagedObjectContext*) context

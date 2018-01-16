@@ -90,7 +90,9 @@
 {
     _done = done;
     
+    self.userInteractionEnabled = !_done;
     self.loading = NO;
+    
     if (_done)
     {
         [self setImage:self.doneImage forState:UIControlStateNormal];

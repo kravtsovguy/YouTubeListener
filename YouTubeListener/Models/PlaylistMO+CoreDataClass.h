@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString*)entityName;
 + (NSString*)recentPlaylistName;
++ (NSString*)downloadsPlaylistName;
+
++ (NSArray<PlaylistMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
 
 // Creation
 + (PlaylistMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
@@ -34,7 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Instance Accessors
 + (NSArray<PlaylistMO*>*)getPlaylistsWithContext: (NSManagedObjectContext*) context;
-+ (PlaylistMO*)getRecentPlaylistWithContext: (NSManagedObjectContext*) context;
 + (PlaylistMO*)getPlaylistForName: (NSString*) name withContext: (NSManagedObjectContext*) context;
 
 // Basic

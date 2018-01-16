@@ -23,8 +23,6 @@ typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
 @property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
 @property (nonatomic, strong) MEKDownloadController *downloadController;
 
-- (instancetype)initWithRecentPlaylist: (PlaylistMO*) recentPlaylist;
-
 - (void)openVideoItem: (VideoItemMO*) item;
 - (void)openVideoItem: (VideoItemMO*) item withVisibleState:(MEKPlayerVisibleState) state;
 

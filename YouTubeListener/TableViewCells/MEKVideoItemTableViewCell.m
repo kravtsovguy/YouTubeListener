@@ -178,7 +178,6 @@
     else
     {
         self.downloadButton.done = YES;
-        self.downloadButton.userInteractionEnabled = NO;
     }
 }
 

@@ -16,10 +16,11 @@
 
 @end
 
-@interface MEKPlaylistsViewController : UIViewController
+@interface MEKPlaylistsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak) id<MEKPlaylistsViewControllerDelegate> delegate;
 
--(instancetype)initModal;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) NSArray *playlists;
 
 @end

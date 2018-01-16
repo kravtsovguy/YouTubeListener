@@ -11,6 +11,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "MEKSearchViewController.h"
 #import "MEKPlaylistsViewController.h"
+#import "MEKDownloadsPlaylistViewController.h"
 
 @interface AppDelegate () <UIScrollViewDelegate>
 
@@ -39,8 +40,8 @@
     navControllerPlaylists.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
     [navControllerPlaylists.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
     
-    UIViewController *blankVC = [UIViewController new];
-    UINavigationController *navControllerDownloads = [[UINavigationController alloc] initWithRootViewController:blankVC];
+    MEKDownloadsPlaylistViewController *dvc = [MEKDownloadsPlaylistViewController new];
+    UINavigationController *navControllerDownloads = [[UINavigationController alloc] initWithRootViewController:dvc];
     navControllerDownloads.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
     
     //[UITabBar appearance].tintColor = UIColor.redColor;
@@ -52,21 +53,8 @@
     self.downloadController = [[MEKDownloadController alloc] init];
     [self.downloadController configurateUrlSessionWithParams:nil backgroundMode:YES];
     
-    PlaylistMO *recentPlaylist = [PlaylistMO getRecentPlaylistWithContext:self.persistentContainer.viewContext];
-    self.player = [[MEKPlayerController alloc] initWithRecentPlaylist:recentPlaylist];
+    self.player = [MEKPlayerController new];
     self.player.downloadController = self.downloadController;
-    
-    
-//    NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-//    path = [path stringByAppendingString:@"/1"];
-//    //NSURL *url = [NSURL fileURLWithPath:path];
-//    
-//    
-//    
-//    NSFileManager *fm = [NSFileManager defaultManager];
-//    BOOL isCreated = [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-//    NSLog(@"Created: %@", @(isCreated));
-    
     
     return YES;
 }

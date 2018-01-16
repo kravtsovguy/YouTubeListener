@@ -11,44 +11,51 @@
 #import "AppDelegate.h"
 #import <Masonry/Masonry.h>
 #import "MEKVideoItemTableViewCell.h"
-#import "MEKPlaylistsViewController.h"
 #import "VideoItemDelegate.h"
+#import "MEKModalPlaylistsViewController.h"
 
-@interface MEKPlaylistViewController () <UITableViewDelegate, UITableViewDataSource, MEKVideoItemDelegate, MEKPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, YouTubeParserDelegate>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, YouTubeParserDelegate>
 
 @property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKDownloadController *downloadController;
 @property (nonatomic, strong) YouTubeParser *parser;
 @property (nonatomic, strong) PlaylistMO *playlist;
 @property (nonatomic, weak) VideoItemMO *currentItem;
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *videoItems;
-@property (nonatomic, readonly) BOOL isEditable;
-
-
 
 @end
 
 @implementation MEKPlaylistViewController
 
-
-- (instancetype)initWithPlaylist:(PlaylistMO *)playlist
+- (instancetype)init
 {
     self = [super init];
     if (self)
     {
-        _playlist = playlist;
-        
         _parser = [YouTubeParser new];
         _parser.delegate = self;
+    }
+    return self;
+}
+
+- (instancetype)initWithPlaylist:(PlaylistMO *)playlist
+{
+    self = [self init];
+    if (self)
+    {
+        _playlist = playlist;
     }
     
     return self;
 }
 
-- (BOOL)isEditable
+- (NSManagedObjectContext*) coreDataContext
 {
-    return ![self.playlist.name isEqualToString:[PlaylistMO recentPlaylistName]];
+    UIApplication *application = [UIApplication sharedApplication];
+    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
+    
+    NSManagedObjectContext *context = container.viewContext;
+    
+    return context;
 }
 
 - (MEKPlayerController *)playerController
@@ -92,7 +99,7 @@
 
 - (void)updateData
 {
-    self.videoItems = [self.playlist getVideoItems];
+    self.items = [self.playlist getVideoItems];
 }
 
 - (void)loadItems
@@ -106,7 +113,7 @@
     MEKVideoItemTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKVideoItemTableViewCell" forIndexPath:indexPath];
     
     cell.delegate = self;
-    VideoItemMO *item = self.videoItems[indexPath.row];
+    VideoItemMO *item = self.items[indexPath.row];
     
     [cell setWithPlaylist:item];
     
@@ -122,7 +129,7 @@
 
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.videoItems.count;
+    return self.items.count;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -134,24 +141,19 @@
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    VideoItemMO *item = self.videoItems[indexPath.row];
+    VideoItemMO *item = self.items[indexPath.row];
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    if (!self.isEditable)
-    {
-        return @[];
-    }
-    
+- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        [self.playlist deleteVideoItem:self.videoItems[indexPath.row]];
+        [self.playlist deleteVideoItem:self.items[indexPath.row]];
         
-        NSMutableArray *items = self.videoItems.mutableCopy;
+        NSMutableArray *items = self.items.mutableCopy;
         [items removeObjectAtIndex:indexPath.row];
-        self.videoItems = items;
+        self.items = items;
         
         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }];
@@ -163,7 +165,7 @@
 {
     self.currentItem = item;
     
-    MEKPlaylistsViewController *playlistsController = [[MEKPlaylistsViewController alloc] initModal];
+    MEKModalPlaylistsViewController *playlistsController = [MEKModalPlaylistsViewController new];
     playlistsController.delegate = self;
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
@@ -212,7 +214,7 @@
 - (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"videoId == %@", key];
-    VideoItemMO *item = [self.videoItems filteredArrayUsingPredicate:predicate].firstObject;
+    VideoItemMO *item = [self.items filteredArrayUsingPredicate:predicate].firstObject;
     
     NSNumber *quality = params[@"quality"];
     [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];

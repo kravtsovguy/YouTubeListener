@@ -13,7 +13,7 @@
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
 #import <Masonry/Masonry.h>
-#import "MEKPlaylistsViewController.h"
+#import "MEKModalPlaylistsViewController.h"
 #import "UIImage+Cache.h"
 
 @import AVFoundation;
@@ -106,8 +106,13 @@
     self.playerController = [MEKPlayerViewController new];
     [self addChildViewController:self.playerController];
     [self.view addSubview:self.playerController.view];
-    
 
+    if (self.item.added)
+    {
+        self.item.added = [NSDate new];
+        [self.item saveObject];
+    }
+    
     [self setWithVideoItem:self.item];
     
     if (!self.item.downloadedURLs)
@@ -116,13 +121,11 @@
         self.youtubeParser.delegate = self;
         [self.youtubeParser loadVideoItem:self.item];;
     }
-    
-
 }
 
 - (void)addButtonPressed:(UIButton *)button
 {
-    MEKPlaylistsViewController *playlistsController = [[MEKPlaylistsViewController alloc] initModal];
+    MEKModalPlaylistsViewController *playlistsController = [MEKModalPlaylistsViewController new];
     playlistsController.delegate = self;
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
@@ -350,11 +353,6 @@
         self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
         [self.playerController.player play];
     }
-    
-    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:)])
-    {
-        [self.delegate videoItemAddToPlaylist:self.item];
-    }
 }
 
 - (void)youtubeParserItemDidLoad:(VideoItemMO *)item
@@ -378,7 +376,6 @@
     else
     {
         self.downloadButton.done = YES;
-        self.downloadButton.userInteractionEnabled = NO;
     }
 }
 @end

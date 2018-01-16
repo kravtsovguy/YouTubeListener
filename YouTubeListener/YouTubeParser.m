@@ -94,8 +94,6 @@
     result[@"author"] = info[@"author"];
     result[@"length_seconds"] = info[@"length_seconds"];
     result[@"view_count"] = info[@"view_count"];
-//    result[@"thumbnail_big"] = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", self.currentVideoId]];
-//    result[@"thumbnail_small"] = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", self.currentVideoId]];
     result[@"urls"] = [NSMutableDictionary new];
     result[@"sizes"] = [NSMutableDictionary new];
     

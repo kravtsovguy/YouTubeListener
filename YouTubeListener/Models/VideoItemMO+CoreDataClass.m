@@ -11,8 +11,6 @@
 
 @interface VideoItemMO()
 
-+ (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
-
 - (NSURL*)getPathUrlWithQuality: (VideoItemQuality) quality;
 
 @end
@@ -85,6 +83,16 @@
     return result;
 }
 
++ (NSArray<VideoItemMO *> *)getRecentVideoItemsWithContext:(NSManagedObjectContext *)context
+{
+    NSFetchRequest *fetchRequest = [self fetchRequest];
+    NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"added" ascending:NO selector:@selector(caseInsensitiveCompare:)];
+    fetchRequest.sortDescriptors = @[dateDescriptor];
+    
+    NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
+    return result;
+}
+
 // Basic
 - (BOOL)saveObject
 {
@@ -103,12 +111,6 @@
     [self.managedObjectContext deleteObject:self];
     return [self saveObject];
 }
-
-//- (NSURL *)originURL
-//{
-//    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", self.videoId]];
-//    return url;
-//}
 
 - (NSString *)getPathDirectory
 {

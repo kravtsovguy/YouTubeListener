@@ -18,7 +18,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate, MEKDownloadControllerDelegate, MEKVideoItemDelegate>
 
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
-@property (nonatomic, strong) PlaylistMO *recentPlaylist;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MEKVideoPlayerViewController *playerViewController;
@@ -34,17 +33,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 @end
 
 @implementation MEKPlayerController
-
-- (instancetype)initWithRecentPlaylist:(PlaylistMO *)recentPlaylist
-{
-    self = [super init];
-    if (self)
-    {
-        _recentPlaylist = recentPlaylist;
-    }
-    
-    return self;
-}
 
 - (NSManagedObjectContext*) coreDataContext
 {
@@ -263,11 +251,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 {
     self.downloadController.delegate = self;
     [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
-}
-
--(void)videoItemAddToPlaylist:(VideoItemMO *)item
-{
-    [self.recentPlaylist addVideoItem:item];
 }
 
 -(void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist

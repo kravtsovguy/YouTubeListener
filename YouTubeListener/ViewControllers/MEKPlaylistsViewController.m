@@ -12,41 +12,16 @@
 #import "PlaylistMO+CoreDataClass.h"
 #import "AppDelegate.h"
 #import "MEKPlaylistViewController.h"
+#import "MEKRecentPlaylistViewController.h"
 
-@interface MEKPlaylistsViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface MEKPlaylistsViewController ()
 
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *playlists;
-@property (nonatomic, assign) BOOL isModal;
 @property (nonatomic, strong) MEKPlaylistTableViewCell *sectionCell;
-@property (nonatomic, strong) PlaylistMO *recentPlaylist;
 
 @end
 
 @implementation MEKPlaylistsViewController
-
--(instancetype)initModal
-{
-    self = [super init];
-    if (self)
-    {
-        _isModal = YES;
-    }
-    
-    return self;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self)
-    {
-        _isModal = NO;
-    }
-    
-    return self;
-}
 
 - (NSManagedObjectContext*) coreDataContext
 {
@@ -65,13 +40,7 @@
     
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPlaylist:)];
     self.navigationItem.rightBarButtonItem = item;
-    
-    if (self.isModal)
-    {
-        UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelView:)];
-        self.navigationItem.leftBarButtonItem = item;
-    }
-    
+
     self.tableView = [UITableView new];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -87,11 +56,6 @@
 //    header.backgroundColor = UIColor.redColor;
 //    self.tableView.tableHeaderView = header;
     self.tableView.sectionHeaderHeight = [MEKPlaylistTableViewCell height];
-    
-    if (self.isModal)
-    {
-        self.tableView.sectionHeaderHeight = 0;
-    }
 }
 
 
@@ -108,7 +72,6 @@
 
 - (void)updateData
 {
-    self.recentPlaylist = [PlaylistMO getRecentPlaylistWithContext:self.coreDataContext];
     self.playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
 }
 
@@ -147,14 +110,11 @@
 }
 
 
-- (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+- (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
     
     MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKPlaylistTableViewCell" forIndexPath:indexPath];
-    
-    if (!self.isModal)
-    {
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     PlaylistMO *playlist = self.playlists[indexPath.row];
     [cell setWithPlaylist:playlist andVideoItem:[playlist getFirstVideoItem]];
@@ -162,7 +122,7 @@
     return cell;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -172,12 +132,6 @@
     if ([self.delegate respondsToSelector:@selector(playlistsViewControllerDidChoosePlaylist:)])
     {
         [self.delegate playlistsViewControllerDidChoosePlaylist:playlist];
-    }
-    
-    if (self.isModal)
-    {
-        [self dismissViewControllerAnimated:YES completion:nil];
-        return;
     }
     
     MEKPlaylistViewController *controller = [[MEKPlaylistViewController alloc] initWithPlaylist:playlist];
@@ -217,14 +171,16 @@
         self.sectionCell = cell;
     }
     
-    [self.sectionCell setWithPlaylist:self.recentPlaylist andVideoItem:[self.recentPlaylist getFirstVideoItem]];
+    NSArray<VideoItemMO*> *items = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
+    
+    [self.sectionCell setWithName:[PlaylistMO recentPlaylistName] itemsCount:items.count imageURL:items.firstObject.thumbnailBig];
+    
     return self.sectionCell;
 }
 
 - (void)recentTapped:(UIGestureRecognizer *)gestureRecognizer
 {
-    MEKPlaylistViewController *controller = [[MEKPlaylistViewController alloc] initWithPlaylist:self.recentPlaylist];
-    
+    MEKRecentPlaylistViewController *controller = [MEKRecentPlaylistViewController new];
     [self.navigationController pushViewController:controller animated:YES];
 }
 
@@ -258,13 +214,8 @@
 }
 
 
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (self.isModal)
-    {
-        return @[];
-    }
-    
+- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
         [self renamePlaylist:self.playlists [indexPath.row]];
