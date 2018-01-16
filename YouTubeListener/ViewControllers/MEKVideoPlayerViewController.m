@@ -25,10 +25,10 @@
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
-@property (nonatomic, strong) YouTubeParser *ytb;
-@property (nonatomic, strong) NSURLSessionDownloadTask *imageTask;
-@property (nonatomic, strong) NSURLSessionDownloadTask *videoTask;
-@property (nonatomic, strong) VideoItemMO *videoInfo;
+@property (nonatomic, strong) YouTubeParser *youtubeParser;
+
+@property (nonatomic, strong) VideoItemMO *item;
+@property (nonatomic, assign) BOOL maximized;
 
 @property (nonatomic, assign) CGFloat videoWidth;
 @property (nonatomic, assign) CGFloat videoHeight;
@@ -40,23 +40,15 @@
 @property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) MEKDowloadButton *downloadButton;
 
-@property (nonatomic, strong) NSURL *url;
-@property (nonatomic, assign) BOOL maximized;
-
 @end
 
 @implementation MEKVideoPlayerViewController
 
-- (instancetype)init
-{
-    return [self initWithURL:[NSURL URLWithString:@"https://www.youtube.com/watch?v=rNhfrFASCGE"]];
-}
-
-- (instancetype)initWithURL:(NSURL *)url
+- (instancetype)initWithVideoItem:(VideoItemMO *)item
 {
     self = [super init];
     if (self) {
-        self.url = url;
+        _item = item;
         [self maximizeWithDuration:0];
     }
     return self;
@@ -111,13 +103,21 @@
     self.view.layer.cornerRadius = 10;
     self.view.layer.masksToBounds = YES;
     
-    self.ytb = [YouTubeParser new];
-    self.ytb.delegate = self;
-    [self.ytb loadVideoItemFromUrl:self.url];
-    
     self.playerController = [MEKPlayerViewController new];
     [self addChildViewController:self.playerController];
     [self.view addSubview:self.playerController.view];
+    
+
+    [self setWithVideoItem:self.item];
+    
+    if (!self.item.downloadedURLs)
+    {
+        self.youtubeParser = [YouTubeParser new];
+        self.youtubeParser.delegate = self;
+        [self.youtubeParser loadVideoItem:self.item];;
+    }
+    
+
 }
 
 - (void)addButtonPressed:(UIButton *)button
@@ -162,7 +162,7 @@
 {
     if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:playlist:)])
     {
-        [self.delegate videoItemAddToPlaylist:self.videoInfo playlist:playlist];
+        [self.delegate videoItemAddToPlaylist:self.item playlist:playlist];
     }
 }
 
@@ -299,51 +299,72 @@
     } completion:nil];
 }
 
-- (void)youtubeParserItemDidLoad:(VideoItemMO *)item
+- (void)setWithVideoItem: (VideoItemMO*) item
 {
-    self.videoInfo = item;
+    if (!item)
+    {
+        return;
+    }
     
-    self.titleLabel.text = self.videoInfo.title;
-    self.authorLabel.text = self.videoInfo.author;
+    self.item = item;
     
-    if ([self.videoInfo hasDownloaded])
+    self.titleLabel.text = self.item.title;
+    self.authorLabel.text = self.item.author;
+    
+    if ([self.item hasDownloaded])
     {
         [self setDownloadingProgress:1];
     }
     
+    if (self.item.title && self.item.author)
+    {
+        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.item.title,
+                                              MPMediaItemPropertyArtist : self.item.author
+                                              };
+    }
     
-    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
-                                          MPMediaItemPropertyArtist : self.videoInfo.author
-                                          };
-    
-    [UIImage ch_downloadImageFromUrl:self.videoInfo.thumbnailSmall completion:^(UIImage *image) {
+    [UIImage ch_downloadImageFromUrl:self.item.thumbnailSmall completion:^(UIImage *image) {
         
         MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size requestHandler:^UIImage * _Nonnull(CGSize size) {
             return image;
         }];
         
-        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
-                                              MPMediaItemPropertyArtist : self.videoInfo.author,
-                                              MPMediaItemPropertyArtwork : albumArt
-                                              };
+        NSMutableDictionary *playerInfo = self.playerController.playingInfo.mutableCopy;
+        playerInfo[MPMediaItemPropertyArtwork] = albumArt;
+        
+        self.playerController.playingInfo = playerInfo;
     }];
     
-    NSURL *url = self.videoInfo.urls[@(VideoItemQualityHD720)];
-//    NSString *quality = [self.videoInfo getQualityOfDownloads].firstObject;
-//    url = [self.videoInfo getPathUrlWithQuality:quality.integerValue];
-    self.playerController.player = [AVPlayer playerWithURL:url];
-    self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
-    [self.playerController.player play];
+    
+    NSURL *url =  self.item.downloadedURLs[@(VideoItemQualityMedium360)];
+    
+    if (!url)
+    {
+        url = self.item.urls[@(VideoItemQualityHD720)];
+    }
+    
 
+    if (url && !self.playerController.player)
+    {
+        self.playerController.player = [AVPlayer playerWithURL:url];
+        self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
+        [self.playerController.player play];
+    }
+    
     if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:)])
     {
-        [self.delegate videoItemAddToPlaylist:self.videoInfo];
+        [self.delegate videoItemAddToPlaylist:self.item];
     }
+}
+
+- (void)youtubeParserItemDidLoad:(VideoItemMO *)item
+{
+    [self setWithVideoItem:item];
 }
 
 - (VideoItemMO *)currentItem
 {
-    return self.videoInfo;
+    return self.item;
 }
 
 - (void)setDownloadingProgress:(double)progress

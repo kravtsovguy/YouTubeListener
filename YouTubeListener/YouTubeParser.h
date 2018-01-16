@@ -20,7 +20,6 @@
 
 @property (nonatomic, weak) id<YouTubeParserDelegate> delegate;
 
--(void) loadVideoItemFromUrl: (NSURL*) url;
 -(void) loadVideoItem: (VideoItemMO*) item;
 
 @end

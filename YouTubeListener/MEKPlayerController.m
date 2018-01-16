@@ -17,6 +17,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate, MEKDownloadControllerDelegate, MEKVideoItemDelegate>
 
+@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, strong) PlaylistMO *recentPlaylist;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -43,6 +44,16 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     }
     
     return self;
+}
+
+- (NSManagedObjectContext*) coreDataContext
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
+    
+    NSManagedObjectContext *context = container.viewContext;
+    
+    return context;
 }
 
 -(UITabBarController *)tabBarController
@@ -91,12 +102,12 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     self.playerViewController = nil;
 }
 
-- (void)initPlayerViewControllerWithURL:(NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state
+- (void)initPlayerViewControllerWithVideoItem:(VideoItemMO*) item withVisibleState:(MEKPlayerVisibleState) state
 {
     if (self.playerViewController)
         return;
     
-    self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithURL:videoURL];
+    self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithVideoItem:item];
     self.playerViewController.playerDelegate = self;
     self.playerViewController.delegate = self;
     
@@ -149,12 +160,29 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     [self.tabBarController.view insertSubview:self.overlayView aboveSubview:self.tabBarMainView];
 }
 
--(void)openURL:(NSURL *)videoURL
+- (void)openURL:(NSURL *)videoURL
 {
-    [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMaximized];
+    [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
--(void)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
+- (void)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
+{
+    VideoItemMO *item = [VideoItemMO getVideoItemForURL:videoURL withContext:self.coreDataContext];
+    if (!item)
+    {
+        item = [VideoItemMO getEmptyWithContext:self.coreDataContext];
+        item.originURL = videoURL;
+    }
+    
+    [self openVideoItem:item withVisibleState:state];
+}
+
+- (void)openVideoItem:(VideoItemMO *)item
+{
+    [self openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
+}
+
+- (void)openVideoItem:(VideoItemMO *)item withVisibleState:(MEKPlayerVisibleState)state
 {
     if (self.isOpened)
     {
@@ -163,7 +191,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     
     [self initOverlayView];
     [self initScrollView];
-    [self initPlayerViewControllerWithURL:videoURL withVisibleState:state];
+    [self initPlayerViewControllerWithVideoItem:item withVisibleState:state];
     
     if (state == MEKPlayerVisibleStateMaximized)
         [self maximizePlayer];

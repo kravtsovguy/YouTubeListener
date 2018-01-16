@@ -135,10 +135,7 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VideoItemMO *item = self.videoItems[indexPath.row];
-    
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", item.videoId]];
-    
-    [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMinimized];
+    [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {

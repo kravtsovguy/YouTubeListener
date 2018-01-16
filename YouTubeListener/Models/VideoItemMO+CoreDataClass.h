@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (VideoItemMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
 
 // Instance Accessors
++ (VideoItemMO*)getVideoItemForURL: (NSURL*) videoURL withContext: (NSManagedObjectContext*) context;
 + (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
 + (NSArray<VideoItemMO*>*)getVideoItemsWithContext: (NSManagedObjectContext*) context;
 
@@ -40,8 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)removeDownloadWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloadedWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloaded;
-- (NSArray <NSNumber*>*)getQualityOfDownloads;
-- (NSURL*)getPathUrlWithQuality: (VideoItemQuality) quality;
+- (NSDictionary*)downloadedURLs;
 
 @end
 

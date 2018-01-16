@@ -13,6 +13,8 @@
 
 + (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
 
+- (NSURL*)getPathUrlWithQuality: (VideoItemQuality) quality;
+
 @end
 
 @implementation VideoItemMO
@@ -44,10 +46,29 @@
 }
 
 // Instance Accessors
+
++ (VideoItemMO*)getVideoItemForURL:(NSURL *)videoURL withContext:(NSManagedObjectContext *)context
+{
+    if (!videoURL)
+    {
+        return nil;
+    }
+    
+    NSFetchRequest *fetchRequest = [self fetchRequest];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"originURL.absoluteString == %@", videoURL.absoluteString];
+    
+    NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
+    VideoItemMO *item = result.firstObject;
+    
+    return item;
+}
+
 + (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext:(nonnull NSManagedObjectContext *)context
 {
     if (!videoId)
+    {
         return nil;
+    }
     
     NSFetchRequest *fetchRequest = [self fetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"videoId == %@", videoId];
@@ -82,6 +103,12 @@
     [self.managedObjectContext deleteObject:self];
     return [self saveObject];
 }
+
+//- (NSURL *)originURL
+//{
+//    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", self.videoId]];
+//    return url;
+//}
 
 - (NSString *)getPathDirectory
 {
@@ -146,37 +173,48 @@
     return isRemoved;
 }
 
-- (NSArray<NSString *> *)getQualityOfDownloads
+- (NSDictionary *)downloadedURLs
 {
+    if (!self.videoId)
+    {
+        return nil;
+    }
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *path = [self getPathDirectory];
     
     NSError *error;
     NSArray *files = [fileManager contentsOfDirectoryAtPath:path error:&error];
     
-    NSMutableArray *qualities = [NSMutableArray new];
+
+    NSMutableDictionary *urls;
+    if (files.count > 0)
+    {
+        urls = [NSMutableDictionary new];
+    }
     
     for (NSString *file in files)
     {
         NSString *quality = [file componentsSeparatedByString:@"."].firstObject;
-        [qualities addObject:@(quality.integerValue)];
+        NSString *absolutePath = [path stringByAppendingPathComponent:file];
+        urls[@(quality.integerValue)] = [NSURL fileURLWithPath:absolutePath];
     }
     
-    return qualities;
+    return urls;
 }
 
 - (BOOL)hasDownloadedWithQuality:(VideoItemQuality)quality
 {
-    NSArray *qualities = [self getQualityOfDownloads];
-    BOOL isDownloaded = [qualities indexOfObject:@(quality).stringValue] != NSNotFound;
+    NSDictionary *urls = [self urls];
+    NSURL *url = urls[@(quality)];
     
-    return isDownloaded;
+    return url;
 }
 
 - (BOOL)hasDownloaded
 {
-    NSArray *qualities = [self getQualityOfDownloads];
-    return qualities.count > 0;
+    NSDictionary *urls = [self downloadedURLs];
+    return urls;
 }
 
 

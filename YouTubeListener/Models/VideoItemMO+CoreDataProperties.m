@@ -2,7 +2,7 @@
 //  VideoItemMO+CoreDataProperties.m
 //  YouTubeListener
 //
-//  Created by Matvey Kravtsov on 13/01/2018.
+//  Created by Matvey Kravtsov on 16/01/2018.
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 //
@@ -21,7 +21,9 @@
 @dynamic thumbnailBig;
 @dynamic thumbnailSmall;
 @dynamic title;
-@dynamic videoId;
 @dynamic urls;
+@dynamic videoId;
+@dynamic sizes;
+@dynamic originURL;
 
 @end

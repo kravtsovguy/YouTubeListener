@@ -14,6 +14,11 @@
 
 - (void)ch_downloadImageFromUrl:(NSURL *)url
 {
+    if (!url)
+    {
+        return;
+    }
+    
     [UIImage ch_downloadImageFromUrl:url completion:^(UIImage *image) {
         
         [UIView transitionWithView:self

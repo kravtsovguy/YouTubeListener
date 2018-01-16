@@ -26,7 +26,8 @@
 
 @property (nonatomic, readonly) VideoItemMO *currentItem;
 
-- (instancetype)initWithURL: (NSURL*) url;
+- (instancetype)initWithVideoItem: (VideoItemMO*) item;
+
 - (void)minimizeWithDuration: (NSTimeInterval) duration withHeight: (CGFloat) height;
 - (void)maximizeWithDuration: (NSTimeInterval) duration;
 - (void)setDownloadingProgress: (double) progress;

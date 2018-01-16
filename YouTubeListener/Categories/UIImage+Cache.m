@@ -62,6 +62,11 @@
 
 +(void)ch_downloadImageFromUrl:(NSURL *)url completion:(void (^)(UIImage *))completion
 {
+    if (!url)
+    {
+        return;
+    }
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
         
         NSData *data = [self ch_getDataForUrl:url];
