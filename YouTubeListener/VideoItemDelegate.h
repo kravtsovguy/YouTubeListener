@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "VideoItemMO+CoreDataClass.h"
 #import "PlaylistMO+CoreDataClass.h"
-#import "YouTubeParser.h"
 
 @protocol MEKVideoItemDelegate <NSObject>
 

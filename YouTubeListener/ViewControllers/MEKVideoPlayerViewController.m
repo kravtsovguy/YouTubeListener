@@ -7,7 +7,7 @@
 //
 
 #import "MEKVideoPlayerViewController.h"
-#import "YouTubeParser.h"
+#import "MEKYouTubeVideoParser.h"
 #import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MPMoviePlayerController.h>
 #import "MEKPlayerViewController.h"
@@ -21,11 +21,11 @@
 @import AssetsLibrary;
 @import MediaPlayer;
 
-@interface MEKVideoPlayerViewController () <YouTubeParserDelegate, MEKPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <MEKWebVideoParserOutputProtocol, MEKPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
-@property (nonatomic, strong) YouTubeParser *youtubeParser;
+@property (nonatomic, strong) MEKWebVideoParser *youtubeParser;
 
 @property (nonatomic, strong) VideoItemMO *item;
 @property (nonatomic, assign) BOOL maximized;
@@ -117,8 +117,8 @@
     
     if (!self.item.downloadedURLs)
     {
-        self.youtubeParser = [YouTubeParser new];
-        self.youtubeParser.delegate = self;
+        self.youtubeParser = [MEKYouTubeVideoParser new];
+        self.youtubeParser.output = self;
         [self.youtubeParser loadVideoItem:self.item];;
     }
 }
@@ -355,7 +355,7 @@
     }
 }
 
-- (void)youtubeParserItemDidLoad:(VideoItemMO *)item
+- (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
 {
     [self setWithVideoItem:item];
 }

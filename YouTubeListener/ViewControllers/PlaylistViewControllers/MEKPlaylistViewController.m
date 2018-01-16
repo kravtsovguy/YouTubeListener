@@ -13,12 +13,13 @@
 #import "MEKVideoItemTableViewCell.h"
 #import "VideoItemDelegate.h"
 #import "MEKModalPlaylistsViewController.h"
+#import "MEKYouTubeVideoParser.h"
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, YouTubeParserDelegate>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol>
 
 @property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKDownloadController *downloadController;
-@property (nonatomic, strong) YouTubeParser *parser;
+@property (nonatomic, strong) MEKWebVideoParser *parser;
 @property (nonatomic, strong) PlaylistMO *playlist;
 @property (nonatomic, weak) VideoItemMO *currentItem;
 
@@ -31,8 +32,8 @@
     self = [super init];
     if (self)
     {
-        _parser = [YouTubeParser new];
-        _parser.delegate = self;
+        _parser = [MEKYouTubeVideoParser new];
+        _parser.output = self;
     }
     return self;
 }
@@ -173,7 +174,7 @@
     [self presentViewController:navController animated:YES completion:nil];
 }
 
-- (void)videoItemDownload:(VideoItemMO *)item
+- (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
 {
     if (item.urls)
     {
