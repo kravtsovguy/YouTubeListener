@@ -72,7 +72,6 @@
 		BAB51E461FFC9382005F24F8 /* MEKDowloadButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKDowloadButton.m; sourceTree = "<group>"; };
 		BAB56F13200BB7AB000DF5C6 /* MEKDownloadController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKDownloadController.h; sourceTree = "<group>"; };
 		BAB56F14200BB7AB000DF5C6 /* MEKDownloadController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKDownloadController.m; sourceTree = "<group>"; };
-		BAB56F16200CE908000DF5C6 /* VideoItemDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoItemDelegate.h; sourceTree = "<group>"; };
 		BAB56F1C200E87CA000DF5C6 /* MEKModalPlaylistsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKModalPlaylistsViewController.h; sourceTree = "<group>"; };
 		BAB56F1D200E87CA000DF5C6 /* MEKModalPlaylistsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKModalPlaylistsViewController.m; sourceTree = "<group>"; };
 		BAB56F1F200E8BCD000DF5C6 /* MEKRecentPlaylistViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKRecentPlaylistViewController.h; sourceTree = "<group>"; };
@@ -216,17 +215,25 @@
 		BAB56F27200E9E81000DF5C6 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				BAB56F33200EB15B000DF5C6 /* MEKYouTubeVideoParser.h */,
-				BAAE6CFF1FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m */,
-				BAB56F2C200EA954000DF5C6 /* MEKWebVideoParserProtocol.h */,
-				BAB56F2F200EAA6D000DF5C6 /* MEKWebVideoParser.h */,
-				BAB56F30200EAA6D000DF5C6 /* MEKWebVideoParser.m */,
+				BAB56F34200EB1EB000DF5C6 /* MEKWebVideoParser */,
 				BA49AB502000A8CE00D6578D /* MEKPlayerController.h */,
 				BA49AB512000A8CE00D6578D /* MEKPlayerController.m */,
 				BAB56F13200BB7AB000DF5C6 /* MEKDownloadController.h */,
 				BAB56F14200BB7AB000DF5C6 /* MEKDownloadController.m */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		BAB56F34200EB1EB000DF5C6 /* MEKWebVideoParser */ = {
+			isa = PBXGroup;
+			children = (
+				BAB56F33200EB15B000DF5C6 /* MEKYouTubeVideoParser.h */,
+				BAAE6CFF1FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m */,
+				BAB56F2C200EA954000DF5C6 /* MEKWebVideoParserProtocol.h */,
+				BAB56F2F200EAA6D000DF5C6 /* MEKWebVideoParser.h */,
+				BAB56F30200EAA6D000DF5C6 /* MEKWebVideoParser.m */,
+			);
+			path = MEKWebVideoParser;
 			sourceTree = "<group>";
 		};
 		BABD355D1FDEAF740036B27F = {
@@ -263,7 +270,6 @@
 				BABD357A1FDEAF740036B27F /* Info.plist */,
 				BABD357B1FDEAF740036B27F /* main.m */,
 				BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */,
-				BAB56F16200CE908000DF5C6 /* VideoItemDelegate.h */,
 			);
 			path = YouTubeListener;
 			sourceTree = "<group>";

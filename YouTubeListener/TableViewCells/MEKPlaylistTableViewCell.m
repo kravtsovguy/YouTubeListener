@@ -89,17 +89,6 @@
 -(void)setWithPlaylist:(PlaylistMO *)playlist andVideoItem:(VideoItemMO *)item
 {
     [self setWithName:playlist.name itemsCount:playlist.items.count imageURL:item.thumbnailBig];
-//    self.nameLabel.text = playlist.name;
-//    self.countLabel.text = [NSString stringWithFormat:@"%li videos", playlist.items.count];
-//
-//    if (item)
-//    {
-//        [self.titleImageView ch_downloadImageFromUrl:item.thumbnailBig];
-//    }
-//    else
-//    {
-//        self.titleImageView.image = [UIImage imageNamed:@"placeholder"];
-//    }
     
 }
 

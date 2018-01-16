@@ -19,6 +19,20 @@ typedef NS_ENUM (NSUInteger, VideoItemQuality) {
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class PlaylistMO;
+@class VideoItemMO;
+
+@protocol MEKVideoItemDelegate <NSObject>
+
+@optional
+- (void)videoItemAddToPlaylist: (VideoItemMO*) item;
+- (void)videoItemAddToPlaylist: (VideoItemMO*) item playlist: (PlaylistMO*) playlist;
+- (void)videoItemDownload: (VideoItemMO*) item;
+- (void)videoItemDownload: (VideoItemMO*) item withQuality: (VideoItemQuality) quality;
+- (void)videoItemCancelDownload: (VideoItemMO*) item;
+
+@end
+
 @interface VideoItemMO : NSManagedObject
 
 + (NSString*)entityName;

@@ -17,7 +17,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate, MEKDownloadControllerDelegate, MEKVideoItemDelegate>
 
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MEKVideoPlayerViewController *playerViewController;

@@ -42,10 +42,9 @@
 {
     PlaylistMO *playlist = self.playlists [indexPath.row];
     
-
-    if ([self.delegate respondsToSelector:@selector(playlistsViewControllerDidChoosePlaylist:)])
+    if ([self.delegate respondsToSelector:@selector(modalPlaylistsViewControllerDidChoosePlaylist:)])
     {
-        [self.delegate playlistsViewControllerDidChoosePlaylist:playlist];
+        [self.delegate modalPlaylistsViewControllerDidChoosePlaylist:playlist];
     }
     
     [self dismissViewControllerAnimated:YES completion:nil];

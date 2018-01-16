@@ -11,11 +11,10 @@
 #import "AppDelegate.h"
 #import <Masonry/Masonry.h>
 #import "MEKVideoItemTableViewCell.h"
-#import "VideoItemDelegate.h"
 #import "MEKModalPlaylistsViewController.h"
 #import "MEKYouTubeVideoParser.h"
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKModalPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol>
 
 @property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKDownloadController *downloadController;
@@ -49,16 +48,6 @@
     return self;
 }
 
-- (NSManagedObjectContext*) coreDataContext
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
-    
-    NSManagedObjectContext *context = container.viewContext;
-    
-    return context;
-}
-
 - (MEKPlayerController *)playerController
 {
     UIApplication *application = [UIApplication sharedApplication];
@@ -70,6 +59,11 @@
 - (MEKDownloadController *)downloadController
 {
     return self.playerController.downloadController;
+}
+
+- (NSManagedObjectContext*) coreDataContext
+{
+    return self.playerController.coreDataContext;
 }
 
 - (void)viewDidLoad {
@@ -192,7 +186,7 @@
     [self.downloadController cancelDownloadForKey:item.videoId];
 }
 
-- (void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
+- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
 {
     [playlist addVideoItem:self.currentItem];
 }

@@ -10,7 +10,6 @@
 #import "VideoItemMO+CoreDataClass.h"
 #import "PlaylistMO+CoreDataClass.h"
 #import "MEKYouTubeVideoParser.h"
-#import "VideoItemDelegate.h"
 
 @protocol MEKVideoPlayerViewControllerDelegate <NSObject>
 

@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "VideoItemMO+CoreDataClass.h"
-#import "VideoItemDelegate.h"
 
 @interface MEKVideoItemTableViewCell : UITableViewCell
 

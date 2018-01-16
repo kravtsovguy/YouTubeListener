@@ -21,7 +21,7 @@
 @import AssetsLibrary;
 @import MediaPlayer;
 
-@interface MEKVideoPlayerViewController () <MEKWebVideoParserOutputProtocol, MEKPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <MEKWebVideoParserOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
@@ -161,7 +161,7 @@
     }
 }
 
-- (void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
+- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
 {
     if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:playlist:)])
     {

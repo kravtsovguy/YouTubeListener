@@ -16,7 +16,6 @@
 
 @interface MEKPlaylistsViewController ()
 
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, strong) MEKPlaylistTableViewCell *sectionCell;
 
 @end
@@ -127,13 +126,6 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     PlaylistMO *playlist = self.playlists [indexPath.row];
-    
-    
-    if ([self.delegate respondsToSelector:@selector(playlistsViewControllerDidChoosePlaylist:)])
-    {
-        [self.delegate playlistsViewControllerDidChoosePlaylist:playlist];
-    }
-    
     MEKPlaylistViewController *controller = [[MEKPlaylistViewController alloc] initWithPlaylist:playlist];
     
     [self.navigationController pushViewController:controller animated:YES];

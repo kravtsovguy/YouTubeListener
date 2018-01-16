@@ -8,6 +8,15 @@
 
 #import "MEKPlaylistsViewController.h"
 
+@protocol MEKModalPlaylistsViewControllerDelegate <NSObject>
+
+@required
+- (void)modalPlaylistsViewControllerDidChoosePlaylist: (PlaylistMO*) playlist;
+
+@end
+
 @interface MEKModalPlaylistsViewController : MEKPlaylistsViewController
+
+@property (nonatomic, weak) id<MEKModalPlaylistsViewControllerDelegate> delegate;
 
 @end

@@ -9,17 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "PlaylistMO+CoreDataClass.h"
 
-@protocol MEKPlaylistsViewControllerDelegate <NSObject>
-
-@optional
-- (void)playlistsViewControllerDidChoosePlaylist: (PlaylistMO*) playlist;
-
-@end
-
 @interface MEKPlaylistsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, weak) id<MEKPlaylistsViewControllerDelegate> delegate;
-
+@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *playlists;
 
