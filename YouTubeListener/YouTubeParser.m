@@ -7,13 +7,13 @@
 //
 
 #import "YouTubeParser.h"
-#import "NetworkService.h"
 #import "AppDelegate.h"
+#import "MEKDownloadController.h"
 
-@interface YouTubeParser() <NetworkServiceOutputProtocol>
+@interface YouTubeParser() <MEKDownloadControllerDelegate>
 
 @property (nonatomic, strong) NSString *currentVideoId;
-@property (nonatomic, strong) NetworkService *networkServiceInfo;
+@property (nonatomic, strong) MEKDownloadController *downloadController;
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 
 @end
@@ -23,15 +23,16 @@
 - (instancetype)init
 {
     self = [super init];
-    if (self) {
-        _networkServiceInfo = [NetworkService new];
-        [_networkServiceInfo configurateUrlSessionWithParams:nil];
-        _networkServiceInfo.output = self;
+    if (self)
+    {
+        _downloadController = [MEKDownloadController new];
+        [_downloadController configurateUrlSessionWithParams:nil backgroundMode:NO];
+        _downloadController.delegate = self;
     }
     return self;
 }
 
-- (NSManagedObjectContext*) coreDataContext
+- (NSManagedObjectContext*)coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
     NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
@@ -41,8 +42,15 @@
     return context;
 }
 
--(void) loadVideoInfo: (NSString*) videoURL
+- (void)loadVideoItem:(VideoItemMO *)item
 {
+    NSURL *youtubeUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", item.videoId]];
+    [self loadVideoItemFromUrl:youtubeUrl];
+}
+
+- (void)loadVideoItemFromUrl:(NSURL *)url
+{
+    NSString *videoURL = url.absoluteString;
     NSString *code;
     
     if ([videoURL containsString:@"youtube"])
@@ -52,26 +60,25 @@
     
     self.currentVideoId = code;
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@&hl=ru_RU", code]];
-    [self.networkServiceInfo loadDataFromURL:url];
+    NSURL *infoUrl = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@&hl=ru_RU", code]];
+    
+    [self.downloadController downloadDataFromURL:infoUrl forKey:code];
 }
 
--(void) loadingIsDoneWithDataRecieved:(NSData *)dataRecieved withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key
 {
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-        NSString *content = [[NSString alloc] initWithData:dataRecieved encoding:NSUTF8StringEncoding];
-        VideoItemMO *info = [self parseQueryContent:content];
-        
-        if (self.delegate && [self.delegate respondsToSelector:@selector(infoDidLoad:forVideo:)])
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.delegate infoDidLoad:info forVideo:self.currentVideoId];
-            });
-        }
-    });
+    NSString *content = [NSString stringWithContentsOfFile:url.path encoding:NSUTF8StringEncoding error:nil];
+    VideoItemMO *item = [self parseQueryContent:content];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(youtubeParserItemDidLoad:)])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate youtubeParserItemDidLoad:item];
+        });
+    }
 }
 
--(VideoItemMO*) parseQueryContent: (NSString*) content
+- (VideoItemMO*) parseQueryContent: (NSString*) content
 {
     NSMutableDictionary *result = [NSMutableDictionary new];
     NSDictionary *info = [self dictionaryWithQueryString:content];
@@ -110,7 +117,7 @@
     return item;
 }
 
--(NSDictionary*) dictionaryWithQueryString: (NSString*) string
+- (NSDictionary*) dictionaryWithQueryString: (NSString*) string
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     NSArray *fields = [string componentsSeparatedByString:@"&"];

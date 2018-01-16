@@ -7,7 +7,6 @@
 //
 
 #import "MEKVideoPlayerViewController.h"
-#import "NetworkService.h"
 #import "YouTubeParser.h"
 #import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MPMoviePlayerController.h>
@@ -22,12 +21,11 @@
 @import AssetsLibrary;
 @import MediaPlayer;
 
-@interface MEKVideoPlayerViewController () <YouTubeParserDelegate, NetworkServiceOutputProtocol, MEKPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <YouTubeParserDelegate, MEKPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
 @property (nonatomic, strong) YouTubeParser *ytb;
-@property (nonatomic, strong) NetworkService *networkService;
 @property (nonatomic, strong) NSURLSessionDownloadTask *imageTask;
 @property (nonatomic, strong) NSURLSessionDownloadTask *videoTask;
 @property (nonatomic, strong) VideoItemMO *videoInfo;
@@ -64,7 +62,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.titleLabel = [UILabel new];
@@ -112,14 +111,9 @@
     self.view.layer.cornerRadius = 10;
     self.view.layer.masksToBounds = YES;
     
-    self.networkService = [NetworkService new];
-    [self.networkService configurateUrlSessionWithParams:nil];
-    self.networkService.output = self;
-    
     self.ytb = [YouTubeParser new];
     self.ytb.delegate = self;
-    
-    [self.ytb loadVideoInfo:self.url.absoluteString];
+    [self.ytb loadVideoItemFromUrl:self.url];
     
     self.playerController = [MEKPlayerViewController new];
     [self addChildViewController:self.playerController];
@@ -136,29 +130,39 @@
     [self presentViewController:navController animated:YES completion:nil];
 }
 
--(void)downloadButtonPressed:(UIButton *)button
+- (void)downloadButtonPressed:(UIButton *)button
 {
-    self.downloadButton.isLoading = YES;
-    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerDownloadVideoItem:withQuality:)])
+    if (!self.downloadButton.isLoading)
     {
-        [self.delegate videoPlayerViewControllerDownloadVideoItem:self.videoInfo withQuality:YouTubeParserVideoQualitySmall144];
+        self.downloadButton.loading = YES;
+        if ([self.delegate respondsToSelector:@selector(videoItemDownload:withQuality:)])
+        {
+            [self.delegate videoItemDownload:self.currentItem withQuality:YouTubeParserVideoQualitySmall144];
+        }
     }
-    //self.videoTask = [self.networkService loadDataFromURL:self.videoInfo.urls[@(YouTubeParserVideoQualitySmall144)]];
+    else
+    {
+        self.downloadButton.loading = NO;
+        if ([self.delegate respondsToSelector:@selector(videoItemCancelDownload:)])
+        {
+            [self.delegate videoItemCancelDownload:self.currentItem];
+        }
+    }
 }
 
 - (void)closeButtonPressed: (UIButton*) button
 {
-    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
+    if ([self.playerDelegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
     {
-        [self.delegate videoPlayerViewControllerClosed];
+        [self.playerDelegate videoPlayerViewControllerClosed];
     }
 }
 
--(void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
+- (void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
 {
-    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerAddVideoItem:toPlaylist:)])
+    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:playlist:)])
     {
-        [self.delegate videoPlayerViewControllerAddVideoItem:self.videoInfo toPlaylist:playlist];
+        [self.delegate videoItemAddToPlaylist:self.videoInfo playlist:playlist];
     }
 }
 
@@ -295,21 +299,18 @@
     } completion:nil];
 }
 
--(void)loadingContinuesWithProgress:(double)progress withTask:(NSURLSessionDownloadTask *)task withService:(id<NetworkServiceInputProtocol>)service
+- (void)youtubeParserItemDidLoad:(VideoItemMO *)item
 {
-    if (task == self.videoTask)
-    {
-        NSLog(@"progress: %f", progress);
-        self.downloadButton.progressBar.progress = progress;
-    }
-}
-
-- (void)infoDidLoad:(VideoItemMO *)info forVideo:(NSString *)videoId
-{
-    self.videoInfo = info;
+    self.videoInfo = item;
     
     self.titleLabel.text = self.videoInfo.title;
     self.authorLabel.text = self.videoInfo.author;
+    
+    if ([self.videoInfo hasDownloaded])
+    {
+        [self setDownloadingProgress:1];
+    }
+    
     
     self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.videoInfo.title,
                                           MPMediaItemPropertyArtist : self.videoInfo.author
@@ -327,17 +328,35 @@
                                               };
     }];
     
-    self.playerController.player = [AVPlayer playerWithURL:self.videoInfo.urls[@(YouTubeParserVideoQualityHD720)]];
+    NSURL *url = self.videoInfo.urls[@(YouTubeParserVideoQualityHD720)];
+    
+    self.playerController.player = [AVPlayer playerWithURL:url];
     self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
     [self.playerController.player play];
-    
-        //self.imageTask = [self.networkService loadDataFromURL:self.videoInfo.thumbnailSmall];
-    
-    //self.videoTask = [self.networkService loadDataFromURL:self.videoInfo[@"urls"][@(YouTubeParserVideoQualitySmall144)]];
-    
-    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerAddVideoItem:toPlaylist:)])
+
+    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:)])
     {
-        [self.delegate videoPlayerViewControllerAddVideoItem:self.videoInfo toPlaylist:nil];
+        [self.delegate videoItemAddToPlaylist:self.videoInfo];
+    }
+}
+
+- (VideoItemMO *)currentItem
+{
+    return self.videoInfo;
+}
+
+- (void)setDownloadingProgress:(double)progress
+{
+    self.downloadButton.progressBar.progress = progress;
+    
+    if (progress < 1)
+    {
+        self.downloadButton.loading = progress > 0;
+    }
+    else
+    {
+        self.downloadButton.done = YES;
+        self.downloadButton.userInteractionEnabled = NO;
     }
 }
 @end

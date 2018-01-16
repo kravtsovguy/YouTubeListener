@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) UIView *stopView;
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImage *doneImage;
 
 @end
 
@@ -22,7 +23,7 @@
     return [self initWithFrame:CGRectMake(0, 0, 50, 50)];
 }
 
--(instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self)
@@ -43,20 +44,34 @@
         [self addSubview:_stopView];
         
         _image = [UIImage imageNamed:@"download"];
+        _doneImage = [UIImage imageNamed:@"downloaded"];
+        //_image = [self imageWithImage:_image convertToSize:CGSizeMake(100, 100)];
         [self setImage:_image forState:UIControlStateNormal];
-
-        //self.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-        self.tintColor = [UIColor blueColor];
+        //self.imageView.adjustsImageSizeForAccessibilityContentSizeCategory = YES;
+        
+        //self.imageView.backgroundColor = UIColor.redColor;
+        //self.imageView.contentMode = UIViewContentModeScaleToFill;
+        //self.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        //self.tintColor = [UIColor blueColor];
     }
     
     return self;
 }
 
--(void)setIsLoading:(BOOL)isLoading
+- (UIImage *)imageWithImage:(UIImage *)image convertToSize:(CGSize)size {
+    UIGraphicsBeginImageContext(size);
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *destImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    destImage = [destImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    return destImage;
+}
+
+- (void)setLoading:(BOOL)loading
 {
-    _isLoading = isLoading;
+    _loading = loading;
     
-    if (_isLoading)
+    if (_loading)
     {
         [self setImage:nil forState:UIControlStateNormal];
         self.progressBar.hidden = NO;
@@ -65,17 +80,21 @@
     else
     {
         [self setImage:self.image forState:UIControlStateNormal];
+        self.progressBar.progress = 0;
         self.progressBar.hidden = YES;
         self.stopView.hidden = YES;
     }
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
+- (void)setDone:(BOOL)done
+{
+    _done = done;
+    
+    self.loading = NO;
+    if (_done)
+    {
+        [self setImage:self.doneImage forState:UIControlStateNormal];
+    }
 }
-*/
 
 @end

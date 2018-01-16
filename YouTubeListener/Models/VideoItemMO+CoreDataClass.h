@@ -27,6 +27,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveObject;
 - (BOOL)deleteObject;
 
+// Downloading
+//- (void)downloadWithQuality:(YouTubeParserVideoQuality) quality WithDownloadController: (MEKDownloadController*) downloadController;
+//- (void)cancelDownloadWithDownloadController: (MEKDownloadController*) downloadController;
+- (BOOL)saveTempPathURL: (NSURL*) url;
+- (BOOL)removeDownload;
+- (BOOL)hasDownloaded;
+- (NSURL*)getPathUrl;
+
 @end
 
 NS_ASSUME_NONNULL_END

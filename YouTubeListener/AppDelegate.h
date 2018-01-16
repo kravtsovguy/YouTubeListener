@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import "MEKPlayerController.h"
+#import "MEKDownloadController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -16,6 +17,7 @@
 @property (nonatomic, strong) UITabBarController *tabBarController;
 
 @property (nonatomic, strong) MEKPlayerController *player;
+@property (nonatomic, strong) MEKDownloadController *downloadController;
 
 @property (readonly, strong) NSPersistentContainer *persistentContainer;
 

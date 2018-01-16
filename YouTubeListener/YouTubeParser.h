@@ -19,7 +19,7 @@ typedef NS_ENUM (NSUInteger, YouTubeParserVideoQuality) {
 @protocol YouTubeParserDelegate <NSObject>
 
 @required
--(void) infoDidLoad: (VideoItemMO*) info forVideo: (NSString*) videoId;
+-(void) youtubeParserItemDidLoad: (VideoItemMO*) item;
 
 @end
 
@@ -27,6 +27,7 @@ typedef NS_ENUM (NSUInteger, YouTubeParserVideoQuality) {
 
 @property (nonatomic, weak) id<YouTubeParserDelegate> delegate;
 
--(void) loadVideoInfo: (NSString*) videoURL;
+-(void) loadVideoItemFromUrl: (NSURL*) url;
+-(void) loadVideoItem: (VideoItemMO*) item;
 
 @end

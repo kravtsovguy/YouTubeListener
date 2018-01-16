@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PlaylistMO+CoreDataClass.h"
+#import "MEKDownloadController.h"
 
 typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
     MEKPlayerVisibleStateNone = 0,
@@ -19,6 +20,7 @@ typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
 
 @property (nonatomic, readonly) BOOL isOpened;
 @property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
+@property (nonatomic, strong) MEKDownloadController *downloadController;
 
 - (instancetype)initWithRecentPlaylist: (PlaylistMO*) recentPlaylist;
 

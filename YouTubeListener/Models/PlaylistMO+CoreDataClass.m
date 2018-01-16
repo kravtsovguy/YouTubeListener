@@ -66,7 +66,7 @@
 // Editing
 - (BOOL)rename: (NSString*) name
 {
-    if ([name isEqualToString:[PlaylistMO recentPlaylistName]])
+    if ([PlaylistMO getPlaylistForName:name withContext:self.managedObjectContext])
         return NO;
     
     self.name = name;

@@ -12,15 +12,19 @@
 #import <Masonry/Masonry.h>
 #import "MEKVideoItemTableViewCell.h"
 #import "MEKPlaylistsViewController.h"
+#import "VideoItemDelegate.h"
 
-@interface MEKPlaylistViewController () <UITableViewDelegate, UITableViewDataSource, MEKVideoItemTableViewCellDelegate, MEKPlaylistsViewControllerDelegate>
+@interface MEKPlaylistViewController () <UITableViewDelegate, UITableViewDataSource, MEKVideoItemDelegate, MEKPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, YouTubeParserDelegate>
 
 @property (nonatomic, readonly) MEKPlayerController *playerController;
+@property (nonatomic, readonly) MEKDownloadController *downloadController;
+@property (nonatomic, strong) YouTubeParser *parser;
 @property (nonatomic, strong) PlaylistMO *playlist;
 @property (nonatomic, weak) VideoItemMO *currentItem;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *videoItems;
 @property (nonatomic, readonly) BOOL isEditable;
+
 
 
 @end
@@ -34,6 +38,9 @@
     if (self)
     {
         _playlist = playlist;
+        
+        _parser = [YouTubeParser new];
+        _parser.delegate = self;
     }
     
     return self;
@@ -50,6 +57,11 @@
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     MEKPlayerController *player = appDelegate.player;
     return player;
+}
+
+- (MEKDownloadController *)downloadController
+{
+    return self.playerController.downloadController;
 }
 
 - (void)viewDidLoad {
@@ -73,6 +85,8 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    self.downloadController.delegate = self;
     [self loadItems];
 }
 
@@ -95,6 +109,13 @@
     VideoItemMO *item = self.videoItems[indexPath.row];
     
     [cell setWithPlaylist:item];
+    
+    double progress = [self.downloadController getProgressForKey:item.videoId];
+    
+    if ([item hasDownloaded])
+        progress = 1;
+    
+    [cell setDownloadProgress:progress];
     
     return cell;
 }
@@ -141,7 +162,7 @@
     return @[deleteAction];
 }
 
-- (void)videoItemAddToPlaylistPressed:(VideoItemMO *)item
+- (void)videoItemAddToPlaylist:(VideoItemMO *)item
 {
     self.currentItem = item;
     
@@ -153,14 +174,53 @@
     [self presentViewController:navController animated:YES completion:nil];
 }
 
-- (void)videoItemDownloadPressed:(VideoItemMO *)item
+- (void)videoItemDownload:(VideoItemMO *)item
 {
-    
+    if (item.urls)
+    {
+        [self.downloadController downloadDataFromURL:item.urls[@(YouTubeParserVideoQualitySmall144)] forKey:item.videoId];
+    }
+    else
+    {
+        [self.parser loadVideoItem:item];
+    }
+}
+
+- (void)videoItemCancelDownload:(VideoItemMO *)item
+{
+    [self.downloadController cancelDownloadForKey:item.videoId];
 }
 
 - (void)playlistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
 {
     [playlist addVideoItem:self.currentItem];
+}
+
+- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        for (MEKVideoItemTableViewCell *cell in self.tableView.visibleCells)
+        {
+            VideoItemMO *item = [cell getItem];
+            if ([key isEqualToString:item.videoId])
+            {
+                [cell setDownloadProgress:progress];
+                return;
+            }
+        }
+    });
+}
+
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"videoId == %@", key];
+    VideoItemMO *item = [self.videoItems filteredArrayUsingPredicate:predicate].firstObject;
+    [item saveTempPathURL:url];
+}
+
+- (void)youtubeParserItemDidLoad:(VideoItemMO *)item
+{
+    [self videoItemDownload:item];
 }
 
 @end

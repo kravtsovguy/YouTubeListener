@@ -12,6 +12,7 @@
 @interface MEKDowloadButton : UIButton
 
 @property (nonatomic, strong) MEKProgressBar *progressBar;
-@property (nonatomic, assign) BOOL isLoading;
+@property (nonatomic, assign, getter=isLoading) BOOL loading;
+@property (nonatomic, assign, getter=isDone) BOOL done;
 
 @end

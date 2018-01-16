@@ -15,7 +15,7 @@ static const CGFloat MEKPlayerViewMaximizedSize = 320;
 static const CGFloat MEKPlayerViewMinimizedSize = 60;
 static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
-@interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
+@interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate, MEKDownloadControllerDelegate, MEKVideoItemDelegate>
 
 @property (nonatomic, strong) PlaylistMO *recentPlaylist;
 @property (nonatomic, strong) UIView *overlayView;
@@ -97,6 +97,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
         return;
     
     self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithURL:videoURL];
+    self.playerViewController.playerDelegate = self;
     self.playerViewController.delegate = self;
     
     if (state == MEKPlayerVisibleStateMinimized)
@@ -198,14 +199,50 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     }
 }
 
--(void)videoPlayerViewControllerAddVideoItem:(VideoItemMO *)item toPlaylist:(PlaylistMO *)playlist
+- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key
 {
-    if (!playlist)
-    {
-        [self.recentPlaylist addVideoItem:item];
+    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
         return;
-    }
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.playerViewController setDownloadingProgress:progress];
+    });
+}
+
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key
+{
+    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+        return;
+    
+    [self.playerViewController.currentItem saveTempPathURL:url];
+}
+
+- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key
+{
+    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+        return;
+    
+    
+}
+
+- (void)videoItemCancelDownload:(VideoItemMO *)item
+{
+    [self.downloadController cancelDownloadForKey:item.videoId];
+}
+
+- (void)videoItemDownload:(VideoItemMO *)item withQuality:(YouTubeParserVideoQuality)quality
+{
+    self.downloadController.delegate = self;
+    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId];
+}
+
+-(void)videoItemAddToPlaylist:(VideoItemMO *)item
+{
+    [self.recentPlaylist addVideoItem:item];
+}
+
+-(void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
+{
     [playlist addVideoItem:item];
 }
 

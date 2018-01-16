@@ -8,21 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "VideoItemMO+CoreDataClass.h"
-
-@protocol MEKVideoItemTableViewCellDelegate <NSObject>
-
-@optional
-
-- (void)videoItemAddToPlaylistPressed: (VideoItemMO*) item;
-- (void)videoItemDownloadPressed: (VideoItemMO*) item;
-
-@end
+#import "VideoItemDelegate.h"
 
 @interface MEKVideoItemTableViewCell : UITableViewCell
 
-@property (nonatomic, weak) id<MEKVideoItemTableViewCellDelegate> delegate;
+@property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
 
+- (VideoItemMO*)getItem;
 - (void)setWithPlaylist: (VideoItemMO*) item;
+- (void)setDownloadProgress: (double) progress;
 + (CGFloat)height;
 
 @end

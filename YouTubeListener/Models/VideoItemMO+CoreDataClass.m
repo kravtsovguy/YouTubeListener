@@ -83,4 +83,52 @@
     return [self saveObject];
 }
 
+- (NSURL *)getPathUrl
+{
+    NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    path = [path stringByAppendingPathComponent:self.videoId];
+    path = [path stringByAppendingPathExtension:@"mp4"];
+    return [NSURL fileURLWithPath:path];
+}
+
+- (BOOL)saveTempPathURL:(NSURL *)url
+{
+    if (!url)
+    {
+        return NO;
+    }
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSError *error;
+    BOOL isMoved = [fileManager moveItemAtURL:url toURL:[self getPathUrl] error:&error];
+    
+    return isMoved;
+}
+
+- (BOOL)removeDownload
+{
+    if ([self hasDownloaded])
+    {
+        return NO;
+    }
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSError *error;
+    BOOL isRemoved = [fileManager removeItemAtURL:[self getPathUrl] error:&error];
+    
+    return isRemoved;
+}
+
+- (BOOL)hasDownloaded
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    BOOL isExists = [fileManager fileExistsAtPath:[self getPathUrl].path];
+    
+    return isExists;
+}
+
+
 @end

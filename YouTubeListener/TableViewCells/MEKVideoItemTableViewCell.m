@@ -167,24 +167,56 @@
     [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig];
 }
 
+- (void)setDownloadProgress:(double)progress
+{
+    self.downloadButton.progressBar.progress = progress;
+    
+    if (progress < 1)
+    {
+        self.downloadButton.loading = progress > 0;
+    }
+    else
+    {
+        self.downloadButton.done = YES;
+        self.downloadButton.userInteractionEnabled = NO;
+    }
+}
+
 + (CGFloat)height
 {
     return 120;
 }
 
+- (VideoItemMO *)getItem
+{
+    return self.item;
+}
+
 - (void)addButtonPressed:(UIButton *)button
 {
-    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylistPressed:)])
+    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:)])
     {
-        [self.delegate videoItemAddToPlaylistPressed:self.item];
+        [self.delegate videoItemAddToPlaylist:self.item];
     }
 }
 
 - (void)downloadButtonPressed:(UIButton *)button
 {
-    if ([self.delegate respondsToSelector:@selector(videoItemDownloadPressed:)])
+    if (!self.downloadButton.isLoading)
     {
-        [self.delegate videoItemDownloadPressed:self.item];
+        self.downloadButton.loading = YES;
+        if ([self.delegate respondsToSelector:@selector(videoItemDownload:)])
+        {
+            [self.delegate videoItemDownload:self.item];
+        }
+    }
+    else
+    {
+        self.downloadButton.loading = NO;
+        if ([self.delegate respondsToSelector:@selector(videoItemCancelDownload:)])
+        {
+            [self.delegate videoItemCancelDownload:self.item];
+        }
     }
 }
 

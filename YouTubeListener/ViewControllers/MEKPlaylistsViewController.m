@@ -200,7 +200,14 @@
     if (!self.sectionCell)
     {
         MEKPlaylistTableViewCell *cell = [[MEKPlaylistTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MEKPlaylistTableViewCell2"];
-        cell.backgroundColor = [UIColor colorWithRed:1 green:0.9 blue:0.9 alpha:1];
+        cell.backgroundColor = [UIColor colorWithRed:1 green:0.0 blue:0.0 alpha:0.1];
+        
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        blurEffectView.alpha = 1;
+        blurEffectView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
+        [cell insertSubview:blurEffectView atIndex:0];
+        
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
         UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recentTapped:)];

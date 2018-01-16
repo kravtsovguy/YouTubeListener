@@ -49,8 +49,14 @@
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     
+    self.downloadController = [[MEKDownloadController alloc] init];
+    [self.downloadController configurateUrlSessionWithParams:nil backgroundMode:YES];
+    
     PlaylistMO *recentPlaylist = [PlaylistMO getRecentPlaylistWithContext:self.persistentContainer.viewContext];
     self.player = [[MEKPlayerController alloc] initWithRecentPlaylist:recentPlaylist];
+    self.player.downloadController = self.downloadController;
+    
+    
     
     return YES;
 }

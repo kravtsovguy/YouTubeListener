@@ -10,23 +10,26 @@
 #import "VideoItemMO+CoreDataClass.h"
 #import "PlaylistMO+CoreDataClass.h"
 #import "YouTubeParser.h"
+#import "VideoItemDelegate.h"
 
 @protocol MEKVideoPlayerViewControllerDelegate <NSObject>
 
 @optional
 - (void)videoPlayerViewControllerClosed;
-- (void)videoPlayerViewControllerAddVideoItem: (VideoItemMO*) item toPlaylist: (PlaylistMO*) playlist;
-- (void)videoPlayerViewControllerDownloadVideoItem: (VideoItemMO*) item withQuality: (YouTubeParserVideoQuality) quality;
 
 @end
 
 @interface MEKVideoPlayerViewController : UIViewController
 
-@property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> playerDelegate;
+@property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
+
+@property (nonatomic, readonly) VideoItemMO *currentItem;
 
 - (instancetype)initWithURL: (NSURL*) url;
--(void) minimizeWithDuration: (NSTimeInterval) duration withHeight: (CGFloat) height;
--(void) maximizeWithDuration: (NSTimeInterval) duration;
+- (void)minimizeWithDuration: (NSTimeInterval) duration withHeight: (CGFloat) height;
+- (void)maximizeWithDuration: (NSTimeInterval) duration;
+- (void)setDownloadingProgress: (double) progress;
 
 @end
 
