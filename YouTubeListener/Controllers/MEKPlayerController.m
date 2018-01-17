@@ -392,7 +392,10 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     if (![key isEqualToString:self.playerViewController.item.videoId])
         return;
 
-    [self downloadControllerProgress:0 forKey:key withParams:params];
+    if (error)
+    {
+        [self downloadControllerProgress:0 forKey:key withParams:params];
+    }
 }
 
 @end

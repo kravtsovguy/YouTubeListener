@@ -114,7 +114,7 @@
 + (NSArray<VideoItemMO *> *)getRecentVideoItemsWithContext:(NSManagedObjectContext *)context
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
-    NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"added" ascending:NO selector:@selector(caseInsensitiveCompare:)];
+    NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"added" ascending:NO];
     fetchRequest.sortDescriptors = @[dateDescriptor];
     
     NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
