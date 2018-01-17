@@ -12,8 +12,8 @@
 @interface MEKVideoItemTableViewCell : UITableViewCell
 
 @property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
+@property (nonatomic, readonly) VideoItemMO *item;
 
-- (VideoItemMO*)getItem;
 - (void)setWithPlaylist: (VideoItemMO*) item;
 - (void)setDownloadProgress: (double) progress;
 + (CGFloat)height;

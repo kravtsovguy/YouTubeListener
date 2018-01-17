@@ -20,10 +20,20 @@
 
 @implementation MEKPlayerViewController
 
-- (void)viewDidLoad {
+#pragma mark - Properties
+
+- (void)setPlayingInfo:(NSDictionary *)playingInfo
+{
+    _playingInfo = playingInfo;
+    [self updateControlCenter];
+}
+
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
+
     self.updatesNowPlayingInfoCenter = NO;
     
     MPRemoteCommandCenter *rcc = [MPRemoteCommandCenter sharedCommandCenter];
@@ -44,7 +54,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     
     [self updateControlCenter];
     
@@ -53,25 +62,23 @@
     });
 }
 
--(void)setPlayingInfo:(NSDictionary *)playingInfo
+#pragma mark - Private
+
+- (void)updateControlCenter
 {
-    _playingInfo = playingInfo;
-    [self updateControlCenter];
+    NSMutableDictionary *playingInfo = [[NSMutableDictionary alloc] initWithDictionary:self.playingInfo ?: [NSDictionary new]];
+    
+    if (self.player)
+    {
+        playingInfo[MPNowPlayingInfoPropertyPlaybackRate] = @(self.player.rate);
+        playingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(CMTimeGetSeconds(self.player.currentItem.currentTime));
+        playingInfo[MPMediaItemPropertyPlaybackDuration] = @(CMTimeGetSeconds(self.player.currentItem.asset.duration));
+    }
+    
+    MPNowPlayingInfoCenter.defaultCenter.nowPlayingInfo = playingInfo;
 }
 
-- (void)applicationDidEnterBackground:(NSNotification *)notification
-{
-    if (self.player.rate == 0)
-        return;
-    
-    AVPlayer *tempPlayer = self.player;
-    self.player = nil;
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        self.player = tempPlayer;
-    });
-    //[self.mPlayer performSelector:@selector(play) withObject:nil afterDelay:0.02];
-}
+#pragma mark - UIResponder
 
 - (void)remoteControlReceivedWithEvent:(UIEvent *)event {
     switch (event.subtype) {
@@ -95,6 +102,8 @@
     [self updateControlCenter];
 }
 
+#pragma mark - Selectors
+
 - (MPRemoteCommandHandlerStatus)changedThumbSliderOnLockScreen:(MPChangePlaybackPositionCommandEvent *)event
 {
     CMTime time = CMTimeMakeWithSeconds(event.positionTime, self.player.currentItem.asset.duration.timescale);
@@ -105,22 +114,36 @@
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
-- (void)movieStateChange{
+- (void)movieStateChange
+{
     [self updateControlCenter];
 }
 
-- (void)updateControlCenter
+- (void)applicationDidEnterBackground:(NSNotification *)notification
 {
-    NSMutableDictionary *playingInfo = [[NSMutableDictionary alloc] initWithDictionary:self.playingInfo ?: [NSDictionary new]];
+    if (self.player.rate == 0)
+        return;
     
-    if (self.player)
-    {
-        playingInfo[MPNowPlayingInfoPropertyPlaybackRate] = @(self.player.rate);
-        playingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(CMTimeGetSeconds(self.player.currentItem.currentTime));
-        playingInfo[MPMediaItemPropertyPlaybackDuration] = @(CMTimeGetSeconds(self.player.currentItem.asset.duration));
-    }
+    AVPlayer *tempPlayer = self.player;
+    self.player = nil;
     
-    MPNowPlayingInfoCenter.defaultCenter.nowPlayingInfo = playingInfo;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        self.player = tempPlayer;
+    });
+}
+
+#pragma mark - dealloc
+
+- (void)dealloc
+{
+    MPRemoteCommandCenter *rcc = [MPRemoteCommandCenter sharedCommandCenter];
+    [rcc.changePlaybackPositionCommand removeTarget:self action:@selector(changedThumbSliderOnLockScreen:)];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemTimeJumpedNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
 @end

@@ -17,6 +17,24 @@
 
 @implementation VideoItemMO
 
+#pragma mark - Static Properties
+
++ (NSString *)entityName
+{
+    return @"VideoItem";
+}
+
+#pragma mark - Creation
+
++ (VideoItemMO*)getEmptyWithContext:(NSManagedObjectContext *)context
+{
+    VideoItemMO *item =  [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
+    
+    return item;
+}
+
+#pragma mark - Instance Accessors
+
 + (NSArray<VideoItemMO *>*)executeFetchRequest:(NSFetchRequest *)request withContext:(NSManagedObjectContext *)context
 {
     NSError *error = nil;
@@ -29,21 +47,6 @@
     
     return result;
 }
-
-+ (NSString *)entityName
-{
-    return @"VideoItem";
-}
-
-// Creation
-+ (VideoItemMO*)getEmptyWithContext:(NSManagedObjectContext *)context
-{
-    VideoItemMO *item =  [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
-    
-    return item;
-}
-
-// Instance Accessors
 
 + (VideoItemMO*)getVideoItemForURL:(NSURL *)videoURL withContext:(NSManagedObjectContext *)context
 {
@@ -93,7 +96,8 @@
     return result;
 }
 
-// Basic
+#pragma mark - Basic
+
 - (BOOL)saveObject
 {
     NSError *error = nil;
@@ -112,6 +116,8 @@
     return [self saveObject];
 }
 
+#pragma mark - Downloading Public
+
 - (NSString *)getPathDirectory
 {
     NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -125,14 +131,6 @@
     }
     
     return path;
-}
-
-- (NSURL *)getPathUrlWithQuality:(VideoItemQuality)quality
-{
-    NSString * path = [self getPathDirectory];
-    path = [path stringByAppendingPathComponent:@(quality).stringValue];
-    path = [path stringByAppendingPathExtension:@"mp4"];
-    return [NSURL fileURLWithPath:path];
 }
 
 - (BOOL)saveTempPathURL:(NSURL *)url withQuality:(VideoItemQuality)quality
@@ -217,6 +215,16 @@
 {
     NSDictionary *urls = [self downloadedURLs];
     return urls;
+}
+
+#pragma mark - Downloading Private
+
+- (NSURL *)getPathUrlWithQuality:(VideoItemQuality)quality
+{
+    NSString * path = [self getPathDirectory];
+    path = [path stringByAppendingPathComponent:@(quality).stringValue];
+    path = [path stringByAppendingPathExtension:@"mp4"];
+    return [NSURL fileURLWithPath:path];
 }
 
 

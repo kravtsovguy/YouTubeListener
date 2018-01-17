@@ -19,6 +19,8 @@
 
 @implementation MEKDownloadController
 
+#pragma mark - init
+
 - (instancetype)init
 {
     self = [super init];
@@ -29,7 +31,9 @@
     return self;
 }
 
--(void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background
+#pragma mark - Public
+
+- (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background
 {
     
     self.backgroundMode = background;
@@ -92,6 +96,8 @@
     return progress;
 }
 
+#pragma mark - NSURLSessionDownloadDelegate
+
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location
 {
     NSString *key = downloadTask.taskDescription;
@@ -103,18 +109,7 @@
     }
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
-{
-    NSString *key = task.taskDescription;
-    NSDictionary *params = self.params[key];
-    
-    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithError:forKey:withParams:)])
-    {
-        [self.delegate downloadControllerDidFinishWithError:error forKey:key withParams:params];
-    }
-}
-
--(void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
     if (totalBytesExpectedToWrite == 0)
     {
@@ -130,6 +125,19 @@
     if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {
         [self.delegate downloadControllerProgress:progress forKey:key withParams:params];
+    }
+}
+
+#pragma mark - NSURLSessionTaskDelegate
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+    NSString *key = task.taskDescription;
+    NSDictionary *params = self.params[key];
+    
+    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithError:forKey:withParams:)])
+    {
+        [self.delegate downloadControllerDidFinishWithError:error forKey:key withParams:params];
     }
 }
 

@@ -128,14 +128,8 @@
 		BA70A6752005F87E002AE1B4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				BA70A6762005FEE2002AE1B4 /* PlaylistMO+CoreDataProperties.h */,
-				BA70A6772005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.h */,
-				BA70A6782005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m */,
-				BA70A6792005FEE2002AE1B4 /* PlaylistMO+CoreDataProperties.m */,
-				BA70A67A2005FEE2002AE1B4 /* VideoItemMO+CoreDataProperties.h */,
-				BA70A67B2005FEE2002AE1B4 /* VideoItemMO+CoreDataClass.h */,
-				BA70A67C2005FEE2002AE1B4 /* VideoItemMO+CoreDataClass.m */,
-				BA70A67D2005FEE2002AE1B4 /* VideoItemMO+CoreDataProperties.m */,
+				BAB56F35200EC656000DF5C6 /* Playlist */,
+				BAB56F36200EC666000DF5C6 /* VideoItem */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -234,6 +228,28 @@
 				BAB56F30200EAA6D000DF5C6 /* MEKWebVideoParser.m */,
 			);
 			path = MEKWebVideoParser;
+			sourceTree = "<group>";
+		};
+		BAB56F35200EC656000DF5C6 /* Playlist */ = {
+			isa = PBXGroup;
+			children = (
+				BA70A6762005FEE2002AE1B4 /* PlaylistMO+CoreDataProperties.h */,
+				BA70A6772005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.h */,
+				BA70A6782005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m */,
+				BA70A6792005FEE2002AE1B4 /* PlaylistMO+CoreDataProperties.m */,
+			);
+			path = Playlist;
+			sourceTree = "<group>";
+		};
+		BAB56F36200EC666000DF5C6 /* VideoItem */ = {
+			isa = PBXGroup;
+			children = (
+				BA70A67A2005FEE2002AE1B4 /* VideoItemMO+CoreDataProperties.h */,
+				BA70A67B2005FEE2002AE1B4 /* VideoItemMO+CoreDataClass.h */,
+				BA70A67C2005FEE2002AE1B4 /* VideoItemMO+CoreDataClass.m */,
+				BA70A67D2005FEE2002AE1B4 /* VideoItemMO+CoreDataProperties.m */,
+			);
+			path = VideoItem;
 			sourceTree = "<group>";
 		};
 		BABD355D1FDEAF740036B27F = {

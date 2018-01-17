@@ -11,7 +11,7 @@
 #import <Masonry/Masonry.h>
 #import "AppDelegate.h"
 
-@interface MEKSearchViewController () <UITextFieldDelegate, UIScrollViewDelegate>
+@interface MEKSearchViewController () <UITextFieldDelegate>
 
 @property (nonatomic, strong) UITextField *searchTextField;
 @property (nonatomic, strong) UIButton *searchButton;
@@ -20,7 +20,10 @@
 
 @implementation MEKSearchViewController
 
-- (void)viewDidLoad {
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.view.backgroundColor = UIColor.whiteColor;
@@ -64,6 +67,8 @@
     [self.view addGestureRecognizer:tap];
 }
 
+#pragma mark - Selectors
+
 - (void)goButtonTapped: (UIButton*) button
 {
     [self.view endEditing:YES];
@@ -79,7 +84,9 @@
     [self.view endEditing:YES];
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
     return YES;

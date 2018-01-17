@@ -10,6 +10,35 @@
 
 @implementation UIImage(Cache)
 
+#pragma mark - Public Static
+
++ (void)ch_downloadImageFromUrl:(NSURL *)url completion:(void (^)(UIImage *))completion
+{
+    if (!url)
+    {
+        return;
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
+        
+        NSData *data = [self ch_getDataForUrl:url];
+        if (!data)
+        {
+            data = [NSData dataWithContentsOfURL:url];
+            [self ch_saveData:data ForUrl:url];
+        }
+        
+        UIImage *image = [UIImage imageWithData:data];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            completion(image);
+            
+        });
+    });
+}
+
+#pragma mark - Private Static
+
 + (void)ch_saveData:(NSData*)data ForUrl: (NSURL*)url
 {
     NSString *path = [self ch_getPathForUrl:url];
@@ -58,31 +87,6 @@
     NSString *path = url.path;
     path = [path stringByReplacingOccurrencesOfString:@"/" withString:@""];
     return path;
-}
-
-+(void)ch_downloadImageFromUrl:(NSURL *)url completion:(void (^)(UIImage *))completion
-{
-    if (!url)
-    {
-        return;
-    }
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
-        
-        NSData *data = [self ch_getDataForUrl:url];
-        if (!data)
-        {
-            data = [NSData dataWithContentsOfURL:url];
-            [self ch_saveData:data ForUrl:url];
-        }
-        
-        UIImage *image = [UIImage imageWithData:data];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            completion(image);
-            
-        });
-    });
 }
 
 @end

@@ -14,7 +14,10 @@
 
 @implementation MEKModalPlaylistsViewController
 
-- (void)viewDidLoad {
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.title = @"Choose Playlist";
@@ -25,10 +28,14 @@
     self.tableView.sectionHeaderHeight = 0;
 }
 
+#pragma mark - Selectors
+
 - (void)cancelView: (id) sender
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+#pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
@@ -37,6 +44,8 @@
     
     return cell;
 }
+
+#pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -54,9 +63,5 @@
 {
     return @[];
 }
-
-
-
-
 
 @end

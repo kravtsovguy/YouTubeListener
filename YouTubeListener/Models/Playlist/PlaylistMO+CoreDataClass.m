@@ -15,18 +15,7 @@
 
 @implementation PlaylistMO
 
-+ (NSArray<PlaylistMO *>*)executeFetchRequest:(NSFetchRequest *)request withContext:(NSManagedObjectContext *)context
-{
-    NSError *error = nil;
-    NSArray *result = [context executeFetchRequest:request error:&error];
-    
-    if (!result)
-    {
-        NSLog(@"error: %@", error.localizedDescription);
-    }
-    
-    return result;
-}
+#pragma mark - Static Properties
 
 + (NSString *)entityName
 {
@@ -43,7 +32,8 @@
     return @"DOWNLOADS";
 }
 
-// Creation
+#pragma mark - Creation
+
 + (PlaylistMO*)getEmptyWithContext: (NSManagedObjectContext*) context
 {
     PlaylistMO *item =  [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
@@ -66,7 +56,8 @@
     return playlist;
 }
 
-// Editing
+#pragma mark - Editing
+
 - (BOOL)rename: (NSString*) name
 {
     if ([PlaylistMO getPlaylistForName:name withContext:self.managedObjectContext])
@@ -107,7 +98,8 @@
     return [self saveObject];
 }
 
-// Accessors
+#pragma mark - Accessors
+
 - (NSArray<VideoItemMO*>*)getVideoItems
 {
     NSMutableArray *items = [NSMutableArray new];
@@ -133,7 +125,21 @@
     return contains;
 }
 
-// Instance Accessors
+#pragma mark - Instance Accessors
+
++ (NSArray<PlaylistMO *>*)executeFetchRequest:(NSFetchRequest *)request withContext:(NSManagedObjectContext *)context
+{
+    NSError *error = nil;
+    NSArray *result = [context executeFetchRequest:request error:&error];
+    
+    if (!result)
+    {
+        NSLog(@"error: %@", error.localizedDescription);
+    }
+    
+    return result;
+}
+
 + (NSArray<PlaylistMO*>*)getPlaylistsWithContext: (NSManagedObjectContext*) context
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
@@ -157,7 +163,8 @@
 }
 
 
-// Basic
+#pragma mark - Basic
+
 - (BOOL)saveObject
 {
     NSError *error = nil;

@@ -33,6 +33,8 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @implementation MEKPlayerController
 
+#pragma mark - Properties
+
 - (NSManagedObjectContext*) coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
@@ -43,12 +45,12 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     return context;
 }
 
--(UITabBarController *)tabBarController
+- (UITabBarController *)tabBarController
 {
     return ((AppDelegate*)[UIApplication sharedApplication].delegate).tabBarController;
 }
 
--(UIView *)tabBarMainView
+- (UIView *)tabBarMainView
 {
     return self.tabBarController.view.subviews[0];
 }
@@ -81,6 +83,76 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     
     return MEKPlayerVisibleStateNone;
 }
+
+#pragma mark - Public
+
+- (void)openURL:(NSURL *)videoURL
+{
+    [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMinimized];
+}
+
+- (void)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
+{
+    VideoItemMO *item = [VideoItemMO getVideoItemForURL:videoURL withContext:self.coreDataContext];
+    if (!item)
+    {
+        item = [VideoItemMO getEmptyWithContext:self.coreDataContext];
+        item.originURL = videoURL;
+    }
+    
+    [self openVideoItem:item withVisibleState:state];
+}
+
+- (void)openVideoItem:(VideoItemMO *)item
+{
+    [self openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
+}
+
+- (void)openVideoItem:(VideoItemMO *)item withVisibleState:(MEKPlayerVisibleState)state
+{
+    if (self.isOpened)
+    {
+        [self closePlayer];
+    }
+    
+    [self initOverlayView];
+    [self initScrollView];
+    [self initPlayerViewControllerWithVideoItem:item withVisibleState:state];
+    
+    if (state == MEKPlayerVisibleStateMaximized)
+        [self maximizePlayer];
+    
+    if (state == MEKPlayerVisibleStateMinimized)
+        [self minimizePlayer];
+}
+
+- (void)minimize
+{
+    [self.playerViewController minimizeWithDuration:MEKPlayerViewAnimationDuration withHeight:MEKPlayerViewMinimizedSize];
+    [self minimizePlayer];
+}
+
+- (void)maximize
+{
+    [self.playerViewController maximizeWithDuration:MEKPlayerViewAnimationDuration];
+    [self maximizePlayer];
+}
+
+- (void)close
+{
+    if (!self.isOpened)
+        return;
+    
+    [self minimizePlayer];
+    
+    [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
+        self.scrollView.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished) {
+        [self closePlayer];
+    }];
+}
+
+#pragma mark - Private
 
 - (void)closePlayer
 {
@@ -147,134 +219,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     [self.tabBarController.view insertSubview:self.overlayView aboveSubview:self.tabBarMainView];
 }
 
-- (void)openURL:(NSURL *)videoURL
-{
-    [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMinimized];
-}
-
-- (void)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
-{
-    VideoItemMO *item = [VideoItemMO getVideoItemForURL:videoURL withContext:self.coreDataContext];
-    if (!item)
-    {
-        item = [VideoItemMO getEmptyWithContext:self.coreDataContext];
-        item.originURL = videoURL;
-    }
-    
-    [self openVideoItem:item withVisibleState:state];
-}
-
-- (void)openVideoItem:(VideoItemMO *)item
-{
-    [self openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
-}
-
-- (void)openVideoItem:(VideoItemMO *)item withVisibleState:(MEKPlayerVisibleState)state
-{
-    if (self.isOpened)
-    {
-        [self closePlayer];
-    }
-    
-    [self initOverlayView];
-    [self initScrollView];
-    [self initPlayerViewControllerWithVideoItem:item withVisibleState:state];
-    
-    if (state == MEKPlayerVisibleStateMaximized)
-        [self maximizePlayer];
-    
-    if (state == MEKPlayerVisibleStateMinimized)
-        [self minimizePlayer];
-}
-
-- (void)fixContentInScrollView: (UIScrollView*) scrollView AtOffset: (CGPoint) offset
-{
-    [scrollView setContentOffset:offset animated:NO];
-    
-    CGRect rect = CGRectMake(0, 0, CGRectGetWidth(scrollView.frame), CGRectGetHeight(scrollView.frame));
-    [scrollView scrollRectToVisible:rect animated:YES];
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
-    NSLog(@"contentOffset: %f", scrollView.contentOffset.y);
-    
-    if (scrollView.contentOffset.y > 100)
-    {
-        [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, 100)];
-
-        [self maximize];
-    }
-    
-    if (scrollView.contentOffset.y < -80)
-    {
-        [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, -80)];
-        
-        [self minimize];
-    }
-}
-
-- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key
-{
-    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
-        return;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.playerViewController setDownloadingProgress:progress];
-    });
-}
-
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
-        return;
-    
-    NSNumber *quality = params[@"quality"];
-    [self.playerViewController.currentItem saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
-}
-
-- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
-        return;
-    
-    
-}
-
-- (void)videoItemCancelDownload:(VideoItemMO *)item
-{
-    [self.downloadController cancelDownloadForKey:item.videoId];
-}
-
-- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
-{
-    self.downloadController.delegate = self;
-    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
-}
-
--(void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
-{
-    [playlist addVideoItem:item];
-}
-
--(void)videoPlayerViewControllerClosed
-{
-    [self close];
-}
-
--(void)close
-{
-    if (!self.isOpened)
-        return;
-    
-    [self minimizePlayer];
-    
-    [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        self.scrollView.transform = CGAffineTransformIdentity;
-    } completion:^(BOOL finished) {
-        [self closePlayer];
-    }];
-}
 
 - (void)minimizePlayerUI
 {
@@ -318,16 +262,86 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     } completion:nil];
 }
 
--(void)minimize
+- (void)fixContentInScrollView: (UIScrollView*) scrollView AtOffset: (CGPoint) offset
 {
-    [self.playerViewController minimizeWithDuration:MEKPlayerViewAnimationDuration withHeight:MEKPlayerViewMinimizedSize];
-    [self minimizePlayer];
+    [scrollView setContentOffset:offset animated:NO];
+    
+    CGRect rect = CGRectMake(0, 0, CGRectGetWidth(scrollView.frame), CGRectGetHeight(scrollView.frame));
+    [scrollView scrollRectToVisible:rect animated:YES];
 }
 
--(void)maximize
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    NSLog(@"contentOffset: %f", scrollView.contentOffset.y);
+    
+    if (scrollView.contentOffset.y > 100)
+    {
+        [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, 100)];
+        
+        [self maximize];
+    }
+    
+    if (scrollView.contentOffset.y < -80)
+    {
+        [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, -80)];
+        
+        [self minimize];
+    }
+}
+
+#pragma mark - MEKVideoItemDelegate
+
+- (void)videoItemCancelDownload:(VideoItemMO *)item
 {
-    [self.playerViewController maximizeWithDuration:MEKPlayerViewAnimationDuration];
-    [self maximizePlayer];
+    [self.downloadController cancelDownloadForKey:item.videoId];
+}
+
+- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
+{
+    self.downloadController.delegate = self;
+    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
+}
+
+- (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
+{
+    [playlist addVideoItem:item];
+}
+
+#pragma mark - MEKVideoPlayerViewControllerDelegate
+
+- (void)videoPlayerViewControllerClosed
+{
+    [self close];
+}
+
+#pragma mark - MEKDownloadControllerDelegate
+
+- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key
+{
+    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+        return;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.playerViewController setDownloadingProgress:progress];
+    });
+}
+
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+        return;
+    
+    NSNumber *quality = params[@"quality"];
+    [self.playerViewController.currentItem saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
+}
+
+- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+        return;
+    
 }
 
 @end

@@ -12,6 +12,8 @@
 
 @implementation MEKYouTubeVideoParser
 
+#pragma mark - Private overriding
+
 - (NSString*)generateIdForVideoItem: (VideoItemMO*) item
 {
     NSString *videoURL = item.originURL.absoluteString;

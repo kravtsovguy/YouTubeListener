@@ -15,6 +15,6 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *items;
 
--(instancetype)initWithPlaylist: (PlaylistMO*) playlist;
+- (instancetype)initWithPlaylist: (PlaylistMO*) playlist;
 
 @end

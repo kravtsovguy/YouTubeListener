@@ -14,11 +14,15 @@
 
 @implementation MEKDownloadsPlaylistViewController
 
-- (void)viewDidLoad {
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    
     self.title = [PlaylistMO downloadsPlaylistName];
 }
+
+#pragma mark - Private
 
 - (void)updateData
 {
@@ -29,6 +33,8 @@
     
     self.items = items;
 }
+
+#pragma mark - UITableViewDelegate
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -14,16 +14,23 @@
 
 @implementation MEKRecentPlaylistViewController
 
-- (void)viewDidLoad {
+
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    
     self.title = [PlaylistMO recentPlaylistName];
 }
+
+#pragma mark - Private
 
 - (void)updateData
 {
     self.items = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
 }
+
+#pragma mark - UITableViewDelegate
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {

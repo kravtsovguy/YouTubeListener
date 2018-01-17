@@ -13,6 +13,8 @@
 
 @interface MEKVideoItemTableViewCell ()
 
+@property (nonatomic, strong) VideoItemMO *item;
+
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *authorLabel;
 
@@ -23,12 +25,11 @@
 @property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) MEKDowloadButton *downloadButton;
 
-@property (nonatomic, strong) VideoItemMO *item;
-
 @end
 
 @implementation MEKVideoItemTableViewCell
 
+#pragma mark - init
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -84,7 +85,10 @@
     return self;
 }
 
-+ (BOOL)requiresConstraintBasedLayout {
+#pragma mark - UIView
+
++ (BOOL)requiresConstraintBasedLayout
+{
     return YES;
 }
 
@@ -140,6 +144,8 @@
     [super updateConstraints];
 }
 
+#pragma mark - Public
+
 - (void)setWithPlaylist:(VideoItemMO *)item
 {
     if (!item)
@@ -186,10 +192,7 @@
     return 120;
 }
 
-- (VideoItemMO *)getItem
-{
-    return self.item;
-}
+#pragma mark - Selectors
 
 - (void)addButtonPressed:(UIButton *)button
 {

@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString*)recentPlaylistName;
 + (NSString*)downloadsPlaylistName;
 
-+ (NSArray<PlaylistMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
-
 // Creation
 + (PlaylistMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
 + (PlaylistMO*)playlistWithName: (NSString*) name withContext: (NSManagedObjectContext*) context;
@@ -36,15 +34,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)containsVideoItem: (VideoItemMO*) item;
 
 // Instance Accessors
++ (NSArray<PlaylistMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
 + (NSArray<PlaylistMO*>*)getPlaylistsWithContext: (NSManagedObjectContext*) context;
 + (PlaylistMO*)getPlaylistForName: (NSString*) name withContext: (NSManagedObjectContext*) context;
 
 // Basic
 - (BOOL)saveObject;
 - (BOOL)deleteObject;
-
-
-
 
 @end
 

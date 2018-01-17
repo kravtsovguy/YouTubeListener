@@ -12,6 +12,8 @@
 
 @interface MEKPlaylistTableViewCell()
 
+@property (nonatomic, strong) PlaylistMO *playlist;
+
 @property (nonatomic, strong) UIImageView *titleImageView;
 @property (nonatomic, strong) UILabel *nameLabel;
 @property (nonatomic, strong) UILabel *countLabel;
@@ -19,6 +21,8 @@
 @end
 
 @implementation MEKPlaylistTableViewCell
+
+#pragma mark - init
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -45,7 +49,10 @@
     return self;
 }
 
-+ (BOOL)requiresConstraintBasedLayout {
+#pragma mark - UIView
+
++ (BOOL)requiresConstraintBasedLayout
+{
     return YES;
 }
 
@@ -71,6 +78,8 @@
     [super updateConstraints];
 }
 
+#pragma mark - Public
+
 - (void)setWithName:(NSString *)playlistName itemsCount: (NSUInteger)count imageURL:(NSURL*)url
 {
     self.nameLabel.text = playlistName;
@@ -86,13 +95,15 @@
     }
 }
 
--(void)setWithPlaylist:(PlaylistMO *)playlist andVideoItem:(VideoItemMO *)item
+- (void)setWithPlaylist:(PlaylistMO *)playlist andVideoItem:(VideoItemMO *)item
 {
+    self.playlist = playlist;
+    
     [self setWithName:playlist.name itemsCount:playlist.items.count imageURL:item.thumbnailBig];
     
 }
 
-+(CGFloat)height
++ (CGFloat)height
 {
     return 80;
 }

@@ -37,12 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString*)entityName;
 
-+ (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
-
 // Creation
 + (VideoItemMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
 
 // Instance Accessors
++ (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
 + (VideoItemMO*)getVideoItemForURL: (NSURL*) videoURL withContext: (NSManagedObjectContext*) context;
 + (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
 + (NSArray<VideoItemMO*>*)getVideoItemsWithContext: (NSManagedObjectContext*) context;

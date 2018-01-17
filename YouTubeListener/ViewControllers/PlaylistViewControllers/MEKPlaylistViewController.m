@@ -26,6 +26,8 @@
 
 @implementation MEKPlaylistViewController
 
+#pragma mark - init
+
 - (instancetype)init
 {
     self = [super init];
@@ -48,6 +50,8 @@
     return self;
 }
 
+#pragma mark - Properties
+
 - (MEKPlayerController *)playerController
 {
     UIApplication *application = [UIApplication sharedApplication];
@@ -66,7 +70,10 @@
     return self.playerController.coreDataContext;
 }
 
-- (void)viewDidLoad {
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.title = self.playlist.name;
@@ -84,13 +91,15 @@
     }];
 }
 
--(void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
     self.downloadController.delegate = self;
     [self loadItems];
 }
+
+#pragma mark - Private
 
 - (void)updateData
 {
@@ -102,6 +111,8 @@
     [self updateData];
     [self.tableView reloadData];
 }
+
+#pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     
@@ -127,12 +138,14 @@
     return self.items.count;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [MEKVideoItemTableViewCell height];
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -156,6 +169,8 @@
     return @[deleteAction];
 }
 
+#pragma mark - MEKVideoItemDelegate
+
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item
 {
     self.currentItem = item;
@@ -168,7 +183,7 @@
     [self presentViewController:navController animated:YES completion:nil];
 }
 
-- (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
+- (void)videoItemDownload: (VideoItemMO*) item;
 {
     if (item.urls)
     {
@@ -186,17 +201,28 @@
     [self.downloadController cancelDownloadForKey:item.videoId];
 }
 
+#pragma mark - MEKWebVideoParserOutputProtocol
+
+- (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
+{
+    [self videoItemDownload:item];
+}
+
+#pragma mark - MEKModalPlaylistsViewControllerDelegate
+
 - (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
 {
     [playlist addVideoItem:self.currentItem];
 }
+
+#pragma mark - MEKDownloadControllerDelegate
 
 - (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         for (MEKVideoItemTableViewCell *cell in self.tableView.visibleCells)
         {
-            VideoItemMO *item = [cell getItem];
+            VideoItemMO *item = cell.item;
             if ([key isEqualToString:item.videoId])
             {
                 [cell setDownloadProgress:progress];
@@ -213,11 +239,6 @@
     
     NSNumber *quality = params[@"quality"];
     [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
-}
-
-- (void)youtubeParserItemDidLoad:(VideoItemMO *)item
-{
-    [self videoItemDownload:item];
 }
 
 @end

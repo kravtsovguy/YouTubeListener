@@ -21,7 +21,9 @@
 
 @implementation MEKProgressBar
 
--(instancetype)initWithFrame:(CGRect)frame
+#pragma mark - init
+
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self)
@@ -65,7 +67,9 @@
     return self;
 }
 
--(void)setRadius:(CGFloat)radius
+#pragma mark - Properties
+
+- (void)setRadius:(CGFloat)radius
 {
     _radius = radius;
     
@@ -79,29 +83,9 @@
     [self.backProgressLayer setLineWidth:_radius];
 }
 
--(void)setProgress:(CGFloat)progress
+- (void)setProgress:(CGFloat)progress
 {
-    //[CATransaction begin];
-
     self.progressLayer.strokeEnd = progress;
-    
-//    [self.progressLayer removeAllAnimations];
-//    self.animateStrokeDown = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-//    self.animateStrokeDown.fromValue = @(self.progressLayer.strokeEnd);
-//    self.animateStrokeDown.toValue = @(progress);
-//    [self.progressLayer addAnimation:self.animateStrokeDown forKey:@"animateStrokeDown"];
-    
-    //[CATransaction commit];
-    //[_progressLayer setStrokeEnd:_progress];
-    //[self setNeedsLayout];
-    //[_progressLayer setNeedsDisplay];
 }
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end

@@ -22,6 +22,8 @@
 
 @implementation MEKPlaylistsViewController
 
+#pragma mark - Properties
+
 - (NSManagedObjectContext*) coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
@@ -32,7 +34,10 @@
     return context;
 }
 
-- (void)viewDidLoad {
+#pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     self.title = @"PLAYLISTS";
     self.view.backgroundColor = UIColor.whiteColor;
@@ -51,23 +56,16 @@
         make.edges.equalTo(self.view);
     }];
 
-//    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 100)];
-//    header.backgroundColor = UIColor.redColor;
-//    self.tableView.tableHeaderView = header;
     self.tableView.sectionHeaderHeight = [MEKPlaylistTableViewCell height];
 }
 
-
--(void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self loadPlaylists];
 }
 
-- (void)cancelView: (id) sender
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+#pragma mark - Private
 
 - (void)updateData
 {
@@ -108,6 +106,44 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+- (void)renamePlaylist: (PlaylistMO*) playlist
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Rename Playlist"
+                                                                   message:@""
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action) {
+                                                       [self.tableView setEditing:NO];
+                                                       
+                                                       [playlist rename:alert.textFields[0].text];
+                                                       
+                                                       [self loadPlaylists];
+                                                   }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    
+    [alert addAction:submit];
+    [alert addAction:cancel];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.text = playlist.name;
+    }];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+#pragma mark - Selectors
+
+- (void)recentTapped:(UIGestureRecognizer *)gestureRecognizer
+{
+    MEKRecentPlaylistViewController *controller = [MEKRecentPlaylistViewController new];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
+#pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
@@ -121,6 +157,13 @@
     return cell;
 }
 
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.playlists.count;
+}
+
+#pragma mark - UITableViewDelegate
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -131,17 +174,12 @@
     [self.navigationController pushViewController:controller animated:YES];
 }
 
-- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return self.playlists.count;
-}
-
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [MEKPlaylistTableViewCell height];
 }
 
--(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (!self.sectionCell)
     {
@@ -170,53 +208,17 @@
     return self.sectionCell;
 }
 
-- (void)recentTapped:(UIGestureRecognizer *)gestureRecognizer
-{
-    MEKRecentPlaylistViewController *controller = [MEKRecentPlaylistViewController new];
-    [self.navigationController pushViewController:controller animated:YES];
-}
-
-- (void)renamePlaylist: (PlaylistMO*) playlist
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Rename Playlist"
-                                                                   message:@""
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       [self.tableView setEditing:NO];
-                                                       
-                                                       [playlist rename:alert.textFields[0].text];
-
-                                                       [self loadPlaylists];
-                                                   }];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                   }];
-    
-    [alert addAction:submit];
-    [alert addAction:cancel];
-    
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.text = playlist.name;
-    }];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
         [self renamePlaylist:self.playlists [indexPath.row]];
-
+        
     }];
     moreAction.backgroundColor = [UIColor lightGrayColor];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-
+        
         PlaylistMO *playlist = self.playlists [indexPath.row];
         [playlist deleteObject];
         

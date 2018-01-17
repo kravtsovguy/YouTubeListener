@@ -11,6 +11,7 @@
 
 @implementation UIImageView(Cache)
 
+#pragma mark - Public 
 
 - (void)ch_downloadImageFromUrl:(NSURL *)url
 {

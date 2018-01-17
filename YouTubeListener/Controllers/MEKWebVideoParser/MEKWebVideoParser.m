@@ -20,6 +20,8 @@
 
 @implementation MEKWebVideoParser
 
+#pragma mark - init
+
 - (instancetype)init
 {
     self = [super init];
@@ -31,6 +33,23 @@
     }
     return self;
 }
+
+#pragma mark - Public
+
+- (void)loadVideoItem:(VideoItemMO *)item
+{
+    if (!item)
+    {
+        return;
+    }
+    
+    item.videoId = [self generateIdForVideoItem:item];
+    NSURL *url = [self generateUrlForVideoItem:item];
+    
+    [self.downloadController downloadDataFromURL:url forKey:item.videoId withParams:@{@"item" : item}];
+}
+
+#pragma mark - Private
 
 - (NSString*)generateIdForVideoItem: (VideoItemMO*) item
 {
@@ -45,26 +64,12 @@
     return item.originURL;
 }
 
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    NSString *content = [NSString stringWithContentsOfFile:url.path encoding:NSUTF8StringEncoding error:nil];
-    
-    VideoItemMO *item = params[@"item"];
-    [self parseQueryContent:content forVideoItem:item];
-    [item saveObject];
-    
-    if (self.output && [self.output respondsToSelector:@selector(webVideoParser:didLoadItem:)])
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.output webVideoParser:self didLoadItem:item];
-        });
-    }
-}
-
 - (void)parseQueryContent: (NSString*) content forVideoItem: (VideoItemMO*) item
 {
     /* Parsing... */
 }
+
+#pragma mark - Useful
 
 - (NSDictionary*) dictionaryWithQueryString: (NSString*) string
 {
@@ -81,17 +86,22 @@
     return dictionary;
 }
 
-- (void)loadVideoItem:(VideoItemMO *)item
+#pragma mark - MEKDownloadControllerDelegate
+
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (!item)
+    NSString *content = [NSString stringWithContentsOfFile:url.path encoding:NSUTF8StringEncoding error:nil];
+    
+    VideoItemMO *item = params[@"item"];
+    [self parseQueryContent:content forVideoItem:item];
+    [item saveObject];
+    
+    if (self.output && [self.output respondsToSelector:@selector(webVideoParser:didLoadItem:)])
     {
-        return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.output webVideoParser:self didLoadItem:item];
+        });
     }
-    
-    item.videoId = [self generateIdForVideoItem:item];
-    NSURL *url = [self generateUrlForVideoItem:item];
-    
-    [self.downloadController downloadDataFromURL:url forKey:item.videoId withParams:@{@"item" : item}];
 }
 
 @end
