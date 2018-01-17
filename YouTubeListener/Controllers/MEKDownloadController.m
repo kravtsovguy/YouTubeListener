@@ -82,7 +82,7 @@
     NSURLSessionDownloadTask *task = self.tasks[key];
     [task cancel];
     
-    [self.tasks removeObjectForKey:key];
+    [self removeTaskForKey:key];
 }
 
 - (double)getProgressForKey:(NSString *)key
@@ -96,12 +96,21 @@
     return progress;
 }
 
+#pragma mark - Private
+
+- (void)removeTaskForKey: (NSString *)key
+{
+    [self.tasks removeObjectForKey:key];
+    [self.params removeObjectForKey:key];
+}
+
 #pragma mark - NSURLSessionDownloadDelegate
 
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location
 {
     NSString *key = downloadTask.taskDescription;
     NSDictionary *params = self.params[key];
+    [self removeTaskForKey:key];
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithTempUrl:forKey:withParams:)])
     {
@@ -134,6 +143,7 @@
 {
     NSString *key = task.taskDescription;
     NSDictionary *params = self.params[key];
+    [self removeTaskForKey:key];
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithError:forKey:withParams:)])
     {

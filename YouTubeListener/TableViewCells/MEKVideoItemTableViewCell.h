@@ -14,7 +14,7 @@
 @property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
 @property (nonatomic, readonly) VideoItemMO *item;
 
-- (void)setWithPlaylist: (VideoItemMO*) item;
+- (void)setWithVideoItem: (VideoItemMO*) item;
 - (void)setDownloadProgress: (double) progress;
 + (CGFloat)height;
 

@@ -10,9 +10,6 @@
 #import "MEKVideoPlayerViewController.h"
 #import "AppDelegate.h"
 
-
-static const CGFloat MEKPlayerViewMaximizedSize = 320;
-static const CGFloat MEKPlayerViewMinimizedSize = 60;
 static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate, MEKDownloadControllerDelegate, MEKVideoItemDelegate>
@@ -71,12 +68,12 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     CGFloat tabbarHeight = CGRectGetHeight(self.tabBarController.tabBar.frame);
     CGFloat y = CGRectGetMinY(self.scrollView.frame);
     
-    if (y == frameHeight - MEKPlayerViewMaximizedSize)
+    if (y == frameHeight - MEKPlayerViewHeightSizeMaximized)
     {
         return MEKPlayerVisibleStateMaximized;
     }
     
-    if (y == frameHeight - tabbarHeight - MEKPlayerViewMinimizedSize)
+    if (y == frameHeight - tabbarHeight - MEKPlayerViewHeightSizeMinimized)
     {
         return MEKPlayerVisibleStateMinimized;
     }
@@ -128,7 +125,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 - (void)minimize
 {
-    [self.playerViewController minimizeWithDuration:MEKPlayerViewAnimationDuration withHeight:MEKPlayerViewMinimizedSize];
+    [self.playerViewController minimizeWithDuration:MEKPlayerViewAnimationDuration];
     [self minimizePlayer];
 }
 
@@ -172,7 +169,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     
     if (state == MEKPlayerVisibleStateMinimized)
     {
-        [self.playerViewController minimizeWithDuration:0 withHeight:MEKPlayerViewMinimizedSize];
+        [self.playerViewController minimizeWithDuration:0];
     }
     
     if (state == MEKPlayerVisibleStateMaximized)
@@ -192,10 +189,10 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     if (self.scrollView)
         return;
     
-    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.mainFrame), CGRectGetWidth(self.mainFrame), MEKPlayerViewMaximizedSize)];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.mainFrame), CGRectGetWidth(self.mainFrame), MEKPlayerViewHeightSizeMaximized)];
     
     self.scrollView.showsVerticalScrollIndicator = NO;
-    self.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.mainFrame), MEKPlayerViewMaximizedSize + 1);
+    self.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.mainFrame), MEKPlayerViewHeightSizeMaximized + 1);
     self.scrollView.clipsToBounds = NO;
     self.scrollView.delegate = self;
     
@@ -229,7 +226,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     //self.tabBarMainView.layer.transform = CATransform3DIdentity;
     self.tabBarMainView.layer.cornerRadius = 0;
     
-    self.scrollView.transform = CGAffineTransformMakeTranslation(0, -CGRectGetHeight(self.tabBarController.tabBar.frame) - MEKPlayerViewMinimizedSize);
+    self.scrollView.transform = CGAffineTransformMakeTranslation(0, -CGRectGetHeight(self.tabBarController.tabBar.frame) - MEKPlayerViewHeightSizeMinimized);
 }
 
 - (void)maximizePlayerUI
@@ -241,11 +238,19 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     self.tabBarMainView.layer.cornerRadius = 10;
     //self.tabBarMainView.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
     
-    self.scrollView.transform = CGAffineTransformMakeTranslation(0, - MEKPlayerViewMaximizedSize);
+    self.scrollView.transform = CGAffineTransformMakeTranslation(0, - MEKPlayerViewHeightSizeMaximized);
 }
 
 - (void)minimizePlayer
 {
+    UIViewController *navController = self.tabBarController.selectedViewController;
+    [navController viewWillAppear:NO];
+    if ([navController isKindOfClass:[UINavigationController class]])
+    {
+        id vc = ((UINavigationController*)navController).topViewController;
+        [vc viewWillAppear:NO];
+    }
+    
     [self.tabBarMainView setNeedsUpdateConstraints];
     
     [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
@@ -255,6 +260,8 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 - (void)maximizePlayer
 {
+    self.downloadController.delegate = self;
+    
     [self.tabBarMainView setNeedsUpdateConstraints];
     
     [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
@@ -268,6 +275,45 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     
     CGRect rect = CGRectMake(0, 0, CGRectGetWidth(scrollView.frame), CGRectGetHeight(scrollView.frame));
     [scrollView scrollRectToVisible:rect animated:YES];
+}
+
+- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality
+{
+    NSString *qualityString = [VideoItemMO getQualityString:quality];
+    NSString *name = qualityString;
+    
+    VideoItemMO *item = self.playerViewController.item;
+    NSNumber *size = item.sizes[@(quality)];
+    if (![size isEqualToNumber:@(0)])
+    {
+        name = [NSString stringWithFormat:@"%@ (%@MB)", qualityString, size];
+    }
+    
+    UIAlertAction *action = [UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    
+        [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
+        
+    }];
+    
+    return action;
+}
+
+- (void)showDownloadingDialog
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
+                                                                   message:@"Available formats"
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                            style:UIAlertActionStyleCancel handler:nil];
+    
+    [alert addAction:[self createActionForQuality:VideoItemQualityHD720]];
+    [alert addAction:[self createActionForQuality:VideoItemQualityMedium360]];
+    [alert addAction:[self createActionForQuality:VideoItemQualitySmall240]];
+    [alert addAction:[self createActionForQuality:VideoItemQualitySmall144]];
+    [alert addAction:cancedlAction];
+    
+    [self.playerViewController presentViewController:alert animated:YES completion:nil];
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -300,8 +346,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 - (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
 {
-    self.downloadController.delegate = self;
-    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
+    [self showDownloadingDialog];
 }
 
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
@@ -311,6 +356,11 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 #pragma mark - MEKVideoPlayerViewControllerDelegate
 
+- (void)videoPlayerViewControllerOpen
+{
+    [self maximize];
+}
+
 - (void)videoPlayerViewControllerClosed
 {
     [self close];
@@ -318,9 +368,9 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 #pragma mark - MEKDownloadControllerDelegate
 
-- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key
+- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+    if (![key isEqualToString:self.playerViewController.item.videoId])
         return;
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -330,18 +380,19 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 - (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+    if (![key isEqualToString:self.playerViewController.item.videoId])
         return;
     
     NSNumber *quality = params[@"quality"];
-    [self.playerViewController.currentItem saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
+    [self.playerViewController.item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
 }
 
 - (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (![key isEqualToString:self.playerViewController.currentItem.videoId])
+    if (![key isEqualToString:self.playerViewController.item.videoId])
         return;
-    
+
+    [self downloadControllerProgress:0 forKey:key withParams:params];
 }
 
 @end

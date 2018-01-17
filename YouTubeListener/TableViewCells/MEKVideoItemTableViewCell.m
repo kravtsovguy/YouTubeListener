@@ -24,6 +24,7 @@
 
 @property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) MEKDowloadButton *downloadButton;
+@property (nonatomic, strong) UILabel *downloadInfoLabel;
 
 @end
 
@@ -80,6 +81,12 @@
         [_downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:_downloadButton];
         
+        _downloadInfoLabel = [UILabel new];
+        _downloadInfoLabel.numberOfLines = 1;
+        _downloadInfoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        _downloadInfoLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightUltraLight];
+        _downloadInfoLabel.text = @"";
+        [self.contentView addSubview:_downloadInfoLabel];
     }
     
     return self;
@@ -139,14 +146,18 @@
         make.height.equalTo(@30);
     }];
     
-    
-    
+    [self.downloadInfoLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.downloadButton.mas_top);
+        make.left.equalTo(self.downloadButton.mas_right).with.offset(10);
+        make.height.equalTo(@30);
+    }];
+
     [super updateConstraints];
 }
 
 #pragma mark - Public
 
-- (void)setWithPlaylist:(VideoItemMO *)item
+- (void)setWithVideoItem:(VideoItemMO *)item
 {
     if (!item)
     {
@@ -171,6 +182,19 @@
     self.durationLabel.text = [df stringFromDate:date];
     
     [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig];
+    
+    if ([item hasDownloaded])
+    {
+        VideoItemQuality quality = item.downloadedQuality;
+        NSString *qualityString = [VideoItemMO getQualityString:quality];
+        NSNumber *size = item.downloadedSizes.allValues.firstObject;
+
+        self.downloadInfoLabel.text = [NSString stringWithFormat:@"(%@ | %@MB)", qualityString, size];
+    }
+    else
+    {
+        self.downloadInfoLabel.text = @"";
+    }
 }
 
 - (void)setDownloadProgress:(double)progress
@@ -206,7 +230,7 @@
 {
     if (!self.downloadButton.isLoading)
     {
-        self.downloadButton.loading = YES;
+        //self.downloadButton.loading = YES;
         if ([self.delegate respondsToSelector:@selector(videoItemDownload:)])
         {
             [self.delegate videoItemDownload:self.item];
@@ -214,7 +238,7 @@
     }
     else
     {
-        self.downloadButton.loading = NO;
+        //self.downloadButton.loading = NO;
         if ([self.delegate respondsToSelector:@selector(videoItemCancelDownload:)])
         {
             [self.delegate videoItemCancelDownload:self.item];

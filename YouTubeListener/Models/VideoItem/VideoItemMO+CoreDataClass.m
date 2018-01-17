@@ -17,6 +17,31 @@
 
 @implementation VideoItemMO
 
++ (NSString *)getQualityString:(VideoItemQuality)quality
+{
+    NSString *qualityString = @"";
+    
+    switch (quality)
+    {
+        case VideoItemQualitySmall144:
+            qualityString = @"144p";
+            break;
+            
+        case VideoItemQualitySmall240:
+            qualityString = @"240p";
+            break;
+            
+        case VideoItemQualityMedium360:
+            qualityString = @"360p";
+            break;
+            
+        case VideoItemQualityHD720:
+            qualityString = @"720p";
+    }
+    
+    return qualityString;
+}
+
 #pragma mark - Static Properties
 
 + (NSString *)entityName
@@ -171,6 +196,32 @@
     BOOL isRemoved = [fileManager removeItemAtURL:[self getPathUrlWithQuality:quality] error:&error];
     
     return isRemoved;
+}
+
+- (VideoItemQuality)downloadedQuality
+{
+    NSDictionary *urls = [self downloadedURLs];
+    NSNumber *key = urls.allKeys.firstObject;
+    VideoItemQuality quality = key.unsignedIntegerValue;
+    
+    return quality;
+}
+
+- (NSDictionary *)downloadedSizes
+{
+    NSDictionary *urls = [self downloadedURLs];
+    NSMutableDictionary *sizes = [NSMutableDictionary new];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    for (NSNumber *key in urls)
+    {
+        NSURL *url = urls[key];
+        NSInteger size = [[fileManager attributesOfItemAtPath:url.path error:nil] fileSize];
+        sizes[key] = @(size / 1000 / 1000);
+    }
+    
+    return sizes;
 }
 
 - (NSDictionary *)downloadedURLs

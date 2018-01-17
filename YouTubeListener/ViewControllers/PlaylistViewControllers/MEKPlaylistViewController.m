@@ -112,6 +112,42 @@
     [self.tableView reloadData];
 }
 
+- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality
+{
+    NSString *qualityString = [VideoItemMO getQualityString:quality];
+    NSString *name = qualityString;
+    
+    NSNumber *size = self.currentItem.sizes[@(quality)];
+    if (![size isEqualToNumber:@(0)])
+    {
+        name = [NSString stringWithFormat:@"%@ (%@MB)", qualityString, size];
+    }
+    
+    UIAlertAction *action = [UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        [self videoItemDownload:self.currentItem withQuality:quality];
+    }];
+    
+    return action;
+}
+
+- (void)showDownloadingDialog
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
+                                                                   message:@"Available formats"
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                            style:UIAlertActionStyleCancel handler:nil];
+    
+    [alert addAction:[self createActionForQuality:VideoItemQualityHD720]];
+    [alert addAction:[self createActionForQuality:VideoItemQualityMedium360]];
+    [alert addAction:[self createActionForQuality:VideoItemQualitySmall240]];
+    [alert addAction:[self createActionForQuality:VideoItemQualitySmall144]];
+    [alert addAction:cancedlAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 #pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
@@ -121,14 +157,14 @@
     cell.delegate = self;
     VideoItemMO *item = self.items[indexPath.row];
     
-    [cell setWithPlaylist:item];
-    
     double progress = [self.downloadController getProgressForKey:item.videoId];
     
     if ([item hasDownloaded])
         progress = 1;
     
     [cell setDownloadProgress:progress];
+    
+    [cell setWithVideoItem:item];
     
     return cell;
 }
@@ -155,9 +191,20 @@
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    VideoItemMO *item = self.items[indexPath.row];
+    
+    UITableViewRowAction *unloadAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Unload"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        
+        [item removeDownloadAll];
+        
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }];
+    
+    unloadAction.backgroundColor = UIColor.orangeColor;
+    
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        [self.playlist deleteVideoItem:self.items[indexPath.row]];
+        [self.playlist deleteVideoItem:item];
         
         NSMutableArray *items = self.items.mutableCopy;
         [items removeObjectAtIndex:indexPath.row];
@@ -166,7 +213,15 @@
         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }];
     
-    return @[deleteAction];
+    NSMutableArray *actions = [NSMutableArray new];
+    [actions addObject:deleteAction];
+
+    if ([item hasDownloaded])
+    {
+        [actions addObject:unloadAction];
+    }
+    
+    return actions;
 }
 
 #pragma mark - MEKVideoItemDelegate
@@ -185,15 +240,21 @@
 
 - (void)videoItemDownload: (VideoItemMO*) item;
 {
+    self.currentItem = item;
+    
     if (item.urls)
     {
-        NSNumber *quality = @(VideoItemQualityMedium360);
-        [self.downloadController downloadDataFromURL:item.urls[quality] forKey:item.videoId withParams:@{@"quality" : quality}];
+        [self showDownloadingDialog];
     }
     else
     {
         [self.parser loadVideoItem:item];
     }
+}
+
+- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
+{
+    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
 }
 
 - (void)videoItemCancelDownload:(VideoItemMO *)item
@@ -226,6 +287,12 @@
             if ([key isEqualToString:item.videoId])
             {
                 [cell setDownloadProgress:progress];
+
+                if (progress == 1)
+                {
+                    [cell setWithVideoItem:item];
+                }
+//
                 return;
             }
         }
@@ -239,6 +306,21 @@
     
     NSNumber *quality = params[@"quality"];
     [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
+    
+    //NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.items indexOfObject:item] inSection:0];
+
+    [self downloadControllerProgress:1 forKey:key withParams:params];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//    });
+}
+
+- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (error)
+    {
+        [self downloadControllerProgress:0 forKey:key withParams:params];
+    }
 }
 
 @end

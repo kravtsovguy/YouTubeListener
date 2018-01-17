@@ -34,7 +34,18 @@
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return @[];
+    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
+    
+    if (actions.count > 1)
+    {
+        actions = @[actions[1]];
+    }
+    else
+    {
+        actions = @[];
+    }
+    
+    return actions;
 }
 
 

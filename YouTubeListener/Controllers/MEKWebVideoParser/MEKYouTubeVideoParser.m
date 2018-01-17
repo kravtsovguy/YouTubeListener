@@ -48,7 +48,7 @@
         urls[@([params[@"itag"] integerValue])] = [NSURL URLWithString:params[@"url"]];
         
         NSDictionary *urlParams = [self dictionaryWithQueryString:params[@"url"]];
-        sizes[@([params[@"itag"] integerValue])] = @([urlParams[@"clen"] integerValue]);
+        sizes[@([params[@"itag"] integerValue])] = @([urlParams[@"clen"] integerValue] / 1000 / 1000);
     }
     
     item.title = info[@"title"];

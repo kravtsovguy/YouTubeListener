@@ -35,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItemMO : NSManagedObject
 
++ (NSString*)getQualityString: (VideoItemQuality) quality;
+
 + (NSString*)entityName;
 
 // Creation
@@ -57,7 +59,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)removeDownloadWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloadedWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloaded;
+- (VideoItemQuality)downloadedQuality;
 - (NSDictionary*)downloadedURLs;
+- (NSDictionary*)downloadedSizes;
 
 @end
 

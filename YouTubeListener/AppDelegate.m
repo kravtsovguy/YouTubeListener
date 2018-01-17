@@ -29,6 +29,19 @@
     
     //[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
+    [self initWindow];
+    
+    self.downloadController = [MEKDownloadController new];
+    [self.downloadController configurateUrlSessionWithParams:nil backgroundMode:YES];
+    
+    self.player = [MEKPlayerController new];
+    self.player.downloadController = self.downloadController;
+    
+    return YES;
+}
+
+- (void)initWindow
+{
     self.window = [UIWindow new];
     self.window.tintColor = [[UIColor redColor] colorWithAlphaComponent:0.7];
     
@@ -49,14 +62,6 @@
     self.tabBarController.viewControllers = @[vc, navControllerPlaylists, navControllerDownloads];
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
-    
-    self.downloadController = [[MEKDownloadController alloc] init];
-    [self.downloadController configurateUrlSessionWithParams:nil backgroundMode:YES];
-    
-    self.player = [MEKPlayerController new];
-    self.player.downloadController = self.downloadController;
-    
-    return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -11,10 +11,14 @@
 #import "PlaylistMO+CoreDataClass.h"
 #import "MEKYouTubeVideoParser.h"
 
+static const CGFloat MEKPlayerViewHeightSizeMaximized = 320;
+static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;
+
 @protocol MEKVideoPlayerViewControllerDelegate <NSObject>
 
 @optional
 - (void)videoPlayerViewControllerClosed;
+- (void)videoPlayerViewControllerOpen;
 
 @end
 
@@ -23,11 +27,11 @@
 @property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> playerDelegate;
 @property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
 
-@property (nonatomic, readonly) VideoItemMO *currentItem;
+@property (nonatomic, readonly) VideoItemMO *item;
 
 - (instancetype)initWithVideoItem: (VideoItemMO*) item;
 
-- (void)minimizeWithDuration: (NSTimeInterval) duration withHeight: (CGFloat) height;
+- (void)minimizeWithDuration: (NSTimeInterval) duration;
 - (void)maximizeWithDuration: (NSTimeInterval) duration;
 - (void)setDownloadingProgress: (double) progress;
 

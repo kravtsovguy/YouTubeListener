@@ -30,10 +30,10 @@
     self = [super initWithFrame:frame];
     if (self)
     {
-        self.progressBar = [[MEKProgressBar alloc] initWithFrame:self.bounds];
-        self.progressBar.userInteractionEnabled = NO;
-        self.progressBar.hidden = YES;
-        [self addSubview:self.progressBar];
+        _progressBar = [[MEKProgressBar alloc] initWithFrame:self.bounds];
+        _progressBar.userInteractionEnabled = NO;
+        _progressBar.hidden = YES;
+        [self addSubview:_progressBar];
         
         CGFloat stopViewSize = CGRectGetHeight(frame) / 3;
 
@@ -79,19 +79,22 @@
         self.progressBar.hidden = YES;
         self.stopView.hidden = YES;
     }
+    
+    self.userInteractionEnabled = YES;
 }
 
 - (void)setDone:(BOOL)done
 {
     _done = done;
     
-    self.userInteractionEnabled = !_done;
     self.loading = NO;
     
     if (_done)
     {
         [self setImage:self.doneImage forState:UIControlStateNormal];
     }
+    
+    self.userInteractionEnabled = !_done;
 }
 
 #pragma mark - Trash
