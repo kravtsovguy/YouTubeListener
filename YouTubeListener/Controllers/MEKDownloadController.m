@@ -33,6 +33,11 @@
 
 #pragma mark - Public
 
+- (void)configurateUrlSessionWithBackgroundMode:(BOOL)background
+{
+    [self configurateUrlSessionWithParams:nil backgroundMode:background];
+}
+
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background
 {
     

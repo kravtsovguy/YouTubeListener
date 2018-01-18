@@ -8,7 +8,6 @@
 
 #import "MEKPlaylistViewController.h"
 #import "VideoItemMO+CoreDataClass.h"
-#import "AppDelegate.h"
 #import <Masonry/Masonry.h>
 #import "MEKVideoItemTableViewCell.h"
 #import "MEKModalPlaylistsViewController.h"
@@ -16,8 +15,6 @@
 
 @interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
 
-@property (nonatomic, readonly) MEKPlayerController *playerController;
-@property (nonatomic, readonly) MEKDownloadController *downloadController;
 @property (nonatomic, strong) MEKWebVideoParser *parser;
 @property (nonatomic, strong) PlaylistMO *playlist;
 
@@ -55,13 +52,15 @@
 {
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-    MEKPlayerController *player = appDelegate.player;
-    return player;
+    return appDelegate.player;
 }
 
 - (MEKDownloadController *)downloadController
 {
-    return self.playerController.downloadController;
+    UIApplication *application = [UIApplication sharedApplication];
+    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
+    return appDelegate.downloadController;
+
 }
 
 - (NSManagedObjectContext*) coreDataContext

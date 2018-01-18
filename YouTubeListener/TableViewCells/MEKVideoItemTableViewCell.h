@@ -14,7 +14,6 @@
 
 @property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
 @property (nonatomic, readonly) VideoItemMO *item;
-@property (nonatomic, readonly) MEKDowloadButton *downloadButton;
 
 - (void)setWithVideoItem: (VideoItemMO*) item;
 - (void)setDownloadProgress: (double)progress;

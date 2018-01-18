@@ -13,55 +13,99 @@
 #import "MEKPlaylistsViewController.h"
 #import "MEKDownloadsPlaylistViewController.h"
 
-@interface AppDelegate () <UIScrollViewDelegate>
+@interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
 
+#pragma mark - Init View Controllers
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+- (UIViewController*)searchViewController
+{
+    MEKSearchViewController *searchViewController = [MEKSearchViewController new];
+    searchViewController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
     
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    [[AVAudioSession sharedInstance] setActive:YES error:nil];
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    
-    //[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
-    
-    [self initWindow];
-    
-    self.downloadController = [MEKDownloadController new];
-    [self.downloadController configurateUrlSessionWithParams:nil backgroundMode:YES];
-    
-    self.player = [MEKPlayerController new];
-    self.player.downloadController = self.downloadController;
-    
-    return YES;
+    return searchViewController;
 }
+
+- (UIViewController*)playlistsViewController
+{
+    MEKPlaylistsViewController *playlistsViewController = [MEKPlaylistsViewController new];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:playlistsViewController];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
+    [navigationController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
+    
+    return navigationController;
+}
+
+- (UIViewController*)downloadsPlaylistViewController
+{
+    MEKDownloadsPlaylistViewController *downloadsPlaylistViewController = [MEKDownloadsPlaylistViewController new];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:downloadsPlaylistViewController];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
+    
+    return navigationController;
+}
+
+#pragma mark - Init Tab Bar
+
+- (void)initTabBarController
+{
+    self.tabBarController = [UITabBarController new];
+    self.tabBarController.viewControllers = @[self.searchViewController, self.playlistsViewController, self.downloadsPlaylistViewController];
+}
+
+#pragma mark - Init Window
 
 - (void)initWindow
 {
     self.window = [UIWindow new];
     self.window.tintColor = [[UIColor redColor] colorWithAlphaComponent:0.7];
     
-    MEKSearchViewController *vc = [MEKSearchViewController new];
-    vc.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
+    [self initTabBarController];
     
-    MEKPlaylistsViewController *pvc = [MEKPlaylistsViewController new];
-    UINavigationController *navControllerPlaylists = [[UINavigationController alloc] initWithRootViewController:pvc];
-    navControllerPlaylists.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
-    [navControllerPlaylists.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
-    
-    MEKDownloadsPlaylistViewController *dvc = [MEKDownloadsPlaylistViewController new];
-    UINavigationController *navControllerDownloads = [[UINavigationController alloc] initWithRootViewController:dvc];
-    navControllerDownloads.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
-    
-    //[UITabBar appearance].tintColor = UIColor.redColor;
-    self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[vc, navControllerPlaylists, navControllerDownloads];
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
+}
+
+#pragma mark - Init Controllers
+
+- (void)initPlayerController
+{
+    self.player = [MEKPlayerController new];
+}
+
+- (void)initDownloadController
+{
+    self.downloadController = [MEKDownloadController new];
+    [self.downloadController configurateUrlSessionWithBackgroundMode:YES];
+}
+
+- (void)initControllers
+{
+    [self initDownloadController];
+    [self initPlayerController];
+}
+
+#pragma mark - Settings
+
+- (void)makeSettings
+{
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setActive:YES error:nil];
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+}
+
+#pragma mark - UIApplicationDelegate
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    [self makeSettings];
+    [self initControllers];
+    [self initWindow];
+    
+    return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

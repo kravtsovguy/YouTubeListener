@@ -164,7 +164,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
         return;
     
     self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithVideoItem:item];
-    self.playerViewController.downloadController = self.downloadController;
     self.playerViewController.delegate = self;
     
     if (state == MEKPlayerVisibleStateMinimized)

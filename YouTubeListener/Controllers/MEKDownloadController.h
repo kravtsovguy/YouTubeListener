@@ -21,6 +21,7 @@
 
 @property (nonatomic, weak) id<MEKDownloadControllerDelegate> delegate;
 
+- (void)configurateUrlSessionWithBackgroundMode: (BOOL) background;
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background;
 - (void)downloadDataFromURL: (NSURL*) url forKey: (NSString*) key withParams: (NSDictionary*) params;
 - (void)cancelDownloadForKey: (NSString*) key;

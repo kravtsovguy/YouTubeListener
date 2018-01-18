@@ -10,7 +10,6 @@
 
 @interface MEKProgressBar : UIView
 
-@property (nonatomic, assign) CGFloat radius;
 @property (nonatomic, assign) CGFloat progress;
 
 @end

@@ -28,7 +28,7 @@
     if (self)
     {
         _downloadController = [MEKDownloadController new];
-        [_downloadController configurateUrlSessionWithParams:nil backgroundMode:NO];
+        [_downloadController configurateUrlSessionWithBackgroundMode:NO];
         _downloadController.delegate = self;
     }
     return self;

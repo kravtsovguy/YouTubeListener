@@ -8,18 +8,15 @@
 
 #import "MEKVideoPlayerViewController.h"
 #import "MEKYouTubeVideoParser.h"
-#import <AVFoundation/AVFoundation.h>
-#import <MediaPlayer/MPMoviePlayerController.h>
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
 #import <Masonry/Masonry.h>
 #import "MEKModalPlaylistsViewController.h"
 #import "UIImage+Cache.h"
 #import "UIViewController+VideoItemActions.h"
+#import "AppDelegate.h"
 
-//@import AVFoundation;
-//@import AVKit;
-//@import AssetsLibrary;
+
 @import MediaPlayer;
 
 static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
@@ -70,6 +67,15 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     return self;
 }
 
+#pragma mark - Properties
+
+- (MEKDownloadController *)downloadController
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    AppDelegate *delegate = ((AppDelegate*)(application.delegate));
+    return delegate.downloadController;
+}
+
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
@@ -100,7 +106,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     [self.addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.addButton];
     
-    self.downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+    self.downloadButton = [MEKDowloadButton new];
     //self.downloadButton.backgroundColor = UIColor.blueColor;
     self.downloadButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
     [self.downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];

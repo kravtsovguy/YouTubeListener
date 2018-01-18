@@ -31,16 +31,14 @@
     self = [super initWithFrame:frame];
     if (self)
     {
-        _progressBar = [[MEKProgressBar alloc] initWithFrame:self.bounds];
+        _progressBar = [MEKProgressBar new];
         _progressBar.userInteractionEnabled = NO;
         _progressBar.hidden = YES;
         [self addSubview:_progressBar];
         
-        CGFloat stopViewSize = CGRectGetHeight(frame) / 3;
-
-        _stopView = [[UIView alloc] initWithFrame:CGRectMake((self.frame.size.width - stopViewSize)/ 2, (self.frame.size.height - stopViewSize)/ 2, stopViewSize, stopViewSize)];
+        
+        _stopView = [UIView new];
         _stopView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
-        _stopView.layer.cornerRadius = stopViewSize / 4;
         _stopView.layer.masksToBounds = YES;
         _stopView.userInteractionEnabled = NO;
         _stopView.hidden = YES;
@@ -112,6 +110,19 @@
     }
     
     self.userInteractionEnabled = !_done;
+}
+
+#pragma mark - UIView
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    self.progressBar.frame = self.bounds;
+    
+    CGFloat stopViewSize = CGRectGetHeight(self.frame) / 3;
+    self.stopView.frame = CGRectMake((self.frame.size.width - stopViewSize)/ 2, (self.frame.size.height - stopViewSize)/ 2, stopViewSize, stopViewSize);
+    self.stopView.layer.cornerRadius = stopViewSize / 4;
 }
 
 #pragma mark - Trash
