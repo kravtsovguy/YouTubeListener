@@ -10,9 +10,24 @@
 
 @interface MEKModalPlaylistsViewController ()
 
+@property (nonatomic, strong) VideoItemMO *item;
+
 @end
 
 @implementation MEKModalPlaylistsViewController
+
+#pragma mark - init
+
+- (instancetype)initWithVideoItem:(VideoItemMO *)item
+{
+    self = [super init];
+    if (self)
+    {
+        _item = item;
+    }
+    
+    return self;
+}
 
 #pragma mark - UIViewController
 
@@ -51,9 +66,9 @@
 {
     PlaylistMO *playlist = self.playlists [indexPath.row];
     
-    if ([self.delegate respondsToSelector:@selector(modalPlaylistsViewControllerDidChoosePlaylist:)])
+    if ([self.delegate respondsToSelector:@selector(modalPlaylistsViewControllerDidChoosePlaylist:forVideoItem:)])
     {
-        [self.delegate modalPlaylistsViewControllerDidChoosePlaylist:playlist];
+        [self.delegate modalPlaylistsViewControllerDidChoosePlaylist:playlist forVideoItem:self.item];
     }
     
     [self dismissViewControllerAnimated:YES completion:nil];

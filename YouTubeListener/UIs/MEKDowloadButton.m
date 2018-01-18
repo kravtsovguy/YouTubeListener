@@ -10,6 +10,7 @@
 
 @interface MEKDowloadButton ()
 
+@property (nonatomic, strong) MEKProgressBar *progressBar;
 @property (nonatomic, strong) UIView *stopView;
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) UIImage *doneImage;
@@ -58,6 +59,22 @@
     }
     
     return self;
+}
+
+#pragma mark - Public
+
+- (void)setProgress:(double)progress
+{
+    self.progressBar.progress = progress;
+    
+    if (progress < 1)
+    {
+        self.loading = progress > 0;
+    }
+    else
+    {
+        self.done = YES;
+    }
 }
 
 #pragma mark - Properties

@@ -11,12 +11,14 @@
 @protocol MEKModalPlaylistsViewControllerDelegate <NSObject>
 
 @required
-- (void)modalPlaylistsViewControllerDidChoosePlaylist: (PlaylistMO*) playlist;
+- (void)modalPlaylistsViewControllerDidChoosePlaylist: (PlaylistMO*) playlist forVideoItem: (VideoItemMO*) item;
 
 @end
 
 @interface MEKModalPlaylistsViewController : MEKPlaylistsViewController
 
 @property (nonatomic, weak) id<MEKModalPlaylistsViewControllerDelegate> delegate;
+
+- (instancetype)initWithVideoItem: (VideoItemMO*)item;
 
 @end

@@ -17,6 +17,16 @@
 
 @implementation VideoItemMO
 
++ (NSArray<NSNumber *> *)getAllQualities
+{
+    NSArray *qualities = @[@(VideoItemQualityHD720),
+                           @(VideoItemQualityMedium360),
+                           @(VideoItemQualitySmall240),
+                           @(VideoItemQualitySmall144)];
+    
+    return qualities;
+}
+
 + (NSString *)getQualityString:(VideoItemQuality)quality
 {
     NSString *qualityString = @"";

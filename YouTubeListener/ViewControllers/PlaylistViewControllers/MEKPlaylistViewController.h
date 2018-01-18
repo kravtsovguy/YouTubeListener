@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PlaylistMO+CoreDataClass.h"
+#import "UIViewController+VideoItemActions.h"
 
 @interface MEKPlaylistViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 

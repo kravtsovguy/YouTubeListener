@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItemMO : NSManagedObject
 
++ (NSArray<NSNumber*>*)getAllQualities;
 + (NSString*)getQualityString: (VideoItemQuality) quality;
 
 + (NSString*)entityName;

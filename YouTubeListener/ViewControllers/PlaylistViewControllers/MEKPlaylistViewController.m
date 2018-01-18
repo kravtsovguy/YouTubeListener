@@ -14,13 +14,12 @@
 #import "MEKModalPlaylistsViewController.h"
 #import "MEKYouTubeVideoParser.h"
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKModalPlaylistsViewControllerDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
 
 @property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKDownloadController *downloadController;
 @property (nonatomic, strong) MEKWebVideoParser *parser;
 @property (nonatomic, strong) PlaylistMO *playlist;
-@property (nonatomic, weak) VideoItemMO *currentItem;
 
 @end
 
@@ -112,42 +111,6 @@
     [self.tableView reloadData];
 }
 
-- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality
-{
-    NSString *qualityString = [VideoItemMO getQualityString:quality];
-    NSString *name = qualityString;
-    
-    NSNumber *size = self.currentItem.sizes[@(quality)];
-    if (![size isEqualToNumber:@(0)])
-    {
-        name = [NSString stringWithFormat:@"%@ (%@MB)", qualityString, size];
-    }
-    
-    UIAlertAction *action = [UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        [self videoItemDownload:self.currentItem withQuality:quality];
-    }];
-    
-    return action;
-}
-
-- (void)showDownloadingDialog
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
-                                                                   message:@"Available formats"
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
-                                                            style:UIAlertActionStyleCancel handler:nil];
-    
-    [alert addAction:[self createActionForQuality:VideoItemQualityHD720]];
-    [alert addAction:[self createActionForQuality:VideoItemQualityMedium360]];
-    [alert addAction:[self createActionForQuality:VideoItemQualitySmall240]];
-    [alert addAction:[self createActionForQuality:VideoItemQualitySmall144]];
-    [alert addAction:cancedlAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
 #pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
@@ -228,23 +191,21 @@
 
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item
 {
-    self.currentItem = item;
-    
-    MEKModalPlaylistsViewController *playlistsController = [MEKModalPlaylistsViewController new];
-    playlistsController.delegate = self;
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
-    
-    [self presentViewController:navController animated:YES completion:nil];
+    [self choosePlaylistForVideoItem:item];
 }
 
-- (void)videoItemDownload: (VideoItemMO*) item;
+- (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
 {
-    self.currentItem = item;
-    
+    [playlist addVideoItem:item];
+}
+
+- (void)videoItemDownload: (VideoItemMO*) item
+{
     if (item.urls)
     {
-        [self showDownloadingDialog];
+        [self showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
+            [self videoItemDownload:item withQuality:quality];
+        }];
     }
     else
     {
@@ -269,13 +230,6 @@
     [self videoItemDownload:item];
 }
 
-#pragma mark - MEKModalPlaylistsViewControllerDelegate
-
-- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
-{
-    [playlist addVideoItem:self.currentItem];
-}
-
 #pragma mark - MEKDownloadControllerDelegate
 
 - (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
@@ -292,8 +246,7 @@
                 {
                     [cell setWithVideoItem:item];
                 }
-//
-                return;
+                break;
             }
         }
     });
@@ -306,13 +259,8 @@
     
     NSNumber *quality = params[@"quality"];
     [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
-    
-    //NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.items indexOfObject:item] inSection:0];
 
     [self downloadControllerProgress:1 forKey:key withParams:params];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-//    });
 }
 
 - (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
@@ -321,6 +269,13 @@
     {
         [self downloadControllerProgress:0 forKey:key withParams:params];
     }
+}
+
+#pragma mark - MEKModalPlaylistsViewControllerDelegate
+
+- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist forVideoItem:(VideoItemMO *)item
+{
+    [self videoItemAddToPlaylist:item playlist:playlist];
 }
 
 @end

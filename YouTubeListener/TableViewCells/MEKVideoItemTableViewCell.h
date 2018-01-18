@@ -8,14 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "VideoItemMO+CoreDataClass.h"
+#import "MEKDowloadButton.h"
 
 @interface MEKVideoItemTableViewCell : UITableViewCell
 
 @property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
 @property (nonatomic, readonly) VideoItemMO *item;
+@property (nonatomic, readonly) MEKDowloadButton *downloadButton;
 
 - (void)setWithVideoItem: (VideoItemMO*) item;
-- (void)setDownloadProgress: (double) progress;
+- (void)setDownloadProgress: (double)progress;
 + (CGFloat)height;
 
 @end

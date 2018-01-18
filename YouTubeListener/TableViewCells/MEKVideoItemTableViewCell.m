@@ -9,7 +9,6 @@
 #import "MEKVideoItemTableViewCell.h"
 #import <Masonry/Masonry.h>
 #import "UIImageView+Cache.h"
-#import "MEKDowloadButton.h"
 
 @interface MEKVideoItemTableViewCell ()
 
@@ -199,16 +198,7 @@
 
 - (void)setDownloadProgress:(double)progress
 {
-    self.downloadButton.progressBar.progress = progress;
-    
-    if (progress < 1)
-    {
-        self.downloadButton.loading = progress > 0;
-    }
-    else
-    {
-        self.downloadButton.done = YES;
-    }
+    [self.downloadButton setProgress:progress];
 }
 
 + (CGFloat)height
@@ -230,7 +220,6 @@
 {
     if (!self.downloadButton.isLoading)
     {
-        //self.downloadButton.loading = YES;
         if ([self.delegate respondsToSelector:@selector(videoItemDownload:)])
         {
             [self.delegate videoItemDownload:self.item];
@@ -238,7 +227,6 @@
     }
     else
     {
-        //self.downloadButton.loading = NO;
         if ([self.delegate respondsToSelector:@selector(videoItemCancelDownload:)])
         {
             [self.delegate videoItemCancelDownload:self.item];

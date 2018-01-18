@@ -15,6 +15,7 @@
 #import <Masonry/Masonry.h>
 #import "MEKModalPlaylistsViewController.h"
 #import "UIImage+Cache.h"
+#import "UIViewController+VideoItemActions.h"
 
 //@import AVFoundation;
 //@import AVKit;
@@ -23,7 +24,7 @@
 
 static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
-@interface MEKVideoPlayerViewController () <MEKWebVideoParserOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <MEKWebVideoParserOutputProtocol, MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
@@ -148,7 +149,16 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
         [self.item saveObject];
     }
     
-    [self setWithVideoItem:self.item andQuality:self.quality];
+    [self setUIwithVideoItem:self.item];
+    [self setVideoWithQuality:self.quality];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.downloadController.delegate = self;
+    [self setUIwithVideoItem:self.item];
 }
 
 - (void)updateViewConstraints
@@ -284,44 +294,30 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     } completion:nil];
 }
 
-- (void)setDownloadingProgress:(double)progress
-{
-    self.downloadButton.progressBar.progress = progress;
-    
-    if (progress < 1)
-    {
-        self.downloadButton.loading = progress > 0;
-    }
-    else
-    {
-        self.downloadButton.done = YES;
-    }
-}
-
 #pragma mark - Private
 
-- (void)setWithVideoItem: (VideoItemMO*) item andQuality: (VideoItemQuality) quality
+- (BOOL)setUIwithVideoItem: (VideoItemMO*) item
 {
     if (!item)
     {
-        return;
+        return NO;
     }
     
     self.item = item;
-    self.quality = quality;
     
-    self.titleLabel.text = self.item.title;
-    self.authorLabel.text = self.item.author;
+    self.titleLabel.text = item.title;
+    self.authorLabel.text = item.author;
     
-    if ([self.item hasDownloaded])
-    {
-        [self setDownloadingProgress:1];
-    }
+    double progress = [self.downloadController getProgressForKey:item.videoId];
+    if ([item hasDownloaded])
+        progress = 1;
+    
+    [self.downloadButton setProgress:progress];
     
     if (self.item.title && self.item.author)
     {
-        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : self.item.title,
-                                              MPMediaItemPropertyArtist : self.item.author
+        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
+                                              MPMediaItemPropertyArtist : item.author
                                               };
     }
     
@@ -337,14 +333,25 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
         self.playerController.playingInfo = playerInfo;
     }];
     
+    return YES;
+}
+
+- (BOOL)setVideoWithQuality: (VideoItemQuality) quality
+{
+    if (!self.item)
+    {
+        return NO;
+    }
+    
+    self.quality = quality;
     
     NSURL *downloadedURL = self.item.downloadedURLs[@(quality)];
     NSURL *webURL = self.item.urls[@(quality)];
     
     if (!downloadedURL && !webURL)
     {
-        [self.youtubeParser loadVideoItem:item];
-        return;
+        [self.youtubeParser loadVideoItem:self.item];
+        return NO;
     }
     
     NSURL *url = downloadedURL ?: webURL;
@@ -352,6 +359,8 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     self.playerController.player = [AVPlayer playerWithURL:url];
     self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
     [self.playerController.player play];
+    
+    return YES;
 }
 
 - (void)maximizeUI
@@ -376,106 +385,50 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     self.authorLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightLight];
 }
 
-- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality
-{
-    NSString *qualityString = [VideoItemMO getQualityString:quality];
-    NSString *name = qualityString;
-    if (self.quality == quality)
-    {
-        name = [NSString stringWithFormat:@"%@ (Current)", qualityString];
-    }
-    
-    UIAlertAction *action = [UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        
-        if (self.quality == quality)
-        {
-            return;
-        }
-        
-        [self setWithVideoItem:self.item andQuality:quality];
-    }];
-    
-    return action;
-}
-
-- (void)showQualityDialog
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
-                                                                   message:@"Available formats"
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
-                                                            style:UIAlertActionStyleCancel handler:nil];
-    
-    [alert addAction:[self createActionForQuality:VideoItemQualityHD720]];
-    [alert addAction:[self createActionForQuality:VideoItemQualityMedium360]];
-    [alert addAction:[self createActionForQuality:VideoItemQualitySmall240]];
-    [alert addAction:[self createActionForQuality:VideoItemQualitySmall144]];
-    [alert addAction:cancedlAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
 #pragma mark - Selectors
 
 - (void)backgroundTapped:(UIGestureRecognizer *)gestureRecognizer
 {
-    if ([self.playerDelegate respondsToSelector:@selector(videoPlayerViewControllerOpen)])
+    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerOpen)])
     {
-        [self.playerDelegate videoPlayerViewControllerOpen];
+        [self.delegate videoPlayerViewControllerOpen];
     }
 }
 
 - (void)qualityButtonPressed:(UIButton *)button
 {
-    [self showQualityDialog];
+    [self showQualityDialogForCurrentQuality:self.quality handler:^(VideoItemQuality quality) {
+        if (self.quality == quality)
+        {
+            return;
+        }
+
+        [self setVideoWithQuality:quality];
+    }];
 }
 
 - (void)addButtonPressed:(UIButton *)button
 {
-    MEKModalPlaylistsViewController *playlistsController = [MEKModalPlaylistsViewController new];
-    playlistsController.delegate = self;
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
-    
-    [self presentViewController:navController animated:YES completion:nil];
+    [self videoItemAddToPlaylist:self.item];
 }
 
 - (void)downloadButtonPressed:(UIButton *)button
 {
     if (!self.downloadButton.isLoading)
     {
-        //self.downloadButton.loading = YES;
-        if ([self.delegate respondsToSelector:@selector(videoItemDownload:withQuality:)])
-        {
-            [self.delegate videoItemDownload:self.item withQuality:VideoItemQualityMedium360];
-        }
+        [self videoItemDownload:self.item];
     }
     else
     {
-        //self.downloadButton.loading = NO;
-        if ([self.delegate respondsToSelector:@selector(videoItemCancelDownload:)])
-        {
-            [self.delegate videoItemCancelDownload:self.item];
-        }
+        [self videoItemCancelDownload:self.item];
     }
 }
 
 - (void)closeButtonPressed: (UIButton*) button
 {
-    if ([self.playerDelegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
+    if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
     {
-        [self.playerDelegate videoPlayerViewControllerClosed];
-    }
-}
-
-#pragma mark - MEKModalPlaylistsViewControllerDelegate
-
-- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist
-{
-    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:playlist:)])
-    {
-        [self.delegate videoItemAddToPlaylist:self.item playlist:playlist];
+        [self.delegate videoPlayerViewControllerClosed];
     }
 }
 
@@ -483,7 +436,75 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
 - (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
 {
-    [self setWithVideoItem:item andQuality:self.quality];
+    [self setVideoWithQuality:self.quality];
+}
+
+#pragma mark - MEKVideoItemDelegate
+
+- (void)videoItemAddToPlaylist:(VideoItemMO *)item
+{
+    [self choosePlaylistForVideoItem:item];
+}
+
+- (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
+{
+    [playlist addVideoItem:item];
+}
+
+- (void)videoItemDownload: (VideoItemMO*) item
+{
+    [self showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
+        [self videoItemDownload:item withQuality:quality];
+    }];
+}
+
+- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
+{
+    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
+}
+
+- (void)videoItemCancelDownload:(VideoItemMO *)item
+{
+    [self.downloadController cancelDownloadForKey:item.videoId];
+}
+
+#pragma mark - MEKDownloadControllerDelegate
+
+- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (![key isEqualToString:self.item.videoId])
+        return;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.downloadButton setProgress:progress];
+    });
+}
+
+- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (![key isEqualToString:self.item.videoId])
+        return;
+    
+    NSNumber *quality = params[@"quality"];
+    [self.item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
+}
+
+- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (![key isEqualToString:self.item.videoId])
+        return;
+    
+    if (error)
+    {
+        [self downloadControllerProgress:0 forKey:key withParams:params];
+    }
+}
+
+#pragma mark - MEKModalPlaylistsViewControllerDelegate
+
+- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist forVideoItem:(VideoItemMO *)item
+{
+    [self videoItemAddToPlaylist:item playlist:playlist];
 }
 
 @end

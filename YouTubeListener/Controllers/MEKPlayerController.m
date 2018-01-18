@@ -12,7 +12,7 @@
 
 static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
-@interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate, MEKDownloadControllerDelegate, MEKVideoItemDelegate>
+@interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -164,7 +164,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
         return;
     
     self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithVideoItem:item];
-    self.playerViewController.playerDelegate = self;
+    self.playerViewController.downloadController = self.downloadController;
     self.playerViewController.delegate = self;
     
     if (state == MEKPlayerVisibleStateMinimized)
@@ -243,13 +243,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 - (void)minimizePlayer
 {
-    UIViewController *navController = self.tabBarController.selectedViewController;
-    [navController viewWillAppear:NO];
-    if ([navController isKindOfClass:[UINavigationController class]])
-    {
-        id vc = ((UINavigationController*)navController).topViewController;
-        [vc viewWillAppear:NO];
-    }
+    [self topViewWillAppear];
     
     [self.tabBarMainView setNeedsUpdateConstraints];
     
@@ -260,7 +254,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 - (void)maximizePlayer
 {
-    self.downloadController.delegate = self;
+    [self playerViewWillAppear];
     
     [self.tabBarMainView setNeedsUpdateConstraints];
     
@@ -277,43 +271,20 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     [scrollView scrollRectToVisible:rect animated:YES];
 }
 
-- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality
+- (void)topViewWillAppear
 {
-    NSString *qualityString = [VideoItemMO getQualityString:quality];
-    NSString *name = qualityString;
-    
-    VideoItemMO *item = self.playerViewController.item;
-    NSNumber *size = item.sizes[@(quality)];
-    if (![size isEqualToNumber:@(0)])
+    UIViewController *navController = self.tabBarController.selectedViewController;
+    [navController viewWillAppear:NO];
+    if ([navController isKindOfClass:[UINavigationController class]])
     {
-        name = [NSString stringWithFormat:@"%@ (%@MB)", qualityString, size];
+        id vc = ((UINavigationController*)navController).topViewController;
+        [vc viewWillAppear:NO];
     }
-    
-    UIAlertAction *action = [UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-    
-        [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
-        
-    }];
-    
-    return action;
 }
 
-- (void)showDownloadingDialog
+- (void)playerViewWillAppear
 {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
-                                                                   message:@"Available formats"
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
-                                                            style:UIAlertActionStyleCancel handler:nil];
-    
-    [alert addAction:[self createActionForQuality:VideoItemQualityHD720]];
-    [alert addAction:[self createActionForQuality:VideoItemQualityMedium360]];
-    [alert addAction:[self createActionForQuality:VideoItemQualitySmall240]];
-    [alert addAction:[self createActionForQuality:VideoItemQualitySmall144]];
-    [alert addAction:cancedlAction];
-    
-    [self.playerViewController presentViewController:alert animated:YES completion:nil];
+    [self.playerViewController viewWillAppear:NO];
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -337,23 +308,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     }
 }
 
-#pragma mark - MEKVideoItemDelegate
-
-- (void)videoItemCancelDownload:(VideoItemMO *)item
-{
-    [self.downloadController cancelDownloadForKey:item.videoId];
-}
-
-- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
-{
-    [self showDownloadingDialog];
-}
-
-- (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
-{
-    [playlist addVideoItem:item];
-}
-
 #pragma mark - MEKVideoPlayerViewControllerDelegate
 
 - (void)videoPlayerViewControllerOpen
@@ -364,38 +318,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 - (void)videoPlayerViewControllerClosed
 {
     [self close];
-}
-
-#pragma mark - MEKDownloadControllerDelegate
-
-- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (![key isEqualToString:self.playerViewController.item.videoId])
-        return;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.playerViewController setDownloadingProgress:progress];
-    });
-}
-
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (![key isEqualToString:self.playerViewController.item.videoId])
-        return;
-    
-    NSNumber *quality = params[@"quality"];
-    [self.playerViewController.item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
-}
-
-- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (![key isEqualToString:self.playerViewController.item.videoId])
-        return;
-
-    if (error)
-    {
-        [self downloadControllerProgress:0 forKey:key withParams:params];
-    }
 }
 
 @end

@@ -24,16 +24,13 @@ static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;
 
 @interface MEKVideoPlayerViewController : UIViewController
 
-@property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> playerDelegate;
-@property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
-
-@property (nonatomic, readonly) VideoItemMO *item;
+@property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> delegate;
+@property (nonatomic, strong) MEKDownloadController *downloadController;
 
 - (instancetype)initWithVideoItem: (VideoItemMO*) item;
 
 - (void)minimizeWithDuration: (NSTimeInterval) duration;
 - (void)maximizeWithDuration: (NSTimeInterval) duration;
-- (void)setDownloadingProgress: (double) progress;
 
 @end
 
