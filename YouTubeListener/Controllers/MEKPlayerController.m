@@ -11,7 +11,7 @@
 #import "AppDelegate.h"
 #import "MEKWebVideoLoader.h"
 
-static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
+static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
@@ -19,13 +19,13 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MEKVideoPlayerViewController *playerViewController;
 
+@property (nonatomic, readonly) UITabBarController *tabBarController;
+@property (nonatomic, readonly) UIView *tabBarMainView;
+@property (nonatomic, readonly) CGRect mainFrame;
+
 - (void)maximizePlayer;
 - (void)minimizePlayer;
 - (void)closePlayer;
-
-- (UITabBarController*)tabBarController;
-- (UIView*)tabBarMainView;
-- (CGRect)mainFrame;
 
 @end
 
@@ -125,6 +125,8 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
         [self closePlayer];
     }
     
+    self.tabBarMainView.translatesAutoresizingMaskIntoConstraints = NO;
+    
     [self initOverlayView];
     [self initScrollView];
     [self initPlayerViewControllerWithVideoItem:item withVisibleState:state];
@@ -219,8 +221,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     self.overlayView = [[UIView alloc] initWithFrame:self.mainFrame];
     self.overlayView.backgroundColor = UIColor.blackColor;
     self.overlayView.alpha = 0;
-    //self.darkView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(minimize)];
     [self.overlayView addGestureRecognizer:tap];
@@ -235,8 +236,8 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     
     self.tabBarController.tabBar.transform = CGAffineTransformIdentity;
     
-    //self.tabBarMainView.layer.transform = CATransform3DIdentity;
     self.tabBarMainView.layer.cornerRadius = 0;
+    self.tabBarMainView.layer.transform = CATransform3DIdentity;
     
     self.scrollView.transform = CGAffineTransformMakeTranslation(0, -CGRectGetHeight(self.tabBarController.tabBar.frame) - MEKPlayerViewHeightSizeMinimized);
 }
@@ -248,7 +249,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.tabBarController.tabBar.frame));
     
     self.tabBarMainView.layer.cornerRadius = 10;
-    //self.tabBarMainView.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
+    self.tabBarMainView.layer.transform = CATransform3DMakeScale(0.95, 0.95, 1.0);
     
     self.scrollView.transform = CGAffineTransformMakeTranslation(0, - MEKPlayerViewHeightSizeMaximized);
 }
@@ -258,6 +259,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     [self topViewWillAppear];
     
     [self.tabBarMainView setNeedsUpdateConstraints];
+    [self.tabBarMainView updateConstraintsIfNeeded];
     
     [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
         [self minimizePlayerUI];
@@ -269,6 +271,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     [self playerViewWillAppear];
     
     [self.tabBarMainView setNeedsUpdateConstraints];
+    [self.tabBarMainView updateConstraintsIfNeeded];
     
     [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
         [self maximizePlayerUI];
@@ -286,7 +289,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 - (void)topViewWillAppear
 {
     UIViewController *navController = self.tabBarController.selectedViewController;
-    [navController viewWillAppear:NO];
     if ([navController isKindOfClass:[UINavigationController class]])
     {
         id vc = ((UINavigationController*)navController).topViewController;
@@ -301,10 +303,8 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 #pragma mark - UIScrollViewDelegate
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
-    NSLog(@"contentOffset: %f", scrollView.contentOffset.y);
-    
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
     if (scrollView.contentOffset.y > 100)
     {
         [self fixContentInScrollView:scrollView AtOffset:CGPointMake(0, 100)];
