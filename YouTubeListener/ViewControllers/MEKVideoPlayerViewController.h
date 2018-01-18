@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "VideoItemMO+CoreDataClass.h"
 #import "PlaylistMO+CoreDataClass.h"
-#import "MEKYouTubeVideoParser.h"
+#import "MEKDownloadController.h"
 
 static const CGFloat MEKPlayerViewHeightSizeMaximized = 320;
 static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;

@@ -20,6 +20,9 @@
 {
     [super viewDidLoad];
     self.title = [PlaylistMO downloadsPlaylistName];
+    
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAll:)];
+    self.navigationItem.rightBarButtonItem = item;
 }
 
 #pragma mark - Private
@@ -32,6 +35,31 @@
     items = [items filteredArrayUsingPredicate:predicate];
     
     self.items = items;
+}
+
+#pragma mark - Selectors
+
+- (void)deleteAll: (id) sender
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Delete all saved videos?"
+                                                                   message:@"You will remove all downloads"
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"DeleteAll" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+        [self.items makeObjectsPerformSelector:@selector(removeDownloadAll)];
+        self.items = nil;
+        
+        NSIndexSet *indexedSet = [NSIndexSet indexSetWithIndex:0];
+        [self.tableView reloadSections:indexedSet withRowAnimation:UITableViewRowAnimationFade];
+    }];
+    
+    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [alert addAction:deleteAction];
+    [alert addAction:cancedlAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 #pragma mark - UITableViewDelegate

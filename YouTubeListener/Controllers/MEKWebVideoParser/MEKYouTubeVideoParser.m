@@ -12,7 +12,24 @@
 
 @implementation MEKYouTubeVideoParser
 
-#pragma mark - Private overriding
+#pragma mark - Private
+
+- (NSDictionary*)dictionaryWithQueryString: (NSString*) string
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
+    NSArray *fields = [string componentsSeparatedByString:@"&"];
+    for (NSString *field in fields) {
+        NSArray *pair = [field componentsSeparatedByString:@"="];
+        if (pair.count == 2) {
+            NSString *key = pair[0];
+            NSString *value = [[pair[1] stringByRemovingPercentEncoding] stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+            dictionary[key] = value;
+        }
+    }
+    return dictionary;
+}
+
+#pragma mark - MEKWebVideoParserProtocol
 
 - (NSString*)generateIdForVideoItem: (VideoItemMO*) item
 {
@@ -34,7 +51,7 @@
     return infoUrl;
 }
 
-- (void)parseQueryContent: (NSString*) content forVideoItem: (VideoItemMO*) item
+- (void)parseQueryContent: (NSString*) content toVideoItem:(VideoItemMO *)item
 {
     NSDictionary *info = [self dictionaryWithQueryString:content];
     
@@ -58,7 +75,6 @@
     item.thumbnailBig = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", item.videoId]];
     item.urls = urls;
     item.sizes = sizes;
-    item.added = [NSDate new];
 }
 
 @end

@@ -42,8 +42,11 @@
     self.title = @"PLAYLISTS";
     self.view.backgroundColor = UIColor.whiteColor;
     
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPlaylist:)];
-    self.navigationItem.rightBarButtonItem = item;
+    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPlaylist:)];
+    self.navigationItem.rightBarButtonItem = addItem;
+    
+    UIBarButtonItem *goItem = [[UIBarButtonItem alloc] initWithTitle:@"GO" style:UIBarButtonItemStyleDone target:self action:@selector(goToURL:)];
+    self.navigationItem.leftBarButtonItem = goItem;
 
     self.tableView = [UITableView new];
     self.tableView.delegate = self;
@@ -78,34 +81,6 @@
     [self.tableView reloadData];
 }
 
-- (void)addPlaylist: (id) sender
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Add Playlist"
-                                                                   message:@""
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       [PlaylistMO playlistWithName:alert.textFields[0].text withContext:self.coreDataContext];
-                                                       
-                                                       [self loadPlaylists];
-                                                   }];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                   }];
-    
-    [alert addAction:submit];
-    [alert addAction:cancel];
-    
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"Playlist Name";
-    }];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
 - (void)renamePlaylist: (PlaylistMO*) playlist
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Rename Playlist"
@@ -136,6 +111,48 @@
 }
 
 #pragma mark - Selectors
+
+- (void)goToURL: (id) sender
+{
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    if (![pasteboard hasStrings])
+    {
+        return;
+    }
+    
+    NSURL *url = [NSURL URLWithString:pasteboard.string];
+    
+    AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
+}
+
+- (void)addPlaylist: (id) sender
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Add Playlist"
+                                                                   message:@""
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action) {
+                                                       
+                                                       [PlaylistMO playlistWithName:alert.textFields[0].text withContext:self.coreDataContext];
+                                                       
+                                                       [self loadPlaylists];
+                                                   }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    
+    [alert addAction:submit];
+    [alert addAction:cancel];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = @"Playlist Name";
+    }];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 - (void)recentTapped:(UIGestureRecognizer *)gestureRecognizer
 {

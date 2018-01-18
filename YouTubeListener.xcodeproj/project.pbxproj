@@ -28,7 +28,7 @@
 		BAB56F1E200E87CA000DF5C6 /* MEKModalPlaylistsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F1D200E87CA000DF5C6 /* MEKModalPlaylistsViewController.m */; };
 		BAB56F21200E8BCD000DF5C6 /* MEKRecentPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F20200E8BCD000DF5C6 /* MEKRecentPlaylistViewController.m */; };
 		BAB56F24200E8EB6000DF5C6 /* MEKDownloadsPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F23200E8EB6000DF5C6 /* MEKDownloadsPlaylistViewController.m */; };
-		BAB56F31200EAA6D000DF5C6 /* MEKWebVideoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F30200EAA6D000DF5C6 /* MEKWebVideoParser.m */; };
+		BAB56F31200EAA6D000DF5C6 /* MEKWebVideoLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F30200EAA6D000DF5C6 /* MEKWebVideoLoader.m */; };
 		BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356A1FDEAF740036B27F /* AppDelegate.m */; };
 		BABD356E1FDEAF740036B27F /* MEKVideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356D1FDEAF740036B27F /* MEKVideoPlayerViewController.m */; };
 		BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */; };
@@ -66,6 +66,7 @@
 		BA70A68A200759EB002AE1B4 /* MEKVideoItemTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKVideoItemTableViewCell.m; sourceTree = "<group>"; };
 		BA8F073F2010D937005FA2E6 /* UIViewController+VideoItemActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+VideoItemActions.h"; sourceTree = "<group>"; };
 		BA8F07402010D937005FA2E6 /* UIViewController+VideoItemActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+VideoItemActions.m"; sourceTree = "<group>"; };
+		BA8F07452011409F005FA2E6 /* MEKWebVideoParserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoParserProtocol.h; sourceTree = "<group>"; };
 		BAAE6CFF1FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKYouTubeVideoParser.m; sourceTree = "<group>"; };
 		BAAE6D011FE1A3CD00438DF9 /* MEKPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerViewController.h; sourceTree = "<group>"; };
 		BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerViewController.m; sourceTree = "<group>"; };
@@ -81,9 +82,9 @@
 		BAB56F20200E8BCD000DF5C6 /* MEKRecentPlaylistViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKRecentPlaylistViewController.m; sourceTree = "<group>"; };
 		BAB56F22200E8EB6000DF5C6 /* MEKDownloadsPlaylistViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKDownloadsPlaylistViewController.h; sourceTree = "<group>"; };
 		BAB56F23200E8EB6000DF5C6 /* MEKDownloadsPlaylistViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKDownloadsPlaylistViewController.m; sourceTree = "<group>"; };
-		BAB56F2C200EA954000DF5C6 /* MEKWebVideoParserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoParserProtocol.h; sourceTree = "<group>"; };
-		BAB56F2F200EAA6D000DF5C6 /* MEKWebVideoParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoParser.h; sourceTree = "<group>"; };
-		BAB56F30200EAA6D000DF5C6 /* MEKWebVideoParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKWebVideoParser.m; sourceTree = "<group>"; };
+		BAB56F2C200EA954000DF5C6 /* MEKWebVideoLoaderProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoLoaderProtocol.h; sourceTree = "<group>"; };
+		BAB56F2F200EAA6D000DF5C6 /* MEKWebVideoLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoLoader.h; sourceTree = "<group>"; };
+		BAB56F30200EAA6D000DF5C6 /* MEKWebVideoLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKWebVideoLoader.m; sourceTree = "<group>"; };
 		BAB56F33200EB15B000DF5C6 /* MEKYouTubeVideoParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKYouTubeVideoParser.h; sourceTree = "<group>"; };
 		BABD35661FDEAF740036B27F /* YouTubeListener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeListener.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABD35691FDEAF740036B27F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -228,9 +229,10 @@
 			children = (
 				BAB56F33200EB15B000DF5C6 /* MEKYouTubeVideoParser.h */,
 				BAAE6CFF1FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m */,
-				BAB56F2C200EA954000DF5C6 /* MEKWebVideoParserProtocol.h */,
-				BAB56F2F200EAA6D000DF5C6 /* MEKWebVideoParser.h */,
-				BAB56F30200EAA6D000DF5C6 /* MEKWebVideoParser.m */,
+				BA8F07452011409F005FA2E6 /* MEKWebVideoParserProtocol.h */,
+				BAB56F2C200EA954000DF5C6 /* MEKWebVideoLoaderProtocol.h */,
+				BAB56F2F200EAA6D000DF5C6 /* MEKWebVideoLoader.h */,
+				BAB56F30200EAA6D000DF5C6 /* MEKWebVideoLoader.m */,
 			);
 			path = MEKWebVideoParser;
 			sourceTree = "<group>";
@@ -434,7 +436,7 @@
 				BA70A67E2005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m in Sources */,
 				BAB51E441FFB4C85005F24F8 /* MEKProgressBar.m in Sources */,
 				BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */,
-				BAB56F31200EAA6D000DF5C6 /* MEKWebVideoParser.m in Sources */,
+				BAB56F31200EAA6D000DF5C6 /* MEKWebVideoLoader.m in Sources */,
 				BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */,
 				BABD357C1FDEAF740036B27F /* main.m in Sources */,
 				BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */,

@@ -9,6 +9,7 @@
 #import "MEKPlayerController.h"
 #import "MEKVideoPlayerViewController.h"
 #import "AppDelegate.h"
+#import "MEKWebVideoLoader.h"
 
 static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
@@ -83,13 +84,23 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
 
 #pragma mark - Public
 
-- (void)openURL:(NSURL *)videoURL
+- (BOOL)openURL:(NSURL *)videoURL
 {
-    [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMinimized];
+    return [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
-- (void)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
+- (BOOL)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
 {
+    if (!videoURL)
+    {
+        return NO;
+    }
+    
+    if (![MEKWebVideoLoader parserForURL:videoURL])
+    {
+        return NO;
+    }
+    
     VideoItemMO *item = [VideoItemMO getVideoItemForURL:videoURL withContext:self.coreDataContext];
     if (!item)
     {
@@ -98,6 +109,8 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.3;
     }
     
     [self openVideoItem:item withVisibleState:state];
+    
+    return YES;
 }
 
 - (void)openVideoItem:(VideoItemMO *)item

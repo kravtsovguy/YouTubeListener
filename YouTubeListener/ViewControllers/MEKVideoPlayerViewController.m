@@ -7,7 +7,7 @@
 //
 
 #import "MEKVideoPlayerViewController.h"
-#import "MEKYouTubeVideoParser.h"
+#import "MEKWebVideoLoader.h"
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
 #import <Masonry/Masonry.h>
@@ -21,11 +21,11 @@
 
 static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
-@interface MEKVideoPlayerViewController () <MEKWebVideoParserOutputProtocol, MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <MEKWebVideoLoaderOutputProtocol, MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKProgressBar *progressBar;
-@property (nonatomic, strong) MEKWebVideoParser *youtubeParser;
+@property (nonatomic, strong) MEKWebVideoLoader *loader;
 
 
 @property (nonatomic, strong) VideoItemMO *item;
@@ -146,14 +146,11 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     self.view.layer.cornerRadius = 10;
     self.view.layer.masksToBounds = YES;
     
-    self.youtubeParser = [MEKYouTubeVideoParser new];
-    self.youtubeParser.output = self;
+    self.loader = [MEKWebVideoLoader new];
+    self.loader.output = self;
 
-    if (self.item.added)
-    {
-        self.item.added = [NSDate new];
-        [self.item saveObject];
-    }
+    self.item.added = [NSDate new];
+    [self.item saveObject];    
     
     [self setUIwithVideoItem:self.item];
     [self setVideoWithQuality:self.quality];
@@ -311,21 +308,26 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     
     self.item = item;
     
-    self.titleLabel.text = item.title;
-    self.authorLabel.text = item.author;
+    if (self.item.title && self.item.author)
+    {
+        self.titleLabel.text = item.title;
+        self.authorLabel.text = item.author;
+        
+        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
+                                              MPMediaItemPropertyArtist : item.author
+                                              };
+    }
+    else
+    {
+        [self.loader loadVideoItem:item];
+        return NO;
+    }
     
     double progress = [self.downloadController getProgressForKey:item.videoId];
     if ([item hasDownloaded])
         progress = 1;
     
     [self.downloadButton setProgress:progress];
-    
-    if (self.item.title && self.item.author)
-    {
-        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
-                                              MPMediaItemPropertyArtist : item.author
-                                              };
-    }
     
     [UIImage ch_downloadImageFromUrl:self.item.thumbnailSmall completion:^(UIImage *image) {
         
@@ -356,7 +358,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     
     if (!downloadedURL && !webURL)
     {
-        [self.youtubeParser loadVideoItem:self.item];
+        [self.loader loadVideoItem:self.item];
         return NO;
     }
     
@@ -438,10 +440,11 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     }
 }
 
-#pragma mark - MEKWebVideoParserOutputProtocol
+#pragma mark - MEKWebVideoLoaderOutputProtocol
 
-- (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
+- (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
+    [self setUIwithVideoItem:self.item];
     [self setVideoWithQuality:self.quality];
 }
 

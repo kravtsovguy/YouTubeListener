@@ -11,11 +11,11 @@
 #import <Masonry/Masonry.h>
 #import "MEKVideoItemTableViewCell.h"
 #import "MEKModalPlaylistsViewController.h"
-#import "MEKYouTubeVideoParser.h"
+#import "MEKWebVideoLoader.h"
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoParserOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
 
-@property (nonatomic, strong) MEKWebVideoParser *parser;
+@property (nonatomic, strong) MEKWebVideoLoader *loader;
 @property (nonatomic, strong) PlaylistMO *playlist;
 
 @end
@@ -29,8 +29,8 @@
     self = [super init];
     if (self)
     {
-        _parser = [MEKYouTubeVideoParser new];
-        _parser.output = self;
+        _loader = [MEKWebVideoLoader new];
+        _loader.output = self;
     }
     return self;
 }
@@ -208,7 +208,7 @@
     }
     else
     {
-        [self.parser loadVideoItem:item];
+        [self.loader loadVideoItem:item];
     }
 }
 
@@ -222,9 +222,9 @@
     [self.downloadController cancelDownloadForKey:item.videoId];
 }
 
-#pragma mark - MEKWebVideoParserOutputProtocol
+#pragma mark - MEKWebVideoLoaderOutputProtocol
 
-- (void)webVideoParser:(id<MEKWebVideoParserInputProtocol>)parser didLoadItem:(VideoItemMO *)item
+- (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
     [self videoItemDownload:item];
 }

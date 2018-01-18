@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PlaylistMO+CoreDataClass.h"
 #import "VideoItemMO+CoreDataClass.h"
 #import "MEKDownloadController.h"
 
@@ -23,11 +22,11 @@ typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
 @property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 
+- (BOOL)openURL: (NSURL*) videoURL;
+- (BOOL)openURL: (NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state;
+
 - (void)openVideoItem: (VideoItemMO*) item;
 - (void)openVideoItem: (VideoItemMO*) item withVisibleState:(MEKPlayerVisibleState) state;
-
-- (void)openURL: (NSURL*) videoURL;
-- (void)openURL: (NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state;
 
 - (void)close;
 - (void)minimize;
