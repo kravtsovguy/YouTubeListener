@@ -13,9 +13,9 @@
 
 @interface MEKPlaylistViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
+@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKDownloadController *downloadController;
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *items;
 

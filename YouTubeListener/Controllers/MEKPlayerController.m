@@ -36,16 +36,18 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
 - (NSManagedObjectContext*) coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
-    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
+    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     
-    NSManagedObjectContext *context = container.viewContext;
-    
-    return context;
+    NSPersistentContainer *container = appDelegate.persistentContainer;
+    return container.viewContext;
 }
 
 - (UITabBarController *)tabBarController
 {
-    return ((AppDelegate*)[UIApplication sharedApplication].delegate).tabBarController;
+    UIApplication *application = [UIApplication sharedApplication];
+    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
+    
+    return appDelegate.tabBarController;
 }
 
 - (UIView *)tabBarMainView

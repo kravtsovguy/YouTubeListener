@@ -27,11 +27,18 @@
 - (NSManagedObjectContext*) coreDataContext
 {
     UIApplication *application = [UIApplication sharedApplication];
-    NSPersistentContainer *container = ((AppDelegate*)(application.delegate)).persistentContainer;
+    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     
-    NSManagedObjectContext *context = container.viewContext;
+    NSPersistentContainer *container = appDelegate.persistentContainer;
+    return container.viewContext;
+}
+
+- (MEKPlayerController *)playerController
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     
-    return context;
+    return appDelegate.player;
 }
 
 #pragma mark - UIViewController
@@ -122,8 +129,7 @@
     
     NSURL *url = [NSURL URLWithString:pasteboard.string];
     
-    AppDelegate *appDelegate =  (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [appDelegate.player openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
+    [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
 }
 
 - (void)addPlaylist: (id) sender

@@ -18,9 +18,9 @@ typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
 
 @interface MEKPlayerController : NSObject
 
-@property (nonatomic, readonly) BOOL isOpened;
-@property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
+@property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
+@property (nonatomic, readonly) BOOL isOpened;
 
 - (BOOL)openURL: (NSURL*) videoURL;
 - (BOOL)openURL: (NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state;

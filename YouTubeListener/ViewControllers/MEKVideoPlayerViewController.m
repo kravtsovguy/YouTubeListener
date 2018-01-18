@@ -72,7 +72,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 - (MEKDownloadController *)downloadController
 {
     UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *delegate = ((AppDelegate*)(application.delegate));
+    AppDelegate *delegate = (AppDelegate*)application.delegate;
     return delegate.downloadController;
 }
 
@@ -131,7 +131,6 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     self.blurEffectView.alpha = 0;
     self.blurEffectView.frame = self.view.bounds;
     self.blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-    //self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view insertSubview:self.blurEffectView atIndex:0];
     
     UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];

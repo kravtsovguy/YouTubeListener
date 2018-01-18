@@ -52,6 +52,7 @@
 {
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
+    
     return appDelegate.player;
 }
 
@@ -59,8 +60,8 @@
 {
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
+    
     return appDelegate.downloadController;
-
 }
 
 - (NSManagedObjectContext*) coreDataContext
