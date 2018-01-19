@@ -42,7 +42,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 @property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) MEKDowloadButton *downloadButton;
 @property (nonatomic, strong) UIButton *qualityButton;
-@property (nonatomic, strong) UILabel *downloadInfoLabel;
+@property (nonatomic, strong) UIButton *youtubeButton;
 
 @end
 
@@ -116,14 +116,14 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     [self.qualityButton addTarget:self action:@selector(qualityButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.qualityButton];
     
-    self.downloadInfoLabel = [UILabel new];
-    self.downloadInfoLabel.numberOfLines = 1;
-    self.downloadInfoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.downloadInfoLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightUltraLight];
-    self.downloadInfoLabel.text = @"";
-    [self.view addSubview:self.downloadInfoLabel];
+    self.youtubeButton = [UIButton new];
+    [self.youtubeButton setImage:[UIImage imageNamed:@"youtube"] forState:UIControlStateNormal];
+    self.youtubeButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    [self.youtubeButton addTarget:self action:@selector(youtubeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.youtubeButton];
     
-
+    [self setButtonsHidden:YES];
+    
     UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
     self.blurEffectView.alpha = 0;
@@ -187,12 +187,12 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     
     [self.authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         
-        make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
+        make.top.equalTo(self.titleLabel.mas_bottom).with.offset(15);
         
         if (self.maximized)
         {
             make.left.equalTo(self.view.mas_left).with.offset(10);
-            make.right.equalTo(self.qualityButton.mas_right).with.offset(-10);
+            make.right.equalTo(self.youtubeButton.mas_left).with.offset(-10);
         }
         else
         {
@@ -235,7 +235,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     [self.downloadButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         if (self.maximized)
         {
-            make.top.equalTo(self.titleLabel.mas_bottom).with.offset(5);
+            make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
         }
         else
         {
@@ -247,9 +247,11 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
         make.height.equalTo(@30);
     }];
     
-    [self.downloadInfoLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.downloadButton.mas_top);
-        make.left.equalTo(self.downloadButton.mas_right).with.offset(10);
+    [self.youtubeButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.qualityButton.mas_top);
+        make.right.equalTo(self.qualityButton.mas_left).with.offset(-20);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
     }];
     
     [super updateViewConstraints];
@@ -297,6 +299,14 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
 #pragma mark - Private
 
+- (void)setButtonsHidden: (BOOL) hidden
+{
+    self.downloadButton.hidden = hidden;
+    self.addButton.hidden = hidden;
+    self.qualityButton.hidden = hidden;
+    self.youtubeButton.hidden = hidden;
+}
+
 - (BOOL)setUIwithVideoItem: (VideoItemMO*) item
 {
     if (!item)
@@ -314,6 +324,8 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
         self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
                                               MPMediaItemPropertyArtist : item.author
                                               };
+        
+        [self setButtonsHidden:NO];
     }
     else
     {
@@ -399,6 +411,15 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     {
         [self.delegate videoPlayerViewControllerOpen];
     }
+}
+
+- (void)youtubeButtonPressed:(UIButton *)button
+{
+    UIApplication *application = [UIApplication sharedApplication];
+    NSURL *url = self.item.originURL;
+    [application openURL:url options:@{} completionHandler:^(BOOL success) {
+        [self.playerController.player pause];
+    }];
 }
 
 - (void)qualityButtonPressed:(UIButton *)button

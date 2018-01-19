@@ -37,7 +37,6 @@
         _progress = 0;
         
         _progressLayer = [[CAShapeLayer alloc] init];
-        //[_progressLayer setPath:bezierPath.CGPath];
         [_progressLayer setStrokeColor:[UIColor.redColor colorWithAlphaComponent:0.7].CGColor];
         [_progressLayer setFillColor:UIColor.clearColor.CGColor];
         [_progressLayer setLineWidth:_radius];
@@ -45,7 +44,6 @@
         _progressLayer.lineCap = kCALineCapRound;
         
         _backProgressLayer = [[CAShapeLayer alloc] init];
-        //[_backProgressLayer setPath:bezierPath.CGPath];
         [_backProgressLayer setStrokeColor:[[UIColor grayColor] colorWithAlphaComponent:0.3f].CGColor];
         [_backProgressLayer setFillColor:UIColor.clearColor.CGColor];
         [_backProgressLayer setLineWidth:_radius];
@@ -85,8 +83,6 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
-    NSLog(@"width: %f", self.frame.size.width);
     self.radius = CGRectGetHeight(self.frame) * 0.1;
 }
 

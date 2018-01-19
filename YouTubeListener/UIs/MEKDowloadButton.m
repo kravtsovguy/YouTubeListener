@@ -46,14 +46,7 @@
         
         _image = [UIImage imageNamed:@"download"];
         _doneImage = [UIImage imageNamed:@"downloaded"];
-        //_image = [self imageWithImage:_image convertToSize:CGSizeMake(100, 100)];
         [self setImage:_image forState:UIControlStateNormal];
-        //self.imageView.adjustsImageSizeForAccessibilityContentSizeCategory = YES;
-        
-        //self.imageView.backgroundColor = UIColor.redColor;
-        //self.imageView.contentMode = UIViewContentModeScaleToFill;
-        //self.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-        //self.tintColor = [UIColor blueColor];
     }
     
     return self;
@@ -124,17 +117,4 @@
     self.stopView.frame = CGRectMake((self.frame.size.width - stopViewSize)/ 2, (self.frame.size.height - stopViewSize)/ 2, stopViewSize, stopViewSize);
     self.stopView.layer.cornerRadius = stopViewSize / 4;
 }
-
-#pragma mark - Trash
-
-- (UIImage *)imageWithImage:(UIImage *)image convertToSize:(CGSize)size
-{
-    UIGraphicsBeginImageContext(size);
-    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-    UIImage *destImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    destImage = [destImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    return destImage;
-}
-
 @end
