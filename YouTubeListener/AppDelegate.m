@@ -15,19 +15,14 @@
 
 @interface AppDelegate ()
 
+@property (nonatomic, strong) UIViewController *playlistsViewController;
+@property (nonatomic, strong) UIViewController *downloadsPlaylistViewController;
+
 @end
 
 @implementation AppDelegate
 
 #pragma mark - Init View Controllers
-
-- (UIViewController*)searchViewController
-{
-    MEKSearchViewController *searchViewController = [MEKSearchViewController new];
-    searchViewController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
-    
-    return searchViewController;
-}
 
 - (UIViewController*)playlistsViewController
 {
