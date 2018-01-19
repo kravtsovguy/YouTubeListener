@@ -13,7 +13,7 @@
 #import "MEKModalPlaylistsViewController.h"
 #import "MEKWebVideoLoader.h"
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating>
 
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
 @property (nonatomic, strong) PlaylistMO *playlist;
@@ -85,6 +85,15 @@
     [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:@"MEKVideoItemTableViewCell"];
     [self.view addSubview:self.tableView];
     
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    searchController.searchResultsUpdater = self;
+    searchController.searchBar.placeholder = @"Search by Title or Author";
+    searchController.dimsBackgroundDuringPresentation = NO;
+    searchController.obscuresBackgroundDuringPresentation = NO;
+    self.navigationItem.searchController = searchController;
+    
+    self.definesPresentationContext = YES;
+    
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
@@ -96,6 +105,13 @@
     
     self.downloadController.delegate = self;
     [self loadItems];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    self.navigationItem.searchController.active = NO;
 }
 
 #pragma mark - Private
@@ -147,9 +163,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
+
     VideoItemMO *item = self.items[indexPath.row];
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
+    
+    self.navigationItem.searchController.active = NO;
 }
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -276,6 +294,26 @@
 - (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist forVideoItem:(VideoItemMO *)item
 {
     [self videoItemAddToPlaylist:item playlist:playlist];
+}
+
+#pragma mark - UISearchResultsUpdating
+
+- (void)updateSearchResultsForSearchController:(nonnull UISearchController *)searchController
+{
+    NSString *text = searchController.searchBar.text;
+    if (text.length == 0)
+    {
+        [self loadItems];
+        return;
+    }
+    
+    [self updateData];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title CONTAINS[c] %@ OR author CONTAINS[c] %@", text, text];
+    self.items = [self.items filteredArrayUsingPredicate:predicate];
+    
+    [self.tableView reloadData];
+    
 }
 
 @end
