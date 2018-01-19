@@ -12,6 +12,8 @@
 		BA4942D2200B3A33007D8819 /* UIImage+Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4942D1200B3A33007D8819 /* UIImage+Cache.m */; };
 		BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49AB512000A8CE00D6578D /* MEKPlayerController.m */; };
 		BA5453D4201233020027E2E6 /* MEKInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5453D3201233020027E2E6 /* MEKInfoView.m */; };
+		BA545419201281370027E2E6 /* libOCMock.a in Sources */ = {isa = PBXBuildFile; fileRef = BA545418201281370027E2E6 /* libOCMock.a */; };
+		BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA54541A201283960027E2E6 /* MEKProgressBarTests.m */; };
 		BA70A6652005EAE3002AE1B4 /* MEKPlaylistsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */; };
 		BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */; };
 		BA70A67E2005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6782005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m */; };
@@ -36,9 +38,22 @@
 		BABD35761FDEAF740036B27F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BABD35751FDEAF740036B27F /* Assets.xcassets */; };
 		BABD35791FDEAF740036B27F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BABD35771FDEAF740036B27F /* LaunchScreen.storyboard */; };
 		BABD357C1FDEAF740036B27F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD357B1FDEAF740036B27F /* main.m */; };
+		C62B17E85EE9141C9A3A13CA /* libPods-YouTubeListener-YouTubeListenerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A8531448D4F2E81770E00D /* libPods-YouTubeListener-YouTubeListenerTests.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		BA54541120127D4B0027E2E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BABD355E1FDEAF740036B27F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BABD35651FDEAF740036B27F;
+			remoteInfo = YouTubeListener;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		41FD955D88821B2AD306A5BF /* Pods-YouTubeListener-YouTubeListenerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener-YouTubeListenerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener-YouTubeListenerTests/Pods-YouTubeListener-YouTubeListenerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		68AFCF21D29F4BA85D1A1641 /* Pods-YouTubeListener-YouTubeListenerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener-YouTubeListenerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener-YouTubeListenerTests/Pods-YouTubeListener-YouTubeListenerTests.release.xcconfig"; sourceTree = "<group>"; };
 		6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YouTubeListener.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C8818282E684B6B6C6CCA85 /* Pods-YouTubeListener.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener.release.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener/Pods-YouTubeListener.release.xcconfig"; sourceTree = "<group>"; };
 		AE9604B7FD3A8F3C409C1CFB /* Pods-YouTubeListener.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeListener.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeListener/Pods-YouTubeListener.debug.xcconfig"; sourceTree = "<group>"; };
@@ -50,6 +65,10 @@
 		BA49AB512000A8CE00D6578D /* MEKPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerController.m; sourceTree = "<group>"; };
 		BA5453D2201233020027E2E6 /* MEKInfoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKInfoView.h; sourceTree = "<group>"; };
 		BA5453D3201233020027E2E6 /* MEKInfoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKInfoView.m; sourceTree = "<group>"; };
+		BA54540C20127D4B0027E2E6 /* YouTubeListenerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouTubeListenerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA54541020127D4B0027E2E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BA545418201281370027E2E6 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = usr/include/lib/libOCMock.a; sourceTree = "<group>"; };
+		BA54541A201283960027E2E6 /* MEKProgressBarTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKProgressBarTests.m; sourceTree = "<group>"; };
 		BA70A6632005EAE3002AE1B4 /* MEKPlaylistsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlaylistsViewController.h; sourceTree = "<group>"; };
 		BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistsViewController.m; sourceTree = "<group>"; };
 		BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistTableViewCell.m; sourceTree = "<group>"; };
@@ -98,9 +117,18 @@
 		BABD35781FDEAF740036B27F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BABD357A1FDEAF740036B27F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BABD357B1FDEAF740036B27F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D2A8531448D4F2E81770E00D /* libPods-YouTubeListener-YouTubeListenerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YouTubeListener-YouTubeListenerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		BA54540920127D4B0027E2E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C62B17E85EE9141C9A3A13CA /* libPods-YouTubeListener-YouTubeListenerTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BABD35631FDEAF740036B27F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,7 +143,9 @@
 		3CD486BD69487BF9D851CBEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BA545418201281370027E2E6 /* libOCMock.a */,
 				6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */,
+				D2A8531448D4F2E81770E00D /* libPods-YouTubeListener-YouTubeListenerTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -125,8 +155,19 @@
 			children = (
 				AE9604B7FD3A8F3C409C1CFB /* Pods-YouTubeListener.debug.xcconfig */,
 				9C8818282E684B6B6C6CCA85 /* Pods-YouTubeListener.release.xcconfig */,
+				41FD955D88821B2AD306A5BF /* Pods-YouTubeListener-YouTubeListenerTests.debug.xcconfig */,
+				68AFCF21D29F4BA85D1A1641 /* Pods-YouTubeListener-YouTubeListenerTests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		BA54540D20127D4B0027E2E6 /* YouTubeListenerTests */ = {
+			isa = PBXGroup;
+			children = (
+				BA54541A201283960027E2E6 /* MEKProgressBarTests.m */,
+				BA54541020127D4B0027E2E6 /* Info.plist */,
+			);
+			path = YouTubeListenerTests;
 			sourceTree = "<group>";
 		};
 		BA70A6752005F87E002AE1B4 /* Models */ = {
@@ -263,6 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				BABD35681FDEAF740036B27F /* YouTubeListener */,
+				BA54540D20127D4B0027E2E6 /* YouTubeListenerTests */,
 				BABD35671FDEAF740036B27F /* Products */,
 				6FA42C0B250624A999E01AC9 /* Pods */,
 				3CD486BD69487BF9D851CBEF /* Frameworks */,
@@ -273,6 +315,7 @@
 			isa = PBXGroup;
 			children = (
 				BABD35661FDEAF740036B27F /* YouTubeListener.app */,
+				BA54540C20127D4B0027E2E6 /* YouTubeListenerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -282,10 +325,10 @@
 			children = (
 				BAB56F12200B6B6D000DF5C6 /* Categories */,
 				BA70A68E200779F3002AE1B4 /* Views */,
-				BAB56F27200E9E81000DF5C6 /* Controllers */,
 				BA70A68D20077992002AE1B4 /* ViewControllers */,
 				BA70A68C20075F58002AE1B4 /* TableViewCells */,
 				BA70A6752005F87E002AE1B4 /* Models */,
+				BAB56F27200E9E81000DF5C6 /* Controllers */,
 				BABD35691FDEAF740036B27F /* AppDelegate.h */,
 				BABD356A1FDEAF740036B27F /* AppDelegate.m */,
 				BABD35751FDEAF740036B27F /* Assets.xcassets */,
@@ -300,6 +343,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		BA54540B20127D4B0027E2E6 /* YouTubeListenerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BA54541320127D4B0027E2E6 /* Build configuration list for PBXNativeTarget "YouTubeListenerTests" */;
+			buildPhases = (
+				64AD02972591C91574A0990A /* [CP] Check Pods Manifest.lock */,
+				BA54540820127D4B0027E2E6 /* Sources */,
+				BA54540920127D4B0027E2E6 /* Frameworks */,
+				BA54540A20127D4B0027E2E6 /* Resources */,
+				8A440430F13357116D5C3B77 /* [CP] Embed Pods Frameworks */,
+				EFBCDCA1FD5C93B84763486E /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BA54541220127D4B0027E2E6 /* PBXTargetDependency */,
+			);
+			name = YouTubeListenerTests;
+			productName = YouTubeListenerTests;
+			productReference = BA54540C20127D4B0027E2E6 /* YouTubeListenerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		BABD35651FDEAF740036B27F /* YouTubeListener */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BABD357F1FDEAF740036B27F /* Build configuration list for PBXNativeTarget "YouTubeListener" */;
@@ -329,6 +393,11 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Matvey Kravtsov";
 				TargetAttributes = {
+					BA54540B20127D4B0027E2E6 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = BABD35651FDEAF740036B27F;
+					};
 					BABD35651FDEAF740036B27F = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
@@ -349,11 +418,19 @@
 			projectRoot = "";
 			targets = (
 				BABD35651FDEAF740036B27F /* YouTubeListener */,
+				BA54540B20127D4B0027E2E6 /* YouTubeListenerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		BA54540A20127D4B0027E2E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BABD35641FDEAF740036B27F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -366,6 +443,39 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		64AD02972591C91574A0990A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-YouTubeListener-YouTubeListenerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8A440430F13357116D5C3B77 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YouTubeListener-YouTubeListenerTests/Pods-YouTubeListener-YouTubeListenerTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		95308B9662400329E8E5C82F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -414,9 +524,33 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		EFBCDCA1FD5C93B84763486E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YouTubeListener-YouTubeListenerTests/Pods-YouTubeListener-YouTubeListenerTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		BA54540820127D4B0027E2E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */,
+				BA545419201281370027E2E6 /* libOCMock.a in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BABD35621FDEAF740036B27F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -452,6 +586,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		BA54541220127D4B0027E2E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BABD35651FDEAF740036B27F /* YouTubeListener */;
+			targetProxy = BA54541120127D4B0027E2E6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		BABD35771FDEAF740036B27F /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -464,6 +606,46 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		BA54541420127D4B0027E2E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41FD955D88821B2AD306A5BF /* Pods-YouTubeListener-YouTubeListenerTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JFP62Y85PG;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/usr/include";
+				INFOPLIST_FILE = YouTubeListenerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mekravtsov.YouTubeListenerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouTubeListener.app/YouTubeListener";
+			};
+			name = Debug;
+		};
+		BA54541520127D4B0027E2E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 68AFCF21D29F4BA85D1A1641 /* Pods-YouTubeListener-YouTubeListenerTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JFP62Y85PG;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/usr/include";
+				INFOPLIST_FILE = YouTubeListenerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mekravtsov.YouTubeListenerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouTubeListener.app/YouTubeListener";
+			};
+			name = Release;
+		};
 		BABD357D1FDEAF740036B27F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -605,6 +787,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		BA54541320127D4B0027E2E6 /* Build configuration list for PBXNativeTarget "YouTubeListenerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BA54541420127D4B0027E2E6 /* Debug */,
+				BA54541520127D4B0027E2E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BABD35611FDEAF740036B27F /* Build configuration list for PBXProject "YouTubeListener" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

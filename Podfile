@@ -8,4 +8,8 @@ target 'YouTubeListener' do
   # Pods for YouTubeListener
   pod 'Masonry'
 
+	target 'YouTubeListenerTests' do
+		pod 'Expecta', '~> 1.0'
+	end
+
 end

@@ -1,12 +1,15 @@
 PODS:
+  - Expecta (1.0.6)
   - Masonry (1.1.0)
 
 DEPENDENCIES:
+  - Expecta (~> 1.0)
   - Masonry
 
 SPEC CHECKSUMS:
+  Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
 
-PODFILE CHECKSUM: 192cd4f5890c531e3f799a9e461abf511b6adee3
+PODFILE CHECKSUM: a6415a0be48e5a54a3d00309dfa4c26a8a178054
 
 COCOAPODS: 1.3.1
