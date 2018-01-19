@@ -12,13 +12,16 @@
 #import "MEKVideoItemTableViewCell.h"
 #import "MEKModalPlaylistsViewController.h"
 #import "MEKWebVideoLoader.h"
+#import "MEKInfoView.h"
 
 static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
 @interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating>
 
+@property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
 @property (nonatomic, strong) PlaylistMO *playlist;
+@property (nonatomic, strong) MEKInfoView *infoView;
 
 @end
 
@@ -71,6 +74,12 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     return self.playerController.coreDataContext;
 }
 
+- (void)setItems:(NSArray *)items
+{
+    _items = items;
+    self.infoView.infoLabel.text = [NSString stringWithFormat:@"%@ videos", @(items.count)];
+}
+
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
@@ -85,16 +94,20 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:MEKVideoItemTableViewCellID];
+    
+    self.infoView = [[MEKInfoView alloc] initWithFrame:CGRectMake(0, 0, 0, 50)];
+    self.tableView.tableFooterView = self.infoView;
+    
     [self.view addSubview:self.tableView];
     
     UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     searchController.searchResultsUpdater = self;
     searchController.searchBar.placeholder = @"Search by Title or Author";
     searchController.dimsBackgroundDuringPresentation = NO;
-    searchController.obscuresBackgroundDuringPresentation = NO;
     self.navigationItem.searchController = searchController;
-    
     self.definesPresentationContext = YES;
+    
+    self.searchController = searchController;
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -113,7 +126,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 {
     [super viewWillDisappear:animated];
 
-    self.navigationItem.searchController.active = NO;
+    self.searchController.active = NO;
 }
 
 #pragma mark - Private
@@ -169,7 +182,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     VideoItemMO *item = self.items[indexPath.row];
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
     
-    self.navigationItem.searchController.active = NO;
+    self.searchController.active = NO;
 }
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath

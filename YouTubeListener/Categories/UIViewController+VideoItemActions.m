@@ -23,6 +23,7 @@
     }
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:playlistsController];
+    navController.navigationBar.prefersLargeTitles = YES;
     
     [self presentViewController:navController animated:YES completion:nil];
 }

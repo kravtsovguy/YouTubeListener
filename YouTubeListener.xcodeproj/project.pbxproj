@@ -11,6 +11,7 @@
 		BA4942CF200AB2EB007D8819 /* UIImageView+Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4942CE200AB2EB007D8819 /* UIImageView+Cache.m */; };
 		BA4942D2200B3A33007D8819 /* UIImage+Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4942D1200B3A33007D8819 /* UIImage+Cache.m */; };
 		BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49AB512000A8CE00D6578D /* MEKPlayerController.m */; };
+		BA5453D4201233020027E2E6 /* MEKInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5453D3201233020027E2E6 /* MEKInfoView.m */; };
 		BA70A6652005EAE3002AE1B4 /* MEKPlaylistsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */; };
 		BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */; };
 		BA70A67E2005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6782005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m */; };
@@ -48,6 +49,8 @@
 		BA4942D1200B3A33007D8819 /* UIImage+Cache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Cache.m"; sourceTree = "<group>"; };
 		BA49AB502000A8CE00D6578D /* MEKPlayerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerController.h; sourceTree = "<group>"; };
 		BA49AB512000A8CE00D6578D /* MEKPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerController.m; sourceTree = "<group>"; };
+		BA5453D2201233020027E2E6 /* MEKInfoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKInfoView.h; sourceTree = "<group>"; };
+		BA5453D3201233020027E2E6 /* MEKInfoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKInfoView.m; sourceTree = "<group>"; };
 		BA70A6632005EAE3002AE1B4 /* MEKPlaylistsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlaylistsViewController.h; sourceTree = "<group>"; };
 		BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistsViewController.m; sourceTree = "<group>"; };
 		BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistTableViewCell.m; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 				BAB51E431FFB4C85005F24F8 /* MEKProgressBar.m */,
 				BAB51E451FFC9382005F24F8 /* MEKDowloadButton.h */,
 				BAB51E461FFC9382005F24F8 /* MEKDowloadButton.m */,
+				BA5453D2201233020027E2E6 /* MEKInfoView.h */,
+				BA5453D3201233020027E2E6 /* MEKInfoView.m */,
 			);
 			path = UIs;
 			sourceTree = "<group>";
@@ -442,6 +447,7 @@
 				BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */,
 				BAB56F21200E8BCD000DF5C6 /* MEKRecentPlaylistViewController.m in Sources */,
 				BA4942CF200AB2EB007D8819 /* UIImageView+Cache.m in Sources */,
+				BA5453D4201233020027E2E6 /* MEKInfoView.m in Sources */,
 				BA70A6802005FEE2002AE1B4 /* VideoItemMO+CoreDataClass.m in Sources */,
 				BAB56F24200E8EB6000DF5C6 /* MEKDownloadsPlaylistViewController.m in Sources */,
 				BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */,
@@ -577,7 +583,7 @@
 				DEVELOPMENT_TEAM = JFP62Y85PG;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = YouTubeListener/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mekravtsov.YouTubeListener;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -594,7 +600,7 @@
 				DEVELOPMENT_TEAM = JFP62Y85PG;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = YouTubeListener/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mekravtsov.YouTubeListener;
 				PRODUCT_NAME = "$(TARGET_NAME)";

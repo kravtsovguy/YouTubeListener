@@ -35,6 +35,7 @@
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:playlistsViewController];
     navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
     [navigationController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
+    navigationController.navigationBar.prefersLargeTitles = YES;
     
     return navigationController;
 }
@@ -44,6 +45,7 @@
     MEKDownloadsPlaylistViewController *downloadsPlaylistViewController = [MEKDownloadsPlaylistViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:downloadsPlaylistViewController];
     navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
+    navigationController.navigationBar.prefersLargeTitles = YES;
     
     return navigationController;
 }

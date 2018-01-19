@@ -13,6 +13,7 @@
 #import "AppDelegate.h"
 #import "MEKPlaylistViewController.h"
 #import "MEKRecentPlaylistViewController.h"
+#import "MEKInfoView.h"
 
 static NSString *MEKPlaylistTableViewCellID = @"MEKPlaylistTableViewCell";
 static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
@@ -20,6 +21,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 @interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate>
 
 @property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
+@property (nonatomic, strong) MEKPlaylistTableViewCell *headerCell;
 
 @end
 
@@ -61,16 +63,23 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     self.tableView = [UITableView new];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.tableFooterView = [UIView new];
+    self.tableView.tableFooterView =[UIView new];
+    self.tableView.tableFooterView.backgroundColor = UIColor.greenColor;
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:MEKPlaylistTableViewCellID];
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:MEKPlaylistTableViewHeaderID];
+    
+    self.tableView.sectionHeaderHeight = [MEKPlaylistTableViewCell height];
+    
+    MEKInfoView *infoView = [[MEKInfoView alloc] initWithFrame:CGRectMake(0, 0, 0, [MEKPlaylistTableViewCell height])];
+    infoView.infoLabel.text = @"Copy URL from YouTube\nthen press top left icon";
+    
+    self.tableView.tableFooterView = infoView;
+    
     [self.view addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-
-    self.tableView.sectionHeaderHeight = [MEKPlaylistTableViewCell height];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -243,6 +252,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     PlaylistMO *playlist = self.playlists [indexPath.row];
+    
     MEKPlaylistViewController *controller = [[MEKPlaylistViewController alloc] initWithPlaylist:playlist];
     
     [self.navigationController pushViewController:controller animated:YES];
@@ -255,21 +265,28 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKPlaylistTableViewHeaderID];
-    cell.backgroundColor = [UIColor colorWithRed:1 green:0.0 blue:0.0 alpha:0.1];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    MEKPlaylistTableViewCell *cell = self.headerCell;
     
-    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    blurEffectView.alpha = 1;
-    blurEffectView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
-    [cell insertSubview:blurEffectView atIndex:0];
-    
-    UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recentTapped:)];
-    
-    [cell addGestureRecognizer:singleTapRecognizer];
+    if (!cell)
+    {
+        cell = [self.tableView dequeueReusableCellWithIdentifier:MEKPlaylistTableViewHeaderID];
+        
+        cell.backgroundColor = [UIColor colorWithRed:1 green:0.0 blue:0.0 alpha:0.1];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        blurEffectView.alpha = 1;
+        blurEffectView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
+        [cell insertSubview:blurEffectView atIndex:0];
+        
+        UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recentTapped:)];
+        
+        [cell addGestureRecognizer:singleTapRecognizer];
+        
+        self.headerCell = cell;
+    }
 
-    
     NSArray<VideoItemMO*> *items = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
     
     [cell setWithName:[PlaylistMO recentPlaylistName] itemsCount:items.count imageURL:items.firstObject.thumbnailBig];
@@ -295,7 +312,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
         [playlists removeObjectAtIndex:indexPath.row];
         self.playlists = playlists;
         
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadData];
     }];
     
     return @[deleteAction, moreAction];

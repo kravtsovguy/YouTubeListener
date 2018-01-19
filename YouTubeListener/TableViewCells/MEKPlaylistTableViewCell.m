@@ -100,7 +100,6 @@
     self.playlist = playlist;
     
     [self setWithName:playlist.name itemsCount:playlist.items.count imageURL:item.thumbnailBig];
-    
 }
 
 + (CGFloat)height
