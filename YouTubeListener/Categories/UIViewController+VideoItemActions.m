@@ -13,7 +13,7 @@
 
 #pragma mark - Public
 
-- (void)choosePlaylistForVideoItem:(VideoItemMO *)item
+- (void)vi_choosePlaylistForVideoItem:(VideoItemMO *)item
 {
     MEKModalPlaylistsViewController *playlistsController = [[MEKModalPlaylistsViewController alloc] initWithVideoItem:item];
     
@@ -27,7 +27,7 @@
     [self presentViewController:navController animated:YES completion:nil];
 }
 
-- (void)showDownloadingDialogForVideoItem: (VideoItemMO*) item handler:(void (^)(VideoItemQuality))handler
+- (void)vi_showDownloadingDialogForVideoItem: (VideoItemMO*) item handler:(void (^)(VideoItemQuality))handler
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
                                                                    message:@"Available formats"
@@ -39,7 +39,7 @@
     for (NSNumber *quality in [VideoItemMO getAllQualities])
     {
         NSNumber *size = item.sizes[quality];
-        UIAlertAction *action = [self createActionForQuality:quality.integerValue withSize:size handler:handler];
+        UIAlertAction *action = [self vi_createActionForQuality:quality.integerValue withSize:size handler:handler];
         [alert addAction:action];
     }
     
@@ -48,7 +48,7 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)showQualityDialogForCurrentQuality: (VideoItemQuality)currentQuality handler:(void (^)(VideoItemQuality))handler
+- (void)vi_showQualityDialogForCurrentQuality: (VideoItemQuality)currentQuality handler:(void (^)(VideoItemQuality))handler
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Select Quality"
                                                                    message:@"Available formats"
@@ -59,7 +59,7 @@
     
     for (NSNumber *quality in [VideoItemMO getAllQualities])
     {
-        UIAlertAction *action = [self createActionForQuality:quality.integerValue withCurrentQuality:currentQuality handler:handler];
+        UIAlertAction *action = [self vi_createActionForQuality:quality.integerValue withCurrentQuality:currentQuality handler:handler];
         [alert addAction:action];
     }
     
@@ -70,7 +70,7 @@
 
 #pragma mark - Private
 
-- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality withSize: (NSNumber*) size handler:(void (^)(VideoItemQuality))handler;
+- (UIAlertAction*)vi_createActionForQuality: (VideoItemQuality) quality withSize: (NSNumber*) size handler:(void (^)(VideoItemQuality))handler;
 {
     NSString *qualityString = [VideoItemMO getQualityString:quality];
     NSString *name = qualityString;
@@ -90,7 +90,7 @@
     return action;
 }
 
-- (UIAlertAction*)createActionForQuality: (VideoItemQuality) quality withCurrentQuality: (VideoItemQuality) currentQuality handler:(void (^)(VideoItemQuality))handler;
+- (UIAlertAction*)vi_createActionForQuality: (VideoItemQuality) quality withCurrentQuality: (VideoItemQuality) currentQuality handler:(void (^)(VideoItemQuality))handler;
 {
     NSString *qualityString = [VideoItemMO getQualityString:quality];
     NSString *name = qualityString;

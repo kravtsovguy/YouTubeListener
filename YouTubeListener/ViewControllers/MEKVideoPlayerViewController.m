@@ -403,7 +403,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
 - (void)qualityButtonPressed:(UIButton *)button
 {
-    [self showQualityDialogForCurrentQuality:self.quality handler:^(VideoItemQuality quality) {
+    [self vi_showQualityDialogForCurrentQuality:self.quality handler:^(VideoItemQuality quality) {
         if (self.quality == quality)
         {
             return;
@@ -450,7 +450,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item
 {
-    [self choosePlaylistForVideoItem:item];
+    [self vi_choosePlaylistForVideoItem:item];
 }
 
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
@@ -460,7 +460,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 
 - (void)videoItemDownload: (VideoItemMO*) item
 {
-    [self showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
+    [self vi_showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
         [self videoItemDownload:item withQuality:quality];
     }];
 }

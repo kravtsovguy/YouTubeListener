@@ -211,7 +211,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item
 {
-    [self choosePlaylistForVideoItem:item];
+    [self vi_choosePlaylistForVideoItem:item];
 }
 
 - (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
@@ -223,7 +223,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 {
     if (item.urls)
     {
-        [self showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
+        [self vi_showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
             [self videoItemDownload:item withQuality:quality];
         }];
     }

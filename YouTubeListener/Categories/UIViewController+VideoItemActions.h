@@ -11,8 +11,8 @@
 
 @interface UIViewController(VideoItemActions)
 
-- (void)showDownloadingDialogForVideoItem: (VideoItemMO*) item handler:(void (^)(VideoItemQuality quality))handler;
-- (void)showQualityDialogForCurrentQuality: (VideoItemQuality)currentQuality handler:(void (^)(VideoItemQuality quality))handler;
-- (void)choosePlaylistForVideoItem: (VideoItemMO*) item;
+- (void)vi_showDownloadingDialogForVideoItem: (VideoItemMO*) item handler:(void (^)(VideoItemQuality quality))handler;
+- (void)vi_showQualityDialogForCurrentQuality: (VideoItemQuality)currentQuality handler:(void (^)(VideoItemQuality quality))handler;
+- (void)vi_choosePlaylistForVideoItem: (VideoItemMO*) item;
 
 @end
