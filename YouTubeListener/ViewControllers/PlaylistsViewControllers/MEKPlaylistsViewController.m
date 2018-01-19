@@ -57,7 +57,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addToPlaylistPressed:)];
     self.navigationItem.rightBarButtonItem = addItem;
     
-    UIBarButtonItem *goItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(goToUrlPressed:)];
+    UIBarButtonItem *goItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(goToUrlPressed:)];
     self.navigationItem.leftBarButtonItem = goItem;
 
     self.tableView = [UITableView new];
@@ -71,7 +71,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     self.tableView.sectionHeaderHeight = [MEKPlaylistTableViewCell height];
     
     MEKInfoView *infoView = [[MEKInfoView alloc] initWithFrame:CGRectMake(0, 0, 0, [MEKPlaylistTableViewCell height])];
-    infoView.infoLabel.text = @"Copy URL from YouTube\nthen press top left icon";
+    infoView.infoLabel.text = @"Copy URL from YouTube\nthen press Play icon";
     
     self.tableView.tableFooterView = infoView;
     
