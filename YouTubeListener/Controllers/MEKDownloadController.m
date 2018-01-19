@@ -85,8 +85,12 @@
 - (void)cancelDownloadForKey:(NSString *)key
 {
     NSURLSessionDownloadTask *task = self.tasks[key];
-    [task cancel];
+    if (!task)
+    {
+        return;
+    }
     
+    [task cancel];
     [self removeTaskForKey:key];
 }
 
@@ -94,10 +98,11 @@
 {
     NSURLSessionDownloadTask *task = self.tasks[key];
     if (!task)
+    {
         return 0;
+    }
     
     double progress = (double)task.countOfBytesReceived/(double)task.countOfBytesExpectedToReceive;
-    
     return progress;
 }
 
@@ -111,18 +116,6 @@
 
 #pragma mark - NSURLSessionDownloadDelegate
 
-- (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location
-{
-    NSString *key = downloadTask.taskDescription;
-    NSDictionary *params = self.params[key];
-    [self removeTaskForKey:key];
-    
-    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithTempUrl:forKey:withParams:)])
-    {
-        [self.delegate downloadControllerDidFinishWithTempUrl:location forKey:key withParams:params];
-    }
-}
-
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
     if (totalBytesExpectedToWrite == 0)
@@ -134,11 +127,22 @@
     NSDictionary *params = self.params[key];
     
     double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-    NSLog(@"progress: %f", progress);
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {
         [self.delegate downloadControllerProgress:progress forKey:key withParams:params];
+    }
+}
+
+- (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location
+{
+    NSString *key = downloadTask.taskDescription;
+    NSDictionary *params = self.params[key];
+    [self removeTaskForKey:key];
+    
+    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithTempUrl:forKey:withParams:)])
+    {
+        [self.delegate downloadControllerDidFinishWithTempUrl:location forKey:key withParams:params];
     }
 }
 
