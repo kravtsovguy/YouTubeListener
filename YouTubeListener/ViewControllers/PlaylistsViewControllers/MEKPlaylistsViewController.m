@@ -14,9 +14,9 @@
 #import "MEKPlaylistViewController.h"
 #import "MEKRecentPlaylistViewController.h"
 
-@interface MEKPlaylistsViewController ()
+@interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate>
 
-@property (nonatomic, strong) MEKPlaylistTableViewCell *sectionCell;
+@property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
 
 @end
 
@@ -60,6 +60,7 @@
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:@"MEKPlaylistTableViewCell"];
+    [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:@"MEKPlaylistTableViewCellHeader"];
     [self.view addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -252,31 +253,26 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (!self.sectionCell)
-    {
-        MEKPlaylistTableViewCell *cell = [[MEKPlaylistTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MEKPlaylistTableViewCell2"];
-        cell.backgroundColor = [UIColor colorWithRed:1 green:0.0 blue:0.0 alpha:0.1];
-        
-        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        blurEffectView.alpha = 1;
-        blurEffectView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
-        [cell insertSubview:blurEffectView atIndex:0];
-        
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        
-        UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recentTapped:)];
+    MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKPlaylistTableViewCellHeader"];
+    cell.backgroundColor = [UIColor colorWithRed:1 green:0.0 blue:0.0 alpha:0.1];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    blurEffectView.alpha = 1;
+    blurEffectView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
+    [cell insertSubview:blurEffectView atIndex:0];
+    
+    UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recentTapped:)];
+    
+    [cell addGestureRecognizer:singleTapRecognizer];
 
-        [cell addGestureRecognizer:singleTapRecognizer];
-        
-        self.sectionCell = cell;
-    }
     
     NSArray<VideoItemMO*> *items = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
     
-    [self.sectionCell setWithName:[PlaylistMO recentPlaylistName] itemsCount:items.count imageURL:items.firstObject.thumbnailBig];
+    [cell setWithName:[PlaylistMO recentPlaylistName] itemsCount:items.count imageURL:items.firstObject.thumbnailBig];
     
-    return self.sectionCell;
+    return cell;
 }
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -301,6 +297,55 @@
     }];
     
     return @[deleteAction, moreAction];
+}
+
+#pragma mark - UITraitCollection
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+    [super traitCollectionDidChange:previousTraitCollection];
+    
+    if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
+        if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+
+            if (!self.previewingContext) {
+                self.previewingContext = [self registerForPreviewingWithDelegate:self sourceView:self.view];
+            }
+        } else {
+            [self unregisterForPreviewingWithContext:self.previewingContext];
+            self.previewingContext = nil;
+        }
+    }
+}
+#pragma mark - UIViewControllerPreviewingDelegate
+- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing> )previewingContext viewControllerForLocation:(CGPoint)location
+{
+    
+    CGPoint cellPostion = [self.tableView convertPoint:location fromView:self.view];
+
+    CGRect headerFrame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
+    if (CGRectContainsPoint(headerFrame, cellPostion))
+    {
+        MEKRecentPlaylistViewController *controller = [MEKRecentPlaylistViewController new];
+        
+        return controller;
+    }
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:cellPostion];
+    if (indexPath)
+    {
+        PlaylistMO *playlist = self.playlists [indexPath.row];
+        MEKPlaylistViewController *controller = [[MEKPlaylistViewController alloc] initWithPlaylist:playlist];
+
+        return controller;
+    }
+    
+    return nil;
+}
+
+-(void)previewingContext:(id )previewingContext commitViewController: (UIViewController *)viewControllerToCommit
+{
+    [self.navigationController showViewController:viewControllerToCommit sender:nil];
 }
 
 @end
