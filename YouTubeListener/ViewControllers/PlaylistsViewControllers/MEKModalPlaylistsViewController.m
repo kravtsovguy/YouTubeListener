@@ -79,4 +79,11 @@
     return @[];
 }
 
+#pragma mark - UITraitCollection
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+    
+}
+
 @end

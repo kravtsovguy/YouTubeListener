@@ -320,18 +320,11 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     }
 }
 #pragma mark - UIViewControllerPreviewingDelegate
+
 - (UIViewController *)previewingContext:(id<UIViewControllerPreviewing> )previewingContext viewControllerForLocation:(CGPoint)location
 {
     
     CGPoint cellPostion = [self.tableView convertPoint:location fromView:self.view];
-
-    CGRect headerFrame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
-    if (CGRectContainsPoint(headerFrame, cellPostion))
-    {
-        MEKRecentPlaylistViewController *controller = [MEKRecentPlaylistViewController new];
-        
-        return controller;
-    }
     
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:cellPostion];
     if (indexPath)
@@ -339,6 +332,14 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
         PlaylistMO *playlist = self.playlists [indexPath.row];
         MEKPlaylistViewController *controller = [[MEKPlaylistViewController alloc] initWithPlaylist:playlist];
 
+        return controller;
+    }
+    
+    CGRect headerFrame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), [MEKPlaylistTableViewCell height]);
+    if (CGRectContainsPoint(headerFrame, cellPostion))
+    {
+        MEKRecentPlaylistViewController *controller = [MEKRecentPlaylistViewController new];
+        
         return controller;
     }
     
