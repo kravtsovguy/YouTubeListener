@@ -13,6 +13,8 @@
 #import "MEKModalPlaylistsViewController.h"
 #import "MEKWebVideoLoader.h"
 
+static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
+
 @interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating>
 
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
@@ -82,7 +84,7 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
-    [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:@"MEKVideoItemTableViewCell"];
+    [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:MEKVideoItemTableViewCellID];
     [self.view addSubview:self.tableView];
     
     UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
@@ -131,7 +133,7 @@
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     
-    MEKVideoItemTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKVideoItemTableViewCell" forIndexPath:indexPath];
+    MEKVideoItemTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKVideoItemTableViewCellID forIndexPath:indexPath];
     
     cell.delegate = self;
     VideoItemMO *item = self.items[indexPath.row];

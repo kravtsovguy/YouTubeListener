@@ -14,6 +14,9 @@
 #import "MEKPlaylistViewController.h"
 #import "MEKRecentPlaylistViewController.h"
 
+static NSString *MEKPlaylistTableViewCellID = @"MEKPlaylistTableViewCell";
+static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
+
 @interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate>
 
 @property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
@@ -59,8 +62,8 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
-    [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:@"MEKPlaylistTableViewCell"];
-    [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:@"MEKPlaylistTableViewCellHeader"];
+    [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:MEKPlaylistTableViewCellID];
+    [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:MEKPlaylistTableViewHeaderID];
     [self.view addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -195,8 +198,7 @@
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                   }];
+                                                   handler:nil];
     
     [alert addAction:submit];
     [alert addAction:cancel];
@@ -220,7 +222,7 @@
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
     
-    MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKPlaylistTableViewCell" forIndexPath:indexPath];
+    MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKPlaylistTableViewCellID forIndexPath:indexPath];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     PlaylistMO *playlist = self.playlists[indexPath.row];
@@ -253,7 +255,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MEKPlaylistTableViewCellHeader"];
+    MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKPlaylistTableViewHeaderID];
     cell.backgroundColor = [UIColor colorWithRed:1 green:0.0 blue:0.0 alpha:0.1];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
