@@ -147,6 +147,8 @@
 
 - (BOOL)deleteObject
 {
+    [self removeAllDownloads];
+    
     [self.managedObjectContext deleteObject:self];
     return [self saveObject];
 }
@@ -183,7 +185,7 @@
     return isMoved;
 }
 
-- (BOOL)removeDownloadAll
+- (BOOL)removeAllDownloads
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
 

@@ -83,7 +83,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     [super viewDidLoad];
     
     self.titleLabel = [UILabel new];
-    self.titleLabel.numberOfLines = 0;
+    self.titleLabel.numberOfLines = 2;
     self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
     [self.view addSubview:self.titleLabel];
     
@@ -100,14 +100,12 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     [self.view addSubview:self.closeButton];
     
     self.addButton = [UIButton new];
-    //self.addButton.backgroundColor = UIColor.blueColor;
     [self.addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
     self.addButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
     [self.addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.addButton];
     
     self.downloadButton = [MEKDowloadButton new];
-    //self.downloadButton.backgroundColor = UIColor.blueColor;
     self.downloadButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
     [self.downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.downloadButton];
@@ -183,22 +181,24 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
         {
             make.top.equalTo(self.view.mas_top).with.offset(10);
             make.left.equalTo(self.playerController.view.mas_right).with.offset(10);
-            make.right.equalTo(self.view.mas_right).with.offset(-50);
+            make.right.equalTo(self.closeButton.mas_left);
         }
     }];
     
     [self.authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        
+        make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
+        
         if (self.maximized)
         {
-            make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
             make.left.equalTo(self.view.mas_left).with.offset(10);
-            make.right.equalTo(self.view.mas_right).with.offset(-10);
+            make.right.equalTo(self.qualityButton.mas_right).with.offset(-10);
         }
         else
         {
-            make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
+
             make.left.equalTo(self.playerController.view.mas_right).with.offset(10);
-            make.right.equalTo(self.view.mas_right).with.offset(-30);
+            make.right.equalTo(self.closeButton.mas_left);
         }
     }];
     
@@ -221,7 +221,6 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     [self.qualityButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.addButton.mas_top);
         make.right.equalTo(self.addButton.mas_left).with.offset(-20);
-        //make.left.equalTo(self.view.mas_left).with.offset(10);
         make.width.equalTo(@30);
         make.height.equalTo(@30);
     }];
@@ -376,7 +375,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     self.view.backgroundColor = UIColor.whiteColor;
     self.blurEffectView.alpha = 0;
     self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
-    self.titleLabel.numberOfLines = 0;
+    self.titleLabel.numberOfLines = 2;
     
     self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
 }

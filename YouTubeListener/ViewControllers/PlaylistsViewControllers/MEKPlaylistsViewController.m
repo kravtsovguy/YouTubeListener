@@ -49,10 +49,10 @@
     self.title = @"PLAYLISTS";
     self.view.backgroundColor = UIColor.whiteColor;
     
-    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPlaylist:)];
+    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addToPlaylistPressed:)];
     self.navigationItem.rightBarButtonItem = addItem;
     
-    UIBarButtonItem *goItem = [[UIBarButtonItem alloc] initWithTitle:@"GO" style:UIBarButtonItemStyleDone target:self action:@selector(goToURL:)];
+    UIBarButtonItem *goItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(goToUrlPressed:)];
     self.navigationItem.leftBarButtonItem = goItem;
 
     self.tableView = [UITableView new];
@@ -94,32 +94,68 @@
                                                                    message:@""
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       [self.tableView setEditing:NO];
-                                                       
-                                                       [playlist rename:alert.textFields[0].text];
-                                                       
-                                                       [self loadPlaylists];
-                                                   }];
+    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        [self.tableView setEditing:NO];
+        
+        NSString *name = alert.textFields[0].text;
+        BOOL isOK = [playlist rename:name];
+        if (!isOK)
+        {
+            [self showInvalidNameAlertForName:name];
+            return;
+        }
+        
+        [self loadPlaylists];
+    }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                   }];
+                                                   handler:nil];
     
     [alert addAction:submit];
     [alert addAction:cancel];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        textField.placeholder = @"Playlist Name";
         textField.text = playlist.name;
     }];
     
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+- (void)showInvalidSearchAlertForURL: (NSURL*) url
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Can't Parse Given Url"
+                                                                   message:url.absoluteString
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel
+                                                   handler:nil];
+    
+    [alert addAction:okAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)showInvalidNameAlertForName: (NSString*) name
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Name For Playlist"
+                                                                   message:name
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel
+                                                     handler:nil];
+    
+    [alert addAction:okAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 #pragma mark - Selectors
 
-- (void)goToURL: (id) sender
+- (void)goToUrlPressed: (id) sender
 {
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     if (![pasteboard hasStrings])
@@ -129,22 +165,33 @@
     
     NSURL *url = [NSURL URLWithString:pasteboard.string];
     
-    [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
+    BOOL isOK = [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
+    
+    if (!isOK)
+    {
+        [self showInvalidSearchAlertForURL:url];
+    }
 }
 
-- (void)addPlaylist: (id) sender
+- (void)addToPlaylistPressed: (id) sender
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Add Playlist"
                                                                    message:@""
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       [PlaylistMO playlistWithName:alert.textFields[0].text withContext:self.coreDataContext];
-                                                       
-                                                       [self loadPlaylists];
-                                                   }];
+    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        
+        NSString *name = alert.textFields[0].text;
+        PlaylistMO *player = [PlaylistMO playlistWithName:name withContext:self.coreDataContext];
+        if (!player)
+        {
+            [self showInvalidNameAlertForName:name];
+            return;
+        }
+        
+        [self loadPlaylists];
+        
+    }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
@@ -154,6 +201,7 @@
     [alert addAction:cancel];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
         textField.placeholder = @"Playlist Name";
     }];
     

@@ -53,7 +53,7 @@
 - (void)initTabBarController
 {
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[self.searchViewController, self.playlistsViewController, self.downloadsPlaylistViewController];
+    self.tabBarController.viewControllers = @[self.playlistsViewController, self.downloadsPlaylistViewController];
 }
 
 #pragma mark - Init Window

@@ -21,7 +21,7 @@
     [super viewDidLoad];
     self.title = [PlaylistMO downloadsPlaylistName];
     
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAll:)];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAllPressed:)];
     self.navigationItem.rightBarButtonItem = item;
 }
 
@@ -39,15 +39,15 @@
 
 #pragma mark - Selectors
 
-- (void)deleteAll: (id) sender
+- (void)deleteAllPressed: (id) sender
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Delete all saved videos?"
                                                                    message:@"You will remove all downloads"
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
     
-    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"DeleteAll" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        [self.items makeObjectsPerformSelector:@selector(removeDownloadAll)];
+        [self.items makeObjectsPerformSelector:@selector(removeAllDownloads)];
         self.items = nil;
         
         NSIndexSet *indexedSet = [NSIndexSet indexSetWithIndex:0];
@@ -69,7 +69,7 @@
     UITableViewRowAction *unloadAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Unload"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
         VideoItemMO *item = self.items[indexPath.row];
-        [item removeDownloadAll];
+        [item removeAllDownloads];
         
         NSMutableArray *items = self.items.mutableCopy;
         [items removeObjectAtIndex:indexPath.row];

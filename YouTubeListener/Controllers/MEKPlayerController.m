@@ -127,8 +127,6 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
         [self closePlayer];
     }
     
-    self.tabBarMainView.translatesAutoresizingMaskIntoConstraints = NO;
-    
     [self initOverlayView];
     [self initScrollView];
     [self initPlayerViewControllerWithVideoItem:item withVisibleState:state];
@@ -272,12 +270,16 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
 {
     [self playerViewWillAppear];
     
+    self.tabBarMainView.translatesAutoresizingMaskIntoConstraints = NO;
+    
     [self.tabBarMainView setNeedsUpdateConstraints];
     [self.tabBarMainView updateConstraintsIfNeeded];
     
     [UIView animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
         [self maximizePlayerUI];
-    } completion:nil];
+    } completion:^(BOOL finished) {
+        self.tabBarMainView.translatesAutoresizingMaskIntoConstraints = YES;
+    }];
 }
 
 - (void)fixContentInScrollView: (UIScrollView*) scrollView AtOffset: (CGPoint) offset

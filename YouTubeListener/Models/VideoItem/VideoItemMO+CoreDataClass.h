@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Downloading
 - (BOOL)saveTempPathURL: (NSURL*) url withQuality: (VideoItemQuality) quality;
-- (BOOL)removeDownloadAll;
+- (BOOL)removeAllDownloads;
 - (BOOL)removeDownloadWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloadedWithQuality: (VideoItemQuality) quality;
 - (BOOL)hasDownloaded;
