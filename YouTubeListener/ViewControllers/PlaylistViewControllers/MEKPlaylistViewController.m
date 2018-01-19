@@ -58,7 +58,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     
-    return appDelegate.player;
+    return appDelegate.playerController;
 }
 
 - (MEKDownloadController *)downloadController
@@ -95,7 +95,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:MEKVideoItemTableViewCellID];
     
-    self.infoView = [[MEKInfoView alloc] initWithFrame:CGRectMake(0, 0, 0, 50)];
+    self.infoView = [[MEKInfoView alloc] initWithFrame:CGRectMake(0, 0, 0, MEKPlayerViewHeightSizeMinimized)];
     self.tableView.tableFooterView = self.infoView;
     
     [self.view addSubview:self.tableView];

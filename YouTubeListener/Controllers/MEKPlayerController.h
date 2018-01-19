@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "VideoItemMO+CoreDataClass.h"
 #import "MEKDownloadController.h"
+#import "MEKVideoPlayerViewController.h"
 
 typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
     MEKPlayerVisibleStateNone = 0,

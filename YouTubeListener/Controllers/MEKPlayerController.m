@@ -7,7 +7,6 @@
 //
 
 #import "MEKPlayerController.h"
-#import "MEKVideoPlayerViewController.h"
 #import "AppDelegate.h"
 #import "MEKWebVideoLoader.h"
 

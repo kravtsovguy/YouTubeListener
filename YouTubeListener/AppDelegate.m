@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 #import "MEKVideoPlayerViewController.h"
 #import <AVFoundation/AVFoundation.h>
-#import "MEKSearchViewController.h"
 #import "MEKPlaylistsViewController.h"
 #import "MEKDownloadsPlaylistViewController.h"
 
@@ -70,7 +69,7 @@
 
 - (void)initPlayerController
 {
-    self.player = [MEKPlayerController new];
+    self.playerController = [MEKPlayerController new];
 }
 
 - (void)initDownloadController
@@ -94,6 +93,18 @@
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
 
+- (void)playExampleVideoIfNeeded
+{
+    NSArray *items = [VideoItemMO getVideoItemsWithContext:self.persistentContainer.viewContext];
+    if (items.count == 0)
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSURL *url = [NSURL URLWithString:@"https://youtu.be/_CUIOJ0-jao"];
+            [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
+        });
+    }
+}
+
 #pragma mark - UIApplicationDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -101,6 +112,8 @@
     [self makeSettings];
     [self initControllers];
     [self initWindow];
+    
+    [self playExampleVideoIfNeeded];
     
     return YES;
 }

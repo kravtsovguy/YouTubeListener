@@ -16,7 +16,7 @@
 @property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) UITabBarController *tabBarController;
 
-@property (nonatomic, strong) MEKPlayerController *player;
+@property (nonatomic, strong) MEKPlayerController *playerController;
 @property (nonatomic, strong) MEKDownloadController *downloadController;
 
 @property (readonly, strong) NSPersistentContainer *persistentContainer;

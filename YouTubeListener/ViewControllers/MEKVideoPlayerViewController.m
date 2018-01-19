@@ -186,17 +186,15 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     }];
     
     [self.authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-        
-        make.top.equalTo(self.titleLabel.mas_bottom).with.offset(15);
-        
         if (self.maximized)
         {
+            make.top.equalTo(self.titleLabel.mas_bottom).with.offset(15);
             make.left.equalTo(self.view.mas_left).with.offset(10);
             make.right.equalTo(self.youtubeButton.mas_left).with.offset(-10);
         }
         else
         {
-
+            make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
             make.left.equalTo(self.playerController.view.mas_right).with.offset(10);
             make.right.equalTo(self.closeButton.mas_left);
         }

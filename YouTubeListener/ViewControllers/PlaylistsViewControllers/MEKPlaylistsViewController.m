@@ -43,7 +43,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     
-    return appDelegate.player;
+    return appDelegate.playerController;
 }
 
 #pragma mark - UIViewController
