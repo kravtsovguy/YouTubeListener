@@ -10,7 +10,7 @@
 
 @interface MEKProgressBar ()
 
-@property (nonatomic, assign) CGFloat radius;
+@property (nonatomic, assign) CGFloat progressBarWidth;
 
 @property (nonatomic, strong) CAShapeLayer *progressLayer;
 @property (nonatomic, strong) CAShapeLayer *backProgressLayer;
@@ -33,20 +33,19 @@
     {
         self.backgroundColor = UIColor.clearColor;
         
-        _radius = 0;
-        self.progress = 0;
+        _progressBarWidth = 0;
         
         _progressLayer = [[CAShapeLayer alloc] init];
         [_progressLayer setStrokeColor:[UIColor.redColor colorWithAlphaComponent:0.7].CGColor];
         [_progressLayer setFillColor:UIColor.clearColor.CGColor];
-        [_progressLayer setLineWidth:_radius];
-        [_progressLayer setStrokeEnd:self.progress];
+        [_progressLayer setLineWidth:_progressBarWidth];
+        [_progressLayer setStrokeEnd:0];
         _progressLayer.lineCap = kCALineCapRound;
         
         _backProgressLayer = [[CAShapeLayer alloc] init];
         [_backProgressLayer setStrokeColor:[[UIColor grayColor] colorWithAlphaComponent:0.3f].CGColor];
         [_backProgressLayer setFillColor:UIColor.clearColor.CGColor];
-        [_backProgressLayer setLineWidth:_radius];
+        [_backProgressLayer setLineWidth:_progressBarWidth];
         [_backProgressLayer setStrokeEnd:1];
         
         
@@ -59,25 +58,30 @@
 
 #pragma mark - Properties
 
-- (void)setRadius:(CGFloat)radius
+- (void)setProgressBarWidth:(CGFloat)radius
 {
-    _radius = radius;
+    _progressBarWidth = radius;
     
-    UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(_radius / 2, _radius / 2, self.bounds.size.width - _radius , self.bounds.size.height - _radius) cornerRadius:(self.bounds.size.width - _radius) / 2];
+    UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(_progressBarWidth / 2, _progressBarWidth / 2, self.bounds.size.width - _progressBarWidth , self.bounds.size.height - _progressBarWidth) cornerRadius:(self.bounds.size.width - _progressBarWidth) / 2];
     
     
     [self.progressLayer setPath:bezierPath.CGPath];
-    [self.progressLayer setLineWidth:_radius];
+    [self.progressLayer setLineWidth:_progressBarWidth];
     
     [self.backProgressLayer setPath:bezierPath.CGPath];
-    [self.backProgressLayer setLineWidth:_radius];
+    [self.backProgressLayer setLineWidth:_progressBarWidth];
 }
 
 - (void)setProgress:(CGFloat)progress
 {
-    if (progress < 0 || progress > 1)
+    if (progress < 0)
     {
-        return;
+        progress = 0;
+    }
+    
+    if (progress > 1)
+    {
+        progress = 1;
     }
 
     self.progressLayer.strokeEnd = progress;
@@ -93,7 +97,7 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    self.radius = CGRectGetHeight(self.frame) * 0.1;
+    self.progressBarWidth = CGRectGetHeight(self.frame) * 0.1;
 }
 
 @end

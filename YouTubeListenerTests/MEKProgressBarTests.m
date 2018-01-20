@@ -11,6 +11,15 @@
 #import <Expecta/Expecta.h>
 #import "MEKProgressBar.h"
 
+@interface MEKProgressBar (Tests)
+
+@property (nonatomic, assign) CGFloat progressBarWidth;
+
+@property (nonatomic, strong) CAShapeLayer *progressLayer;
+@property (nonatomic, strong) CAShapeLayer *backProgressLayer;
+
+@end
+
 @interface MEKProgressBarTests : XCTestCase
 
 @property (nonatomic, strong) MEKProgressBar *progressBar;
@@ -33,16 +42,41 @@
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testGetProgress
 {
+    self.progressBar.progress = 0.5;
     
+    expect(self.progressBar.progress).to.equal(0.5);
 }
 
-//- (void)testPerformanceExample {
-//    // This is an example of a performance test case.
-//    [self measureBlock:^{
-//        // Put the code you want to measure the time of here.
-//    }];
-//}
+- (void)testSetProgressLessThanZero
+{
+    self.progressBar.progress = -0.5;
+    
+    expect(self.progressBar.progress).to.equal(0);
+}
+
+- (void)testSetProgressMoreThanOne
+{
+    self.progressBar.progress = 1.1;
+    
+    expect(self.progressBar.progress).to.equal(1);
+}
+
+- (void)testSetRadius
+{
+    self.progressBar.progressBarWidth = 1;
+    
+    expect(self.progressBar.progressLayer.lineWidth).to.equal(1);
+    expect(self.progressBar.backProgressLayer.lineWidth).to.equal(1);
+}
+
+- (void)testLayoutSubviews
+{
+    [self.progressBar layoutIfNeeded];
+    
+    CGFloat radius = CGRectGetHeight(self.progressBar.frame) * 0.1;
+    expect(self.progressBar.progressBarWidth).to.equal(radius);
+}
 
 @end
