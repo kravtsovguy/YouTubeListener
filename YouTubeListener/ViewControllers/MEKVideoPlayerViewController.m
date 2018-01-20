@@ -16,10 +16,11 @@
 #import "UIViewController+VideoItemActions.h"
 #import "AppDelegate.h"
 
-
 @import MediaPlayer;
 
+
 static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
+static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
 @interface MEKVideoPlayerViewController () <MEKWebVideoLoaderOutputProtocol, MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
 
@@ -55,7 +56,7 @@ static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
     self = [super init];
     if (self) {
         _item = item;
-        _quality = VideoItemQualityHD720;
+        _quality = MEKPlayerViewDefaultQuality;
         
         if ([_item hasDownloaded])
         {
