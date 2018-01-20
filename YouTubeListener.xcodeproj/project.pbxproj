@@ -12,7 +12,6 @@
 		BA4942D2200B3A33007D8819 /* UIImage+Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4942D1200B3A33007D8819 /* UIImage+Cache.m */; };
 		BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49AB512000A8CE00D6578D /* MEKPlayerController.m */; };
 		BA5453D4201233020027E2E6 /* MEKInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5453D3201233020027E2E6 /* MEKInfoView.m */; };
-		BA545419201281370027E2E6 /* libOCMock.a in Sources */ = {isa = PBXBuildFile; fileRef = BA545418201281370027E2E6 /* libOCMock.a */; };
 		BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA54541A201283960027E2E6 /* MEKProgressBarTests.m */; };
 		BA70A6652005EAE3002AE1B4 /* MEKPlaylistsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */; };
 		BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */; };
@@ -67,7 +66,6 @@
 		BA5453D3201233020027E2E6 /* MEKInfoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKInfoView.m; sourceTree = "<group>"; };
 		BA54540C20127D4B0027E2E6 /* YouTubeListenerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouTubeListenerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA54541020127D4B0027E2E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BA545418201281370027E2E6 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = usr/include/lib/libOCMock.a; sourceTree = "<group>"; };
 		BA54541A201283960027E2E6 /* MEKProgressBarTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKProgressBarTests.m; sourceTree = "<group>"; };
 		BA70A6632005EAE3002AE1B4 /* MEKPlaylistsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlaylistsViewController.h; sourceTree = "<group>"; };
 		BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistsViewController.m; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 		3CD486BD69487BF9D851CBEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BA545418201281370027E2E6 /* libOCMock.a */,
 				6FDD82332CDC1FD500DFA070 /* libPods-YouTubeListener.a */,
 				D2A8531448D4F2E81770E00D /* libPods-YouTubeListener-YouTubeListenerTests.a */,
 			);
@@ -547,7 +544,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */,
-				BA545419201281370027E2E6 /* libOCMock.a in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,11 +610,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JFP62Y85PG;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/usr/include";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = YouTubeListenerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mekravtsov.YouTubeListenerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -634,11 +630,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JFP62Y85PG;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/usr/include";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = YouTubeListenerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mekravtsov.YouTubeListenerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";

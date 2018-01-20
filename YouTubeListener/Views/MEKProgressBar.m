@@ -79,8 +79,13 @@
     {
         return;
     }
-    
+
     self.progressLayer.strokeEnd = progress;
+}
+
+- (CGFloat)progress
+{
+    return self.progressLayer.strokeEnd;
 }
 
 #pragma mark - UIView
