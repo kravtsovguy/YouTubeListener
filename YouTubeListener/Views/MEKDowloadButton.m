@@ -12,8 +12,11 @@
 
 @property (nonatomic, strong) MEKProgressBar *progressBar;
 @property (nonatomic, strong) UIView *stopView;
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImage *downloadImage;
 @property (nonatomic, strong) UIImage *doneImage;
+
+@property (nonatomic, assign, getter=isLoading) BOOL loading;
+@property (nonatomic, assign, getter=isDone) BOOL done;
 
 @end
 
@@ -44,28 +47,12 @@
         _stopView.hidden = YES;
         [self addSubview:_stopView];
         
-        _image = [UIImage imageNamed:@"download"];
+        _downloadImage = [UIImage imageNamed:@"download"];
         _doneImage = [UIImage imageNamed:@"downloaded"];
-        [self setImage:_image forState:UIControlStateNormal];
+        [self setImage:_downloadImage forState:UIControlStateNormal];
     }
     
     return self;
-}
-
-#pragma mark - Public
-
-- (void)setProgress:(double)progress
-{
-    self.progressBar.progress = progress;
-    
-    if (progress < 1)
-    {
-        self.loading = progress > 0;
-    }
-    else
-    {
-        self.done = YES;
-    }
 }
 
 #pragma mark - Properties
@@ -82,7 +69,7 @@
     }
     else
     {
-        [self setImage:self.image forState:UIControlStateNormal];
+        [self setImage:self.downloadImage forState:UIControlStateNormal];
         self.progressBar.progress = 0;
         self.progressBar.hidden = YES;
         self.stopView.hidden = YES;
@@ -105,6 +92,25 @@
     self.userInteractionEnabled = !_done;
 }
 
+- (void)setProgress:(double)progress
+{
+    self.progressBar.progress = progress;
+    
+    if (progress < 1)
+    {
+        self.loading = progress > 0;
+    }
+    else
+    {
+        self.done = YES;
+    }
+}
+
+- (CGFloat)progress
+{
+    return self.progressBar.progress;
+}
+
 #pragma mark - UIView
 
 - (void)layoutSubviews
@@ -114,7 +120,7 @@
     self.progressBar.frame = self.bounds;
     
     CGFloat stopViewSize = CGRectGetHeight(self.frame) / 3;
-    self.stopView.frame = CGRectMake((self.frame.size.width - stopViewSize)/ 2, (self.frame.size.height - stopViewSize)/ 2, stopViewSize, stopViewSize);
+    self.stopView.frame = CGRectMake((CGRectGetWidth(self.frame) - stopViewSize)/ 2, (CGRectGetHeight(self.frame) - stopViewSize)/ 2, stopViewSize, stopViewSize);
     self.stopView.layer.cornerRadius = stopViewSize / 4;
 }
 @end

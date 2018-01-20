@@ -11,9 +11,9 @@
 
 @interface MEKDowloadButton : UIButton
 
-@property (nonatomic, assign, getter=isLoading) BOOL loading;
-@property (nonatomic, assign, getter=isDone) BOOL done;
+@property (nonatomic, readonly, getter=isLoading) BOOL loading;
+@property (nonatomic, readonly, getter=isDone) BOOL done;
 
-- (void)setProgress: (double)progress;
+@property (nonatomic, assign) CGFloat progress;
 
 @end

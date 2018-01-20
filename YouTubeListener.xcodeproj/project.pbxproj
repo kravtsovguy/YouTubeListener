@@ -13,6 +13,8 @@
 		BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49AB512000A8CE00D6578D /* MEKPlayerController.m */; };
 		BA5453D4201233020027E2E6 /* MEKInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5453D3201233020027E2E6 /* MEKInfoView.m */; };
 		BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA54541A201283960027E2E6 /* MEKProgressBarTests.m */; };
+		BA54541D2013AFBC0027E2E6 /* MEKDowloadButtonTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA54541C2013AFBC0027E2E6 /* MEKDowloadButtonTests.m */; };
+		BA54541F2013BFE00027E2E6 /* MEKInfoViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA54541E2013BFE00027E2E6 /* MEKInfoViewTests.m */; };
 		BA70A6652005EAE3002AE1B4 /* MEKPlaylistsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */; };
 		BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */; };
 		BA70A67E2005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A6782005FEE2002AE1B4 /* PlaylistMO+CoreDataClass.m */; };
@@ -67,6 +69,8 @@
 		BA54540C20127D4B0027E2E6 /* YouTubeListenerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouTubeListenerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA54541020127D4B0027E2E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA54541A201283960027E2E6 /* MEKProgressBarTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKProgressBarTests.m; sourceTree = "<group>"; };
+		BA54541C2013AFBC0027E2E6 /* MEKDowloadButtonTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKDowloadButtonTests.m; sourceTree = "<group>"; };
+		BA54541E2013BFE00027E2E6 /* MEKInfoViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKInfoViewTests.m; sourceTree = "<group>"; };
 		BA70A6632005EAE3002AE1B4 /* MEKPlaylistsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlaylistsViewController.h; sourceTree = "<group>"; };
 		BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistsViewController.m; sourceTree = "<group>"; };
 		BA70A6672005F442002AE1B4 /* MEKPlaylistTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlaylistTableViewCell.m; sourceTree = "<group>"; };
@@ -161,8 +165,10 @@
 		BA54540D20127D4B0027E2E6 /* YouTubeListenerTests */ = {
 			isa = PBXGroup;
 			children = (
-				BA54541A201283960027E2E6 /* MEKProgressBarTests.m */,
 				BA54541020127D4B0027E2E6 /* Info.plist */,
+				BA54541A201283960027E2E6 /* MEKProgressBarTests.m */,
+				BA54541C2013AFBC0027E2E6 /* MEKDowloadButtonTests.m */,
+				BA54541E2013BFE00027E2E6 /* MEKInfoViewTests.m */,
 			);
 			path = YouTubeListenerTests;
 			sourceTree = "<group>";
@@ -543,7 +549,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA54541D2013AFBC0027E2E6 /* MEKDowloadButtonTests.m in Sources */,
 				BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */,
+				BA54541F2013BFE00027E2E6 /* MEKInfoViewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
