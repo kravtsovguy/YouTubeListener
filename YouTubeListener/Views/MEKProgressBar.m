@@ -34,13 +34,13 @@
         self.backgroundColor = UIColor.clearColor;
         
         _radius = 0;
-        _progress = 0;
+        self.progress = 0;
         
         _progressLayer = [[CAShapeLayer alloc] init];
         [_progressLayer setStrokeColor:[UIColor.redColor colorWithAlphaComponent:0.7].CGColor];
         [_progressLayer setFillColor:UIColor.clearColor.CGColor];
         [_progressLayer setLineWidth:_radius];
-        [_progressLayer setStrokeEnd:_progress];
+        [_progressLayer setStrokeEnd:self.progress];
         _progressLayer.lineCap = kCALineCapRound;
         
         _backProgressLayer = [[CAShapeLayer alloc] init];

@@ -606,7 +606,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41FD955D88821B2AD306A5BF /* Pods-YouTubeListener-YouTubeListenerTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JFP62Y85PG;
@@ -626,7 +626,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 68AFCF21D29F4BA85D1A1641 /* Pods-YouTubeListener-YouTubeListenerTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JFP62Y85PG;
