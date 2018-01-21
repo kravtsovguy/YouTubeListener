@@ -41,6 +41,7 @@
     self.navigationItem.leftBarButtonItem = item;
     
     self.tableView.sectionHeaderHeight = 0;
+    self.tableView.tableFooterView = [UIView new];
 }
 
 #pragma mark - Selectors
