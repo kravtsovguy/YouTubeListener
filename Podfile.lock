@@ -1,18 +1,18 @@
 PODS:
   - Expecta (1.0.6)
   - Masonry (1.1.0)
-  - OCMock (3.1.5)
+  - OCMock (3.4.1)
 
 DEPENDENCIES:
-  - Expecta (~> 1.0)
+  - Expecta
   - Masonry
-  - OCMock (~> 3.1.2)
+  - OCMock
 
 SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  OCMock: 4c2925291f80407c3738dd1db14d21d0cc278864
+  OCMock: 2cd0716969bab32a2283ff3a46fd26a8c8b4c5e3
 
-PODFILE CHECKSUM: cf4efd85065a6179d280d0cb1036cdd051781b35
+PODFILE CHECKSUM: 8383f08d9ee2bd92a4b01fbec44376229887e4f1
 
 COCOAPODS: 1.3.1

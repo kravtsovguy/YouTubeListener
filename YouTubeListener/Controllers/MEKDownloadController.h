@@ -17,14 +17,16 @@
 
 @end
 
-@interface MEKDownloadController : NSObject
+@interface MEKDownloadController : NSObject <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, weak) id<MEKDownloadControllerDelegate> delegate;
+@property (nonatomic, readonly) BOOL backgroundMode;
 
 - (void)configurateUrlSessionWithBackgroundMode: (BOOL) background;
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background;
 - (void)downloadDataFromURL: (NSURL*) url forKey: (NSString*) key withParams: (NSDictionary*) params;
 - (void)cancelDownloadForKey: (NSString*) key;
 - (double)getProgressForKey: (NSString*) key;
+- (BOOL)hasTaskForKey: (NSString*) key;
 
 @end

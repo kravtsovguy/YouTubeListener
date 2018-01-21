@@ -9,8 +9,8 @@ target 'YouTubeListener' do
   pod 'Masonry'
 
 	target 'YouTubeListenerTests' do
-		pod 'Expecta', '~> 1.0'
-		pod 'OCMock', '~> 3.1.2'
+		pod 'Expecta'
+		pod 'OCMock'
 	end
 
 end

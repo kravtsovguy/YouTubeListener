@@ -8,7 +8,7 @@
 
 #import "MEKDownloadController.h"
 
-@interface MEKDownloadController () <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
+@interface MEKDownloadController ()
 
 @property (nonatomic, strong) NSURLSession *urlSession;
 @property (nonatomic, copy) NSMutableDictionary *tasks;
@@ -40,21 +40,7 @@
 
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background
 {
-    
-    self.backgroundMode = background;
-    
-    NSURLSessionConfiguration *sessionConfiguration;
-    if (background)
-    {
-        NSString *sessionIdentifier = [NSString stringWithFormat:@"%@.background", NSBundle.mainBundle.bundleIdentifier];
-        
-        sessionConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessionIdentifier];
-    }
-    else
-    {
-        sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    }
-    
+    NSURLSessionConfiguration *sessionConfiguration = [self createSessionConfigurationWithBackgroundMode:background];
     [sessionConfiguration setAllowsCellularAccess:YES];
     
     if (params)
@@ -71,13 +57,15 @@
 
 - (void)downloadDataFromURL:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
+    if (!url || [self hasTaskForKey:key])
+    {
+        return;
+    }
+    
     NSURLSessionDownloadTask *task = [self.urlSession downloadTaskWithURL:url];
     task.taskDescription = key;
     self.tasks[key] = task;
-    if (params)
-    {
-        self.params[key] = params;
-    }
+    self.params[key] = params;
     
     [task resume];
 }
@@ -97,7 +85,7 @@
 - (double)getProgressForKey:(NSString *)key
 {
     NSURLSessionDownloadTask *task = self.tasks[key];
-    if (!task)
+    if (!task || task.countOfBytesExpectedToReceive == 0)
     {
         return 0;
     }
@@ -106,7 +94,31 @@
     return progress;
 }
 
+- (BOOL)hasTaskForKey:(NSString *)key
+{
+    return self.tasks[key] != nil;
+}
+
 #pragma mark - Private
+
+- (NSURLSessionConfiguration*)createSessionConfigurationWithBackgroundMode: (BOOL) background
+{
+    self.backgroundMode = background;
+    
+    NSURLSessionConfiguration *sessionConfiguration;
+    if (background)
+    {
+        NSString *sessionIdentifier = [NSString stringWithFormat:@"%@.background", NSBundle.mainBundle.bundleIdentifier];
+        
+        sessionConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessionIdentifier];
+    }
+    else
+    {
+        sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    }
+    
+    return sessionConfiguration;
+}
 
 - (void)removeTaskForKey: (NSString *)key
 {
@@ -118,15 +130,10 @@
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
-    if (totalBytesExpectedToWrite == 0)
-    {
-        return;
-    }
-    
     NSString *key = downloadTask.taskDescription;
     NSDictionary *params = self.params[key];
     
-    double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+    double progress = [self getProgressForKey:key];
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {

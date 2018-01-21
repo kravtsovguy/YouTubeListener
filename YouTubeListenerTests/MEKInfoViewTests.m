@@ -10,6 +10,7 @@
 #import <OCMock/OCMock.h>
 #import <Expecta/Expecta.h>
 #import "MEKInfoView.h"
+#import <Masonry/Masonry.h>
 
 @interface MEKInfoViewTests : XCTestCase
 
@@ -31,7 +32,9 @@
 
 - (void)testUpdateConstraints
 {
-    [self.infoView setNeedsUpdateConstraints];
+    [self.infoView updateConstraints];
+    
+    OCMVerify([self.infoView.infoLabel mas_remakeConstraints:OCMOCK_ANY]);
 }
 
 @end
