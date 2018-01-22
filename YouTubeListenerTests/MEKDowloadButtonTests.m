@@ -76,7 +76,7 @@
 
 - (void)testLayoutSubviews
 {
-    [self.downloadButton layoutIfNeeded];
+    [self.downloadButton layoutSubviews];
     
     expect(self.downloadButton.progressBar.frame).to.equal(self.downloadButton.bounds);
     
