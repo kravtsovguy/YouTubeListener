@@ -144,9 +144,8 @@
     NSString *key = @"key";
     
     NSURLSessionDownloadTask *task = OCMClassMock([NSURLSessionDownloadTask class]);
-    NSDictionary *tasks = @{key : task};
-    
-    OCMStub(self.downloadController.tasks).andReturn(tasks);
+    OCMStub(self.downloadController.tasks).andReturn(@{key : task}.mutableCopy);
+
     OCMStub([self.downloadController removeTaskForKey:key]);
     
     [self.downloadController cancelDownloadForKey:key];
@@ -169,11 +168,10 @@
     NSString *key = @"key";
     
     NSURLSessionDownloadTask *task = OCMClassMock([NSURLSessionDownloadTask class]);
-    NSDictionary *tasks = @{key : task};
+    OCMStub(self.downloadController.tasks).andReturn(@{key : task}.mutableCopy);
     
     OCMStub(task.countOfBytesReceived).andReturn(1);
     OCMStub(task.countOfBytesExpectedToReceive).andReturn(1);
-    OCMStub(self.downloadController.tasks).andReturn(tasks);
     
     double progress = [self.downloadController getProgressForKey:key];
     
@@ -192,12 +190,8 @@
     NSString *key = @"key";
     
     NSURLSessionDownloadTask *task = OCMClassMock([NSURLSessionDownloadTask class]);
-    NSMutableDictionary *tasks = @{key : task}.mutableCopy;
-    
-    OCMStub(self.downloadController.tasks).andReturn(tasks);
-    
-    NSMutableDictionary *params = @{key : @{}}.mutableCopy;
-    OCMStub(self.downloadController.params).andReturn(params);
+    OCMStub(self.downloadController.tasks).andReturn(@{key : task}.mutableCopy);
+    OCMStub(self.downloadController.params).andReturn(@{key : @{}}.mutableCopy);
     
     [self.downloadController removeTaskForKey:key];
     
@@ -223,7 +217,7 @@
     expect(hasTask).to.beFalsy();
     
     NSURLSessionDownloadTask *task = OCMClassMock([NSURLSessionDownloadTask class]);
-    self.downloadController.tasks = @{key : task}.mutableCopy;
+    OCMStub(self.downloadController.tasks).andReturn(@{key : task}.mutableCopy);
     
     hasTask = [self.downloadController hasTaskForKey:key];
     
