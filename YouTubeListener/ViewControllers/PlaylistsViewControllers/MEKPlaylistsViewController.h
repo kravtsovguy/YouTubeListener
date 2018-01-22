@@ -10,11 +10,9 @@
 #import "PlaylistMO+CoreDataClass.h"
 #import "MEKPlayerController.h"
 
-@interface MEKPlaylistsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface MEKPlaylistsViewController : UIViewController
 
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, readonly) MEKPlayerController *playerController;
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *playlists;
 
 @end

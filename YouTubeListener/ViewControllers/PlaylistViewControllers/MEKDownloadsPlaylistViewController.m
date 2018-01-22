@@ -8,6 +8,13 @@
 
 #import "MEKDownloadsPlaylistViewController.h"
 
+@interface MEKPlaylistViewController (Private) <UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) NSArray *items;
+
+@end
+
 @interface MEKDownloadsPlaylistViewController ()
 
 @end

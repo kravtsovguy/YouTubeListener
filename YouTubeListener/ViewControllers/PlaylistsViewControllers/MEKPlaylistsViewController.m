@@ -18,10 +18,12 @@
 static NSString *MEKPlaylistTableViewCellID = @"MEKPlaylistTableViewCell";
 static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 
-@interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate>
+@interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate, UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) NSArray *playlists;
 @property (nonatomic, strong) MEKPlaylistTableViewCell *headerCell;
+@property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
 
 @end
 

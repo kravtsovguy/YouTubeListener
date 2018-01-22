@@ -16,8 +16,10 @@
 
 static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource>
 
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) NSArray *items;
 @property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
 @property (nonatomic, strong) PlaylistMO *playlist;

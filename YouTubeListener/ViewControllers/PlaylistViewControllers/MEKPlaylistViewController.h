@@ -11,13 +11,12 @@
 #import "UIViewController+VideoItemActions.h"
 #import "AppDelegate.h"
 
-@interface MEKPlaylistViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface MEKPlaylistViewController : UIViewController
 
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKDownloadController *downloadController;
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *items;
+@property (nonatomic, readonly) PlaylistMO *playlist;
 
 - (instancetype)initWithPlaylist: (PlaylistMO*) playlist;
 

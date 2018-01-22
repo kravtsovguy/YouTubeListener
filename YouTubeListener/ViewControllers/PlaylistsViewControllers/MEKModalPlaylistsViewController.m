@@ -8,6 +8,14 @@
 
 #import "MEKModalPlaylistsViewController.h"
 
+@interface MEKPlaylistsViewController (Private) <UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) NSArray *playlists;
+
+@end
+
+
 @interface MEKModalPlaylistsViewController ()
 
 @property (nonatomic, strong) VideoItemMO *item;
