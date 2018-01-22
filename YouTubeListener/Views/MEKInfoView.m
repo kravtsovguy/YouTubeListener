@@ -19,7 +19,7 @@
 
 - (instancetype)init
 {
-    return [super initWithFrame:CGRectMake(0, 0, 100, 50)];
+    return [self initWithFrame:CGRectMake(0, 0, 100, 50)];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame
