@@ -9,6 +9,7 @@
 #import "MEKVideoItemTableViewCell.h"
 #import <Masonry/Masonry.h>
 #import "UIImageView+Cache.h"
+#import "MEKDowloadButton.h"
 
 @interface MEKVideoItemTableViewCell ()
 
