@@ -18,9 +18,11 @@
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     NSArray *fields = [string componentsSeparatedByString:@"&"];
-    for (NSString *field in fields) {
+    for (NSString *field in fields)
+    {
         NSArray *pair = [field componentsSeparatedByString:@"="];
-        if (pair.count == 2) {
+        if (pair.count == 2)
+        {
             NSString *key = pair[0];
             NSString *value = [[pair[1] stringByRemovingPercentEncoding] stringByReplacingOccurrencesOfString:@"+" withString:@" "];
             dictionary[key] = value;

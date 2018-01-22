@@ -11,6 +11,8 @@
 #import "MEKDownloadController.h"
 #import "MEKVideoPlayerViewController.h"
 
+static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
+
 typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
     MEKPlayerVisibleStateNone = 0,
     MEKPlayerVisibleStateMinimized = 1,

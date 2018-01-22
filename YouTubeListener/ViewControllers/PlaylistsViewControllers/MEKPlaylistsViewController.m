@@ -108,7 +108,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        [self.tableView setEditing:NO];
+        self.tableView.editing = NO;
         
         NSString *name = alert.textFields[0].text;
         BOOL isOK = [playlist rename:name];

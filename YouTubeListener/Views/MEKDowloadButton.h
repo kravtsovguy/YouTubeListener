@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MEKProgressBar.h"
 
 @interface MEKDowloadButton : UIButton
 

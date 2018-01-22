@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <Expecta/Expecta.h>
+
 #import "MEKProgressBar.h"
 
 @interface MEKProgressBar (Tests)

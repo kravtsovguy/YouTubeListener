@@ -10,8 +10,6 @@
 #import "AppDelegate.h"
 #import "MEKWebVideoLoader.h"
 
-static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
-
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
 @property (nonatomic, strong) UIView *overlayView;
@@ -92,12 +90,7 @@ static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
 
 - (BOOL)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
 {
-    if (!videoURL)
-    {
-        return NO;
-    }
-    
-    if (![MEKWebVideoLoader parserForURL:videoURL])
+    if (!videoURL || ![MEKWebVideoLoader parserForURL:videoURL])
     {
         return NO;
     }

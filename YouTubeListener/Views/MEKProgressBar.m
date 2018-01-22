@@ -35,19 +35,18 @@
         
         _progressBarWidth = 0;
         
-        _progressLayer = [[CAShapeLayer alloc] init];
-        [_progressLayer setStrokeColor:[UIColor.redColor colorWithAlphaComponent:0.7].CGColor];
-        [_progressLayer setFillColor:UIColor.clearColor.CGColor];
-        [_progressLayer setLineWidth:_progressBarWidth];
-        [_progressLayer setStrokeEnd:0];
+        _progressLayer = [CAShapeLayer new];
+        _progressLayer.strokeColor = [UIColor.redColor colorWithAlphaComponent:0.7].CGColor;
+        _progressLayer.fillColor = UIColor.clearColor.CGColor;
+        _progressLayer.lineWidth = _progressBarWidth;
+        _progressLayer.strokeEnd = 0;
         _progressLayer.lineCap = kCALineCapRound;
         
-        _backProgressLayer = [[CAShapeLayer alloc] init];
-        [_backProgressLayer setStrokeColor:[[UIColor grayColor] colorWithAlphaComponent:0.3f].CGColor];
-        [_backProgressLayer setFillColor:UIColor.clearColor.CGColor];
-        [_backProgressLayer setLineWidth:_progressBarWidth];
-        [_backProgressLayer setStrokeEnd:1];
-        
+        _backProgressLayer = [CAShapeLayer new];
+        _backProgressLayer.strokeColor = [UIColor.grayColor colorWithAlphaComponent:0.3f].CGColor;
+        _backProgressLayer.fillColor = UIColor.clearColor.CGColor;
+        _backProgressLayer.lineWidth = _progressBarWidth;
+        _backProgressLayer.strokeEnd = 1;
         
         [self.layer addSublayer:_backProgressLayer];
         [self.layer addSublayer:_progressLayer];
@@ -62,14 +61,14 @@
 {
     _progressBarWidth = radius;
     
-    UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(_progressBarWidth / 2, _progressBarWidth / 2, self.bounds.size.width - _progressBarWidth , self.bounds.size.height - _progressBarWidth) cornerRadius:(self.bounds.size.width - _progressBarWidth) / 2];
+    UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(_progressBarWidth / 2, _progressBarWidth / 2, CGRectGetWidth(self.bounds) - _progressBarWidth , CGRectGetHeight(self.bounds) - _progressBarWidth) cornerRadius:(CGRectGetWidth(self.bounds) - _progressBarWidth) / 2];
     
     
-    [self.progressLayer setPath:bezierPath.CGPath];
-    [self.progressLayer setLineWidth:_progressBarWidth];
+    self.progressLayer.path = bezierPath.CGPath;
+    self.progressLayer.lineWidth = _progressBarWidth;
     
-    [self.backProgressLayer setPath:bezierPath.CGPath];
-    [self.backProgressLayer setLineWidth:_progressBarWidth];
+    self.backProgressLayer.path = bezierPath.CGPath;
+    self.backProgressLayer.lineWidth = _progressBarWidth;
 }
 
 - (void)setProgress:(CGFloat)progress

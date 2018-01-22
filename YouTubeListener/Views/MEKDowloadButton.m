@@ -7,6 +7,7 @@
 //
 
 #import "MEKDowloadButton.h"
+#import "MEKProgressBar.h"
 
 @interface MEKDowloadButton ()
 

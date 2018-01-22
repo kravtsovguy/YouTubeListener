@@ -37,8 +37,8 @@
     self.updatesNowPlayingInfoCenter = NO;
     
     MPRemoteCommandCenter *rcc = [MPRemoteCommandCenter sharedCommandCenter];
-    [[rcc skipBackwardCommand] setEnabled:NO];
-    [[rcc skipForwardCommand] setEnabled:NO];
+    rcc.skipBackwardCommand.enabled = NO;
+    rcc.skipForwardCommand.enabled = NO;
     
     [rcc.changePlaybackPositionCommand addTarget:self action:@selector(changedThumbSliderOnLockScreen:)];
     

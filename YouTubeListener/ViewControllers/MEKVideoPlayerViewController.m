@@ -25,7 +25,6 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 @interface MEKVideoPlayerViewController () <MEKWebVideoLoaderOutputProtocol, MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
-@property (nonatomic, strong) MEKProgressBar *progressBar;
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
 
 
@@ -54,7 +53,8 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (instancetype)initWithVideoItem:(VideoItemMO *)item
 {
     self = [super init];
-    if (self) {
+    if (self)
+    {
         _item = item;
         _quality = MEKPlayerViewDefaultQuality;
         

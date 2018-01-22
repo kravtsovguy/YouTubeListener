@@ -24,10 +24,12 @@
 - (instancetype)init
 {
     self = [super init];
-    if (self) {
+    if (self)
+    {
         _tasks = [NSMutableDictionary new];
         _params = [NSMutableDictionary new];
     }
+    
     return self;
 }
 
@@ -41,15 +43,15 @@
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background
 {
     NSURLSessionConfiguration *sessionConfiguration = [self createSessionConfigurationWithBackgroundMode:background];
-    [sessionConfiguration setAllowsCellularAccess:YES];
+    sessionConfiguration.allowsCellularAccess = YES;
     
     if (params)
     {
-        [sessionConfiguration setHTTPAdditionalHeaders:params];
+        sessionConfiguration.HTTPAdditionalHeaders = params;
     }
     else
     {
-        [sessionConfiguration setHTTPAdditionalHeaders:@{@"Accept" : @"application/json"}];
+        sessionConfiguration.HTTPAdditionalHeaders = @{@"Accept" : @"application/json"};
     }
     
     self.urlSession = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:self delegateQueue:[NSOperationQueue new]];

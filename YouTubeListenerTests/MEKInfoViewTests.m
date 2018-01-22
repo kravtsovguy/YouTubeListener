@@ -9,8 +9,9 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <Expecta/Expecta.h>
-#import "MEKInfoView.h"
 #import <Masonry/Masonry.h>
+
+#import "MEKInfoView.h"
 
 @interface MEKInfoViewTests : XCTestCase
 

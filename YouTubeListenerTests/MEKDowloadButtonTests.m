@@ -11,6 +11,7 @@
 #import <Expecta/Expecta.h>
 
 #import "MEKDowloadButton.h"
+#import "MEKProgressBar.h"
 
 @interface MEKDowloadButton(Tests)
 
@@ -32,14 +33,12 @@
 - (void)setUp
 {
     [super setUp];
-    
     self.downloadButton = OCMPartialMock([MEKDowloadButton new]);
 }
 
 - (void)tearDown
 {
     self.downloadButton = nil;
-    
     [super tearDown];
 }
 
