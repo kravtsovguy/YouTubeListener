@@ -17,6 +17,8 @@
 
 @implementation MEKVideoItemDownloadController
 
+#pragma mark - init
+
 - (instancetype)initWithDownloadController:(MEKDownloadController *)downloadController
 {
     self = [super init];
@@ -30,6 +32,8 @@
     
     return self;
 }
+
+#pragma mark - Public
 
 - (void)downloadVideoItem:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
 {
@@ -56,6 +60,8 @@
 {
     [self.downloadController cancelDownloadForKey:item.videoId];
 }
+
+#pragma mark - MEKDownloadControllerDelegate
 
 - (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
 {
