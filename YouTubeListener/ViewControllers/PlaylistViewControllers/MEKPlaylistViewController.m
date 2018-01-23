@@ -25,6 +25,11 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 @property (nonatomic, strong) PlaylistMO *playlist;
 @property (nonatomic, strong) MEKInfoView *infoView;
 
+- (void)updateData;
+- (void)loadItems;
+- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath;
+- (void)removeItemFromPlaylistAtIndexPath: (NSIndexPath *) indexPath;
+
 @end
 
 @implementation MEKPlaylistViewController
@@ -144,6 +149,26 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     [self.tableView reloadData];
 }
 
+- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath
+{
+    VideoItemMO *item = self.items[indexPath.row];
+    [item removeAllDownloads];
+    
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)removeItemFromPlaylistAtIndexPath: (NSIndexPath *) indexPath
+{
+    VideoItemMO *item = self.items[indexPath.row];
+    [self.playlist deleteVideoItem:item];
+    
+    NSMutableArray *items = self.items.mutableCopy;
+    [items removeObjectAtIndex:indexPath.row];
+    self.items = items;
+    
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 #pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
@@ -189,34 +214,24 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    VideoItemMO *item = self.items[indexPath.row];
-    
     UITableViewRowAction *unloadAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Unload"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        [item removeAllDownloads];
-        
-        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self unloadItemAtIndexPath:indexPath];
     }];
     
     unloadAction.backgroundColor = UIColor.orangeColor;
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        [self.playlist deleteVideoItem:item];
-        
-        NSMutableArray *items = self.items.mutableCopy;
-        [items removeObjectAtIndex:indexPath.row];
-        self.items = items;
-        
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self removeItemFromPlaylistAtIndexPath:indexPath];
     }];
     
-    NSMutableArray *actions = [NSMutableArray new];
-    [actions addObject:deleteAction];
+    NSArray *actions = @[deleteAction];
 
+    VideoItemMO *item = self.items[indexPath.row];
     if ([item hasDownloaded])
     {
-        [actions addObject:unloadAction];
+        actions = @[deleteAction, unloadAction];
     }
     
     return actions;
@@ -300,10 +315,12 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
 - (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (error)
+    if (!error)
     {
-        [self downloadControllerProgress:0 forKey:key withParams:params];
+        return;
     }
+    
+    [self downloadControllerProgress:0 forKey:key withParams:params];
 }
 
 #pragma mark - MEKModalPlaylistsViewControllerDelegate

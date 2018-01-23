@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *playlists;
+@property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
 
 @end
 
@@ -92,7 +93,15 @@
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
+    [super traitCollectionDidChange:previousTraitCollection];
     
+    if (!self.previewingContext)
+    {
+        return;
+    }
+    
+    [self unregisterForPreviewingWithContext:self.previewingContext];
+    self.previewingContext = nil;
 }
 
 @end

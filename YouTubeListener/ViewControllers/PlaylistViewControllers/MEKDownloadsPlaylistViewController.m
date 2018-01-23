@@ -13,6 +13,9 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *items;
 
+- (void)updateData;
+- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath;
+
 @end
 
 @interface MEKDownloadsPlaylistViewController ()
@@ -44,21 +47,38 @@
     self.items = items;
 }
 
+- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath
+{
+    VideoItemMO *item = self.items[indexPath.row];
+    [item removeAllDownloads];
+    
+    NSMutableArray *items = self.items.mutableCopy;
+    [items removeObject:item];
+    self.items = items;
+    
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)unloadAllItems
+{
+    [self.items makeObjectsPerformSelector:@selector(removeAllDownloads)];
+    self.items = nil;
+    
+    NSIndexSet *indexedSet = [NSIndexSet indexSetWithIndex:0];
+    [self.tableView reloadSections:indexedSet withRowAnimation:UITableViewRowAnimationFade];
+}
+
 #pragma mark - Selectors
 
 - (void)deleteAllPressed: (id) sender
 {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Delete all saved videos?"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Unload all saved videos?"
                                                                    message:@"You will remove all downloads"
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
     
-    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Unload All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        [self.items makeObjectsPerformSelector:@selector(removeAllDownloads)];
-        self.items = nil;
-        
-        NSIndexSet *indexedSet = [NSIndexSet indexSetWithIndex:0];
-        [self.tableView reloadSections:indexedSet withRowAnimation:UITableViewRowAnimationFade];
+        [self unloadAllItems];
     }];
     
     UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
@@ -73,21 +93,8 @@
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewRowAction *unloadAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Unload"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        
-        VideoItemMO *item = self.items[indexPath.row];
-        [item removeAllDownloads];
-        
-        NSMutableArray *items = self.items.mutableCopy;
-        [items removeObjectAtIndex:indexPath.row];
-        self.items = items;
-        
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-    }];
-    
-    unloadAction.backgroundColor = UIColor.orangeColor;
-    
-    return @[unloadAction];
+    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
+    return @[actions[1]];
 }
 
 @end

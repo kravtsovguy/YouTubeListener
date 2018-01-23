@@ -500,7 +500,9 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     if (![key isEqualToString:self.item.videoId])
+    {
         return;
+    }
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.downloadButton setProgress:progress];
@@ -510,7 +512,9 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     if (![key isEqualToString:self.item.videoId])
+    {
         return;
+    }
     
     NSNumber *quality = params[@"quality"];
     [self.item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
@@ -519,12 +523,16 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     if (![key isEqualToString:self.item.videoId])
-        return;
-    
-    if (error)
     {
-        [self downloadControllerProgress:0 forKey:key withParams:params];
+        return;
     }
+    
+    if (!error)
+    {
+        return;
+    }
+    
+    [self downloadControllerProgress:0 forKey:key withParams:params];
 }
 
 #pragma mark - MEKModalPlaylistsViewControllerDelegate

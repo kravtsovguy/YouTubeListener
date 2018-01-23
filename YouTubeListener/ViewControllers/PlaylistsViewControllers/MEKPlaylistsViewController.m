@@ -103,8 +103,10 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     [self.tableView reloadData];
 }
 
-- (void)renamePlaylist: (PlaylistMO*) playlist
+- (void)showRenamePlaylistDialogAtIndexPath: (NSIndexPath *) indexPath
 {
+    PlaylistMO *playlist = self.playlists [indexPath.row];
+    
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Rename Playlist"
                                                                    message:@""
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -113,14 +115,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
         self.tableView.editing = NO;
         
         NSString *name = alert.textFields[0].text;
-        BOOL isOK = [playlist rename:name];
-        if (!isOK)
-        {
-            [self showInvalidNameAlertForName:name];
-            return;
-        }
-        
-        [self loadPlaylists];
+        [self renamePlaylistAtIndexPath:indexPath toName:name];
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
@@ -136,6 +131,52 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     }];
     
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)renamePlaylistAtIndexPath: (NSIndexPath *) indexPath toName: (NSString *) name
+{
+    PlaylistMO *playlist = self.playlists [indexPath.row];
+    
+    BOOL isOK = [playlist rename:name];
+    if (!isOK)
+    {
+        [self showInvalidNameAlertForName:name];
+        return;
+    }
+    
+    [self loadPlaylists];
+}
+
+- (void)showDeletePlaylistDialogAtIndexPath: (NSIndexPath *) indexPath
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@""
+                                                                   message:@"Delete the playlist?"
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        
+        [self deletePlaylistAtIndexPath:indexPath];
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                   handler:nil];
+    
+    [alert addAction:submit];
+    [alert addAction:cancel];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)deletePlaylistAtIndexPath: (NSIndexPath *) indexPath
+{
+    PlaylistMO *playlist = self.playlists [indexPath.row];
+    [playlist deleteObject];
+    
+    NSMutableArray *playlists = self.playlists.mutableCopy;
+    [playlists removeObjectAtIndex:indexPath.row];
+    self.playlists = playlists;
+    
+    [self.tableView reloadData];
 }
 
 - (void)showInvalidSearchAlertForURL: (NSURL*) url
@@ -168,6 +209,18 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+- (void)addPlaylistWithName: (NSString *) name
+{
+    PlaylistMO *player = [PlaylistMO playlistWithName:name withContext:self.coreDataContext];
+    if (!player)
+    {
+        [self showInvalidNameAlertForName:name];
+        return;
+    }
+    
+    [self loadPlaylists];
+}
+
 #pragma mark - Selectors
 
 - (void)goToUrlPressed: (id) sender
@@ -197,15 +250,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         
         NSString *name = alert.textFields[0].text;
-        PlaylistMO *player = [PlaylistMO playlistWithName:name withContext:self.coreDataContext];
-        if (!player)
-        {
-            [self showInvalidNameAlertForName:name];
-            return;
-        }
-        
-        [self loadPlaylists];
-        
+        [self addPlaylistWithName:name];
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
@@ -298,26 +343,18 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        [self renamePlaylist:self.playlists [indexPath.row]];
-        
+        [self showRenamePlaylistDialogAtIndexPath:indexPath];
     }];
-    moreAction.backgroundColor = [UIColor lightGrayColor];
+    renameAction.backgroundColor = [UIColor lightGrayColor];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         
-        PlaylistMO *playlist = self.playlists [indexPath.row];
-        [playlist deleteObject];
-        
-        NSMutableArray *playlists = self.playlists.mutableCopy;
-        [playlists removeObjectAtIndex:indexPath.row];
-        self.playlists = playlists;
-        
-        [self.tableView reloadData];
+        [self showDeletePlaylistDialogAtIndexPath:indexPath];
     }];
     
-    return @[deleteAction, moreAction];
+    return @[deleteAction, renameAction];
 }
 
 #pragma mark - UITraitCollection
@@ -326,13 +363,18 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 {
     [super traitCollectionDidChange:previousTraitCollection];
     
-    if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
-        if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+    if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)])
+    {
+        if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable)
+        {
 
-            if (!self.previewingContext) {
+            if (!self.previewingContext)
+            {
                 self.previewingContext = [self registerForPreviewingWithDelegate:self sourceView:self.view];
             }
-        } else {
+        }
+        else
+        {
             [self unregisterForPreviewingWithContext:self.previewingContext];
             self.previewingContext = nil;
         }
