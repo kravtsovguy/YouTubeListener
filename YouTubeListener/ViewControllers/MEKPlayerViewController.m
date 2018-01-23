@@ -62,6 +62,11 @@
     });
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
 #pragma mark - Private
 
 - (void)updateControlCenter
