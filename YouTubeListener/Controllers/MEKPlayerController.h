@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "VideoItemMO+CoreDataClass.h"
-#import "MEKDownloadController.h"
 #import "MEKVideoPlayerViewController.h"
 
 static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;

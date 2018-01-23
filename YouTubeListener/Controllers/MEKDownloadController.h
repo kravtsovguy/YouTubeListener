@@ -11,13 +11,13 @@
 @protocol MEKDownloadControllerDelegate <NSObject>
 
 @optional
-- (void)downloadControllerProgress: (double) progress forKey: (NSString*) key withParams: (NSDictionary*) params;;
+- (void)downloadControllerProgress: (double) progress forKey: (NSString*) key withParams: (NSDictionary*) params;
 - (void)downloadControllerDidFinishWithTempUrl: (NSURL*) url forKey:(NSString *) key withParams: (NSDictionary*) params;
 - (void)downloadControllerDidFinishWithError: (NSError*) error forKey:(NSString *) key withParams: (NSDictionary*) params;
 
 @end
 
-@interface MEKDownloadController : NSObject <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
+@interface MEKDownloadController : NSObject
 
 @property (nonatomic, weak) id<MEKDownloadControllerDelegate> delegate;
 @property (nonatomic, readonly) BOOL backgroundMode;

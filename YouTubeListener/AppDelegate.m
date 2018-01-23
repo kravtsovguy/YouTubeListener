@@ -75,8 +75,10 @@
 
 - (void)initDownloadController
 {
-    self.downloadController = [MEKDownloadController new];
-    [self.downloadController configurateUrlSessionWithBackgroundMode:YES];
+    MEKDownloadController *downloadController = [MEKDownloadController new];
+    [downloadController configurateUrlSessionWithBackgroundMode:YES];
+    
+    self.downloadController = [[MEKVideoItemDownloadController alloc] initWithDownloadController:downloadController];
 }
 
 - (void)initControllers

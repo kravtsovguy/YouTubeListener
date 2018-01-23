@@ -8,7 +8,7 @@
 
 #import "MEKDownloadController.h"
 
-@interface MEKDownloadController ()
+@interface MEKDownloadController () <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong) NSURLSession *urlSession;
 @property (nonatomic, copy) NSMutableDictionary *tasks;
@@ -136,6 +136,7 @@
     NSDictionary *params = self.params[key];
     
     double progress = [self getProgressForKey:key];
+    NSLog(@"progress %@ : %f", key, progress);
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {

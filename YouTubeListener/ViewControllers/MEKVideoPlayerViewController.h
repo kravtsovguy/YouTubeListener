@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "VideoItemMO+CoreDataClass.h"
 #import "PlaylistMO+CoreDataClass.h"
-#import "MEKDownloadController.h"
+#import "MEKVideoItemDownloadController.h"
 
 static const CGFloat MEKPlayerViewHeightSizeMaximized = 320;
 static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;
@@ -25,7 +25,7 @@ static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;
 @interface MEKVideoPlayerViewController : UIViewController
 
 @property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> delegate;
-@property (nonatomic, readonly) MEKDownloadController *downloadController;
+@property (nonatomic, readonly) MEKVideoItemDownloadController *downloadController;
 
 - (instancetype)initWithVideoItem: (VideoItemMO*) item;
 

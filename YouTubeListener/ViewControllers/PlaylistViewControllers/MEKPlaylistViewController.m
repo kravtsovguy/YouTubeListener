@@ -13,10 +13,11 @@
 #import "MEKModalPlaylistsViewController.h"
 #import "MEKWebVideoLoader.h"
 #import "MEKInfoView.h"
+#import "AppDelegate.h"
 
 static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
-@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource>
+@interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKVideoItemDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray *items;
@@ -68,7 +69,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     return appDelegate.playerController;
 }
 
-- (MEKDownloadController *)downloadController
+- (MEKVideoItemDownloadController *)downloadController
 {
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
@@ -178,7 +179,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     cell.delegate = self;
     VideoItemMO *item = self.items[indexPath.row];
     
-    double progress = [self.downloadController getProgressForKey:item.videoId];
+    double progress = [self.downloadController getProgressForVideoItem:item];
     
     if ([item hasDownloaded])
         progress = 1;
@@ -265,12 +266,12 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
 - (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
 {
-    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
+    [self.downloadController downloadVideoItem:item withQuality:quality];
 }
 
 - (void)videoItemCancelDownload:(VideoItemMO *)item
 {
-    [self.downloadController cancelDownloadForKey:item.videoId];
+    [self.downloadController cancelDownloadingVideoItem:item];
 }
 
 #pragma mark - MEKWebVideoLoaderOutputProtocol
@@ -280,47 +281,31 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     [self videoItemDownload:item];
 }
 
-#pragma mark - MEKDownloadControllerDelegate
+#pragma mark - MEKVideoItemDownloadControllerDelegate
 
-- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
+- (void)videoItemDownloadControllerProgress:(double)progress forVideoItem:(VideoItemMO *)item
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        for (MEKVideoItemTableViewCell *cell in self.tableView.visibleCells)
-        {
-            VideoItemMO *item = cell.item;
-            if ([key isEqualToString:item.videoId])
-            {
-                [cell setDownloadProgress:progress];
-
-                if (progress == 1)
-                {
-                    [cell setWithVideoItem:item];
-                }
-                break;
-            }
-        }
-    });
-}
-
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"videoId == %@", key];
-    VideoItemMO *item = [self.items filteredArrayUsingPredicate:predicate].firstObject;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"item.videoId = %@", item.videoId];
+    MEKVideoItemTableViewCell *cell = [self.tableView.visibleCells filteredArrayUsingPredicate:predicate].firstObject;
     
-    NSNumber *quality = params[@"quality"];
-    [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
+    [cell setDownloadProgress:progress];
 
-    [self downloadControllerProgress:1 forKey:key withParams:params];
-}
-
-- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (!error)
+    if (progress == 1)
     {
-        return;
+        [cell setWithVideoItem:item];
     }
-    
-    [self downloadControllerProgress:0 forKey:key withParams:params];
+}
+
+- (void)videoItemDownloadControllerDidFinishWithError:(NSError *)error forVideoItem:(VideoItemMO *)item
+{
+    if (error)
+    {
+        [self videoItemDownloadControllerProgress:0 forVideoItem:item];
+    }
+    else
+    {
+        [self videoItemDownloadControllerProgress:1 forVideoItem:item];
+    }
 }
 
 #pragma mark - MEKModalPlaylistsViewControllerDelegate

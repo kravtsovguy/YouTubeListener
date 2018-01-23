@@ -124,10 +124,14 @@
     [self initPlayerViewControllerWithVideoItem:item withVisibleState:state];
     
     if (state == MEKPlayerVisibleStateMaximized)
+    {
         [self maximizePlayer];
+    }
     
     if (state == MEKPlayerVisibleStateMinimized)
+    {
         [self minimizePlayer];
+    }
 }
 
 - (void)minimize
@@ -145,7 +149,9 @@
 - (void)close
 {
     if (!self.isOpened)
+    {
         return;
+    }
     
     [self minimizePlayer];
     
@@ -168,7 +174,9 @@
 - (void)initPlayerViewControllerWithVideoItem:(VideoItemMO*) item withVisibleState:(MEKPlayerVisibleState) state
 {
     if (self.playerViewController)
+    {
         return;
+    }
     
     self.playerViewController = [[MEKVideoPlayerViewController alloc] initWithVideoItem:item];
     self.playerViewController.delegate = self;
@@ -193,7 +201,9 @@
 - (void)initScrollView
 {
     if (self.scrollView)
+    {
         return;
+    }
     
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.mainFrame), CGRectGetWidth(self.mainFrame), MEKPlayerViewHeightSizeMaximized)];
     
@@ -208,7 +218,9 @@
 - (void)initOverlayView
 {
     if (self.overlayView)
+    {
         return;
+    }
     
     self.overlayView = [[UIView alloc] initWithFrame:self.mainFrame];
     self.overlayView.backgroundColor = UIColor.blackColor;

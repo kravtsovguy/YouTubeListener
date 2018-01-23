@@ -9,13 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "PlaylistMO+CoreDataClass.h"
 #import "UIViewController+VideoItemActions.h"
-#import "AppDelegate.h"
+#import "MEKPlayerController.h"
+#import "MEKVideoItemDownloadController.h"
 
 @interface MEKPlaylistViewController : UIViewController
 
 @property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, readonly) MEKPlayerController *playerController;
-@property (nonatomic, readonly) MEKDownloadController *downloadController;
+@property (nonatomic, readonly) MEKVideoItemDownloadController *downloadController;
 @property (nonatomic, readonly) PlaylistMO *playlist;
 
 - (instancetype)initWithPlaylist: (PlaylistMO*) playlist;

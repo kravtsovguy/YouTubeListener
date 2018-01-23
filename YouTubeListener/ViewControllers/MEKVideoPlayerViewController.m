@@ -22,7 +22,7 @@
 static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
-@interface MEKVideoPlayerViewController () <MEKWebVideoLoaderOutputProtocol, MEKVideoItemDelegate, MEKDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <MEKWebVideoLoaderOutputProtocol, MEKVideoItemDelegate, MEKVideoItemDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
 
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
@@ -70,7 +70,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 
 #pragma mark - Properties
 
-- (MEKDownloadController *)downloadController
+- (MEKVideoItemDownloadController *)downloadController
 {
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *delegate = (AppDelegate*)application.delegate;
@@ -332,9 +332,11 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
         return NO;
     }
     
-    double progress = [self.downloadController getProgressForKey:item.videoId];
+    double progress = [self.downloadController getProgressForVideoItem:item];
     if ([item hasDownloaded])
+    {
         progress = 1;
+    }
     
     [self.downloadButton setProgress:progress];
     
@@ -487,52 +489,41 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 
 - (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
 {
-    [self.downloadController downloadDataFromURL:item.urls[@(quality)] forKey:item.videoId withParams:@{@"quality" : @(quality)}];
+    [self.downloadController downloadVideoItem:item withQuality:quality];
 }
 
 - (void)videoItemCancelDownload:(VideoItemMO *)item
 {
-    [self.downloadController cancelDownloadForKey:item.videoId];
+    [self.downloadController cancelDownloadingVideoItem:item];
 }
 
-#pragma mark - MEKDownloadControllerDelegate
+#pragma mark - MEKVideoItemDownloadControllerDelegate
 
-- (void)downloadControllerProgress:(double)progress forKey:(NSString *)key withParams:(NSDictionary *)params
+- (void)videoItemDownloadControllerProgress:(double)progress forVideoItem:(VideoItemMO *)item
 {
-    if (![key isEqualToString:self.item.videoId])
+    if (![item.videoId isEqualToString:self.item.videoId])
     {
         return;
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.downloadButton setProgress:progress];
-    });
+    [self.downloadButton setProgress:progress];
 }
 
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
+- (void)videoItemDownloadControllerDidFinishWithError:(NSError *)error forVideoItem:(VideoItemMO *)item
 {
-    if (![key isEqualToString:self.item.videoId])
+    if (![item.videoId isEqualToString:self.item.videoId])
     {
         return;
     }
     
-    NSNumber *quality = params[@"quality"];
-    [self.item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
-}
-
-- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
-{
-    if (![key isEqualToString:self.item.videoId])
+    if (error)
     {
-        return;
+        [self videoItemDownloadControllerProgress:0 forVideoItem:item];
     }
-    
-    if (!error)
+    else
     {
-        return;
+        [self videoItemDownloadControllerProgress:1 forVideoItem:item];
     }
-    
-    [self downloadControllerProgress:0 forKey:key withParams:params];
 }
 
 #pragma mark - MEKModalPlaylistsViewControllerDelegate
