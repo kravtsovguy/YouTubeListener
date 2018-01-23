@@ -144,7 +144,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
         return;
     }
     
-    [self loadPlaylists];
+    [self.tableView reloadData];
 }
 
 - (void)showDeletePlaylistDialogAtIndexPath: (NSIndexPath *) indexPath
