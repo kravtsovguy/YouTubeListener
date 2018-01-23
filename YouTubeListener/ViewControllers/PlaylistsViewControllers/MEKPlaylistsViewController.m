@@ -112,7 +112,6 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        self.tableView.editing = NO;
         
         NSString *name = alert.textFields[0].text;
         [self renamePlaylistAtIndexPath:indexPath toName:name];
@@ -137,8 +136,12 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 {
     PlaylistMO *playlist = self.playlists [indexPath.row];
     
-    BOOL isOK = [playlist rename:name];
-    if (!isOK)
+    if ([playlist.name isEqualToString:name])
+    {
+        return;
+    }
+
+    if (![playlist rename:name])
     {
         [self showInvalidNameAlertForName:name];
         return;
@@ -196,7 +199,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 
 - (void)showInvalidNameAlertForName: (NSString*) name
 {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Name For Playlist"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Playlist with this name already exists"
                                                                    message:name
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
