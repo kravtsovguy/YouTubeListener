@@ -136,7 +136,6 @@
     NSDictionary *params = self.params[key];
     
     double progress = [self getProgressForKey:key];
-    NSLog(@"progress %@ : %f", key, progress);
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {
