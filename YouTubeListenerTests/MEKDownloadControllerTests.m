@@ -12,7 +12,7 @@
 
 #import "MEKDownloadController.h"
 
-@interface MEKDownloadController(Tests)
+@interface MEKDownloadController(Tests) <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong) NSURLSession *urlSession;
 @property (nonatomic, copy) NSMutableDictionary *tasks;

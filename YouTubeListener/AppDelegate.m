@@ -14,6 +14,9 @@
 
 @interface AppDelegate ()
 
+@property (nonatomic, strong) MEKPlayerController *playerController;
+@property (nonatomic, strong) MEKVideoItemDownloadController *downloadController;
+
 @property (nonatomic, strong) UIViewController *playlistsViewController;
 @property (nonatomic, strong) UIViewController *downloadsPlaylistViewController;
 

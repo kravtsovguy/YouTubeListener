@@ -15,11 +15,10 @@
 
 @property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) UITabBarController *tabBarController;
-
-@property (nonatomic, strong) MEKPlayerController *playerController;
-@property (nonatomic, strong) MEKVideoItemDownloadController *downloadController;
-
 @property (readonly, strong) NSPersistentContainer *persistentContainer;
+
+@property (nonatomic, readonly) MEKPlayerController *playerController;
+@property (nonatomic, readonly) MEKVideoItemDownloadController *downloadController;
 
 - (void)saveContext;
 
