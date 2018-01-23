@@ -223,7 +223,7 @@
     }
     
     self.overlayView = [[UIView alloc] initWithFrame:self.mainFrame];
-    self.overlayView.backgroundColor = UIColor.blackColor;
+    self.overlayView.backgroundColor = [UIColor blackColor];
     self.overlayView.alpha = 0;
     self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
     

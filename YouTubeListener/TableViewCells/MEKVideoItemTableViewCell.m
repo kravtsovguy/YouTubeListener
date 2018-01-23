@@ -37,6 +37,8 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self)
     {
+        UIColor *lightBlack = [[UIColor blackColor] colorWithAlphaComponent:0.7];
+        
         _titleLabel = [UILabel new];
         _titleLabel.numberOfLines = 2;
         _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -61,23 +63,23 @@
         _durationView = [UIView new];
         _durationView.layer.cornerRadius = 2;
         _durationView.layer.masksToBounds = YES;
-        _durationView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        _durationView.backgroundColor = lightBlack;
         [_thumbnailImageView addSubview:_durationView];
         
         _durationLabel = [UILabel new];
-        _durationLabel.textColor = UIColor.whiteColor;
+        _durationLabel.textColor = [UIColor whiteColor];
         _durationLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _durationLabel.text = @"12:06";
         [_durationView addSubview:_durationLabel];
         
         _addButton = [UIButton new];
         [_addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
-        _addButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        _addButton.tintColor = lightBlack;
         [_addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:_addButton];
         
         _downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        _downloadButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        _downloadButton.tintColor = lightBlack;
         [_downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:_downloadButton];
         

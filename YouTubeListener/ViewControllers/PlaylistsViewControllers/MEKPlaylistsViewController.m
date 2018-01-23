@@ -54,7 +54,7 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 {
     [super viewDidLoad];
     self.title = @"PLAYLISTS";
-    self.view.backgroundColor = UIColor.whiteColor;
+    self.view.backgroundColor = [UIColor whiteColor];
     
     UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addToPlaylistPressed:)];
     self.navigationItem.rightBarButtonItem = addItem;
@@ -66,7 +66,6 @@ static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView =[UIView new];
-    self.tableView.tableFooterView.backgroundColor = UIColor.greenColor;
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:MEKPlaylistTableViewCellID];
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:MEKPlaylistTableViewHeaderID];
     

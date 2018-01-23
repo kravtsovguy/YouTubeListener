@@ -42,7 +42,7 @@
         
         
         _stopView = [UIView new];
-        _stopView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+        _stopView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.7];
         _stopView.layer.masksToBounds = YES;
         _stopView.userInteractionEnabled = NO;
         _stopView.hidden = YES;

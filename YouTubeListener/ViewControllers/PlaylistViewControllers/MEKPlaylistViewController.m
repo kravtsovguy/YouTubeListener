@@ -95,7 +95,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
     [super viewDidLoad];
     
     self.title = self.playlist.name;
-    self.view.backgroundColor = UIColor.whiteColor;
+    self.view.backgroundColor = [UIColor whiteColor];
     
     self.tableView = [UITableView new];
     self.tableView.delegate = self;
@@ -220,7 +220,7 @@ static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
         [self unloadItemAtIndexPath:indexPath];
     }];
     
-    unloadAction.backgroundColor = UIColor.orangeColor;
+    unloadAction.backgroundColor = [UIColor orangeColor];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         

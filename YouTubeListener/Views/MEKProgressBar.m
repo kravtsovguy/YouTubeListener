@@ -31,20 +31,20 @@
     self = [super initWithFrame:frame];
     if (self)
     {
-        self.backgroundColor = UIColor.clearColor;
+        self.backgroundColor = [UIColor clearColor];
         
         _progressBarWidth = 0;
         
         _progressLayer = [CAShapeLayer new];
-        _progressLayer.strokeColor = [UIColor.redColor colorWithAlphaComponent:0.7].CGColor;
-        _progressLayer.fillColor = UIColor.clearColor.CGColor;
+        _progressLayer.strokeColor = [[UIColor redColor] colorWithAlphaComponent:0.7].CGColor;
+        _progressLayer.fillColor = [UIColor clearColor].CGColor;
         _progressLayer.lineWidth = _progressBarWidth;
         _progressLayer.strokeEnd = 0;
         _progressLayer.lineCap = kCALineCapRound;
         
         _backProgressLayer = [CAShapeLayer new];
-        _backProgressLayer.strokeColor = [UIColor.grayColor colorWithAlphaComponent:0.3f].CGColor;
-        _backProgressLayer.fillColor = UIColor.clearColor.CGColor;
+        _backProgressLayer.strokeColor = [[UIColor grayColor] colorWithAlphaComponent:0.3f].CGColor;
+        _backProgressLayer.fillColor = [UIColor clearColor].CGColor;
         _backProgressLayer.lineWidth = _progressBarWidth;
         _backProgressLayer.strokeEnd = 1;
         

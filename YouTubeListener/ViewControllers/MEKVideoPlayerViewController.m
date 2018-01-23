@@ -83,6 +83,8 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 {
     [super viewDidLoad];
     
+    UIColor *lightBlack = [[UIColor blackColor] colorWithAlphaComponent:0.7];
+    
     self.titleLabel = [UILabel new];
     self.titleLabel.numberOfLines = 2;
     self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
@@ -95,31 +97,31 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     
     self.closeButton = [UIButton new];
     [self.closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
-    self.closeButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    self.closeButton.tintColor = lightBlack;
     self.closeButton.imageEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
     [self.closeButton addTarget:self action:@selector(closeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.closeButton];
     
     self.addButton = [UIButton new];
     [self.addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
-    self.addButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    self.addButton.tintColor = lightBlack;
     [self.addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.addButton];
     
     self.downloadButton = [MEKDowloadButton new];
-    self.downloadButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    self.downloadButton.tintColor = lightBlack;
     [self.downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.downloadButton];
     
     self.qualityButton = [UIButton new];
     [self.qualityButton setImage:[UIImage imageNamed:@"gear"] forState:UIControlStateNormal];
-    self.qualityButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    self.qualityButton.tintColor = lightBlack;
     [self.qualityButton addTarget:self action:@selector(qualityButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.qualityButton];
     
     self.youtubeButton = [UIButton new];
     [self.youtubeButton setImage:[UIImage imageNamed:@"youtube"] forState:UIControlStateNormal];
-    self.youtubeButton.tintColor = [UIColor.blackColor colorWithAlphaComponent:0.7];
+    self.youtubeButton.tintColor = lightBlack;
     [self.youtubeButton addTarget:self action:@selector(youtubeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.youtubeButton];
     
@@ -139,7 +141,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     [self addChildViewController:self.playerController];
     [self.view addSubview:self.playerController.view];
     
-    self.view.backgroundColor = UIColor.whiteColor;
+    self.view.backgroundColor = [UIColor whiteColor];
     self.view.layer.borderWidth = 0.5;
     self.view.layer.cornerRadius = 10;
     self.view.layer.masksToBounds = YES;
@@ -385,7 +387,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (void)maximizeUI
 {
     self.view.layer.cornerRadius = 10;
-    self.view.backgroundColor = UIColor.whiteColor;
+    self.view.backgroundColor = [UIColor whiteColor];
     self.blurEffectView.alpha = 0;
     self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
     self.titleLabel.numberOfLines = 2;
@@ -396,7 +398,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (void)minimizeUI
 {
     self.view.layer.cornerRadius = 0;
-    self.view.backgroundColor = UIColor.clearColor;
+    self.view.backgroundColor = [UIColor clearColor];
     self.blurEffectView.alpha = 1;
     self.titleLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightRegular];
     self.titleLabel.numberOfLines = 1;
