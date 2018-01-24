@@ -39,9 +39,13 @@
     NSString *code;
     
     if ([videoURL containsString:@"youtube"])
+    {
         code = [[videoURL componentsSeparatedByString:@"="][1] componentsSeparatedByString:@"&"][0];
+    }
     else
+    {
         code = [videoURL componentsSeparatedByString:@"youtu.be/"][1];
+    }
     
     return code;
 }
@@ -49,7 +53,6 @@
 - (NSURL*)generateUrlForVideoItem: (VideoItemMO*)item
 {
     NSURL *infoUrl = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@&hl=ru_RU", item.videoId]];
-    
     return infoUrl;
 }
 
