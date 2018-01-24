@@ -15,8 +15,8 @@
 @interface MEKDownloadController(Tests) <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong) NSURLSession *urlSession;
-@property (nonatomic, copy) NSMutableDictionary *tasks;
-@property (nonatomic, copy) NSMutableDictionary *params;
+@property (nonatomic, strong) NSMutableDictionary *tasks;
+@property (nonatomic, strong) NSMutableDictionary *params;
 @property (nonatomic, assign) BOOL backgroundMode;
 
 - (NSURLSessionConfiguration*)createSessionConfigurationWithBackgroundMode: (BOOL) background;

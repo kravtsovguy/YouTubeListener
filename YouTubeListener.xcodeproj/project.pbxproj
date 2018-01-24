@@ -27,6 +27,7 @@
 		BA70A68B200759EB002AE1B4 /* MEKVideoItemTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA70A68A200759EB002AE1B4 /* MEKVideoItemTableViewCell.m */; };
 		BA8F07412010D937005FA2E6 /* UIViewController+VideoItemActions.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8F07402010D937005FA2E6 /* UIViewController+VideoItemActions.m */; };
 		BAACE6482016C78900432BF2 /* MEKVideoItemDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAACE6472016C78900432BF2 /* MEKVideoItemDownloadController.m */; };
+		BAACE64A201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BAACE649201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m */; };
 		BAAE6D001FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BAAE6CFF1FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m */; };
 		BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */; };
 		BAB51E441FFB4C85005F24F8 /* MEKProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB51E431FFB4C85005F24F8 /* MEKProgressBar.m */; };
@@ -97,6 +98,7 @@
 		BA8F07452011409F005FA2E6 /* MEKWebVideoParserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoParserProtocol.h; sourceTree = "<group>"; };
 		BAACE6462016C78900432BF2 /* MEKVideoItemDownloadController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKVideoItemDownloadController.h; sourceTree = "<group>"; };
 		BAACE6472016C78900432BF2 /* MEKVideoItemDownloadController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKVideoItemDownloadController.m; sourceTree = "<group>"; };
+		BAACE649201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKVideoItemDownloadControllerTests.m; sourceTree = "<group>"; };
 		BAAE6CFF1FDFEF6F00438DF9 /* MEKYouTubeVideoParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKYouTubeVideoParser.m; sourceTree = "<group>"; };
 		BAAE6D011FE1A3CD00438DF9 /* MEKPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKPlayerViewController.h; sourceTree = "<group>"; };
 		BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKPlayerViewController.m; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				BA54541E2013BFE00027E2E6 /* MEKInfoViewTests.m */,
 				BA5454202013C48B0027E2E6 /* MEKDownloadControllerTests.m */,
 				BA18359F2016373E001FC7AC /* MEKPlayerControllerTests.m */,
+				BAACE649201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m */,
 			);
 			path = YouTubeListenerTests;
 			sourceTree = "<group>";
@@ -560,6 +563,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAACE64A201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m in Sources */,
 				BA54541D2013AFBC0027E2E6 /* MEKDowloadButtonTests.m in Sources */,
 				BA54541B201283960027E2E6 /* MEKProgressBarTests.m in Sources */,
 				BA1835A02016373E001FC7AC /* MEKPlayerControllerTests.m in Sources */,

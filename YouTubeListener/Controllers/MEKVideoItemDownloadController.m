@@ -11,7 +11,7 @@
 @interface MEKVideoItemDownloadController() <MEKDownloadControllerDelegate>
 
 @property (nonatomic, strong) MEKDownloadController *downloadController;
-@property (nonatomic, copy) NSMutableDictionary *items;
+@property (nonatomic, strong) NSMutableDictionary *items;
 
 @end
 
