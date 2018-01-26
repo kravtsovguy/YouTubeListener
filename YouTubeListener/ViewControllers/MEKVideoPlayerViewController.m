@@ -152,8 +152,13 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     self.item.added = [NSDate new];
     [self.item saveObject];    
     
-    [self setUIwithVideoItem:self.item];
-    [self setVideoWithQuality:self.quality];
+    BOOL isSetUI = [self setUIwithVideoItem:self.item];
+    BOOL isSetVideo = [self setVideoWithQuality:self.quality];
+    
+    if (!isSetUI || !isSetVideo)
+    {
+        [self.loader loadVideoItem:self.item];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -330,7 +335,6 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     }
     else
     {
-        [self.loader loadVideoItem:item];
         return NO;
     }
     
@@ -371,7 +375,6 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     
     if (!downloadedURL && !webURL)
     {
-        [self.loader loadVideoItem:self.item];
         return NO;
     }
     
