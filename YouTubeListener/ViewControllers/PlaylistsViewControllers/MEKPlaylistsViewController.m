@@ -15,8 +15,8 @@
 #import "MEKRecentPlaylistViewController.h"
 #import "MEKInfoView.h"
 
-static NSString *MEKPlaylistTableViewCellID = @"MEKPlaylistTableViewCell";
-static NSString *MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
+static NSString * const MEKPlaylistTableViewCellID = @"MEKPlaylistTableViewCell";
+static NSString * const MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 
 @interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate, UITableViewDelegate, UITableViewDataSource>
 

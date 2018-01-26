@@ -15,7 +15,7 @@
 #import "MEKInfoView.h"
 #import "AppDelegate.h"
 
-static NSString *MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
+static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
 @interface MEKPlaylistViewController () <MEKVideoItemDelegate, MEKVideoItemDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol, MEKModalPlaylistsViewControllerDelegate, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource>
 
