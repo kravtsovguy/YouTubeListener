@@ -105,7 +105,7 @@
     if (items.count == 0)
     {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSURL *url = [NSURL URLWithString:@"https://youtu.be/_CUIOJ0-jao"];
+            NSURL *url = [NSURL URLWithString:@"https://youtu.be/RpgR0c9Y8OQ"];
             [self.playerController openURL:url withVisibleState:MEKPlayerVisibleStateMaximized];
         });
     }
