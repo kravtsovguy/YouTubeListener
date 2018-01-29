@@ -198,7 +198,12 @@ static NSString * const MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHea
 
 - (void)showInvalidNameAlertForName: (NSString*) name
 {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Playlist with this name already exists"
+    [self showInvalidNameAlertForName:name withText:@"Playlist with this name already exists"];
+}
+
+- (void)showInvalidNameAlertForName: (NSString*) name withText: (NSString*) text
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:text
                                                                    message:name
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
@@ -211,16 +216,24 @@ static NSString * const MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHea
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)addPlaylistWithName: (NSString *) name
+- (BOOL)addPlaylistWithName: (NSString *) name
 {
-    PlaylistMO *player = [PlaylistMO playlistWithName:name withContext:self.coreDataContext];
+    NSString *correctName = [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    if (correctName.length == 0)
+    {
+        [self showInvalidNameAlertForName:correctName withText:@"Incorrect playlist name"];
+        return NO;
+    }
+    
+    PlaylistMO *player = [PlaylistMO playlistWithName:correctName withContext:self.coreDataContext];
     if (!player)
     {
-        [self showInvalidNameAlertForName:name];
-        return;
+        [self showInvalidNameAlertForName:correctName];
+        return NO;
     }
     
     [self loadPlaylists];
+    return YES;
 }
 
 #pragma mark - Selectors
