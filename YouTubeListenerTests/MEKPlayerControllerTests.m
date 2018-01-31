@@ -350,7 +350,27 @@
     OCMExpect([self.playerController minimizePlayer]);
     
     id view = OCMClassMock([UIView class]);
-    OCMExpect(ClassMethod([view animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:OCMOCK_ANY completion:OCMOCK_ANY]));
+    OCMExpect(ClassMethod([view animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:[OCMArg checkWithBlock:^BOOL(id param) {
+        
+        void (^passedBlock)( void ) = param;
+        
+        UIScrollView *scrollView = OCMClassMock([UIScrollView class]);
+        self.playerController.scrollView = scrollView;
+        OCMExpect([scrollView setTransform:CGAffineTransformIdentity]);
+        
+        passedBlock();
+        
+        OCMVerifyAll((id)scrollView);
+        
+        return YES;
+    }] completion:[OCMArg checkWithBlock:^BOOL(id param) {
+        
+        void (^passedBlock)( BOOL finished ) = param;
+        OCMExpect([self.playerController closePlayer]);
+        passedBlock(YES);
+        
+        return YES;
+    }]]));
     
     [self.playerController close];
     
@@ -478,29 +498,59 @@
 - (void)testMinimizePlayer
 {
     OCMExpect([self.playerController topViewWillAppear]);
-    OCMExpect(self.playerController.tabBarMainView).andReturn(nil);
+
+    UIView *view = OCMClassMock([UIView class]);
     
-    id view = OCMClassMock([UIView class]);
-    OCMExpect(ClassMethod([view animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:OCMOCK_ANY completion:OCMOCK_ANY]));
+    OCMStub(self.playerController.tabBarMainView).andReturn(view);
+    OCMExpect([view setNeedsUpdateConstraints]);
+    OCMExpect([view updateConstraintsIfNeeded]);
+    
+    OCMExpect(ClassMethod([(id)view animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:[OCMArg checkWithBlock:^BOOL(id param) {
+        
+        void (^passedBlock)( void ) = param;
+        OCMExpect([self.playerController minimizePlayerUI]);
+        passedBlock();
+        
+        return YES;
+    }] completion:OCMOCK_ANY]));
     
     [self.playerController minimizePlayer];
     
     OCMVerifyAll((id)self.playerController);
-    OCMVerifyAll(view);
+    OCMVerifyAll((id)view);
 }
 
 - (void)testMaximizePlayer
 {
     OCMExpect([self.playerController playerViewWillAppear]);
-    OCMExpect(self.playerController.tabBarMainView).andReturn(nil);
+
+    UIView *view = OCMClassMock([UIView class]);
     
-    id view = OCMClassMock([UIView class]);
-    OCMExpect(ClassMethod([view animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:OCMOCK_ANY completion:OCMOCK_ANY]));
+    OCMStub(self.playerController.tabBarMainView).andReturn(view);
+    OCMExpect([view setTranslatesAutoresizingMaskIntoConstraints:NO]);
+    OCMExpect([view setNeedsUpdateConstraints]);
+    OCMExpect([view updateConstraintsIfNeeded]);
+    
+    OCMExpect(ClassMethod([(id)view animateWithDuration:MEKPlayerViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:[OCMArg checkWithBlock:^BOOL(id param) {
+        
+        void (^passedBlock)( void ) = param;
+        OCMExpect([self.playerController maximizePlayerUI]);
+        passedBlock();
+        
+        return YES;
+    }] completion:[OCMArg checkWithBlock:^BOOL(id param) {
+        
+        void (^passedBlock)( BOOL finished ) = param;
+        OCMExpect([view setTranslatesAutoresizingMaskIntoConstraints:YES]);
+        passedBlock(YES);
+        
+        return YES;
+    }]]));
     
     [self.playerController maximizePlayer];
     
     OCMVerifyAll((id)self.playerController);
-    OCMVerifyAll(view);
+    OCMVerifyAll((id)view);
 }
 
 - (void)testFixContentInScrollView

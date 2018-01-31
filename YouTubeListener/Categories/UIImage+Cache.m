@@ -43,7 +43,7 @@
 {
     NSString *path = [self ch_getPathForUrl:url];
     
-    NSError *error = nil;
+    NSError *error;
     if (![data writeToFile:path options:NSDataWritingAtomic error:&error])
     {
         NSLog(@"Error Writing File : %@",error.localizedDescription);
