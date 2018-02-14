@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MEKWebVideoParserProtocol.h"
+#import "MEKDefaultParser.h"
 
-@interface MEKYouTubeVideoParser: NSObject <MEKWebVideoParserProtocol>
+@interface MEKYouTubeVideoParser: MEKDefaultParser
 
 @end

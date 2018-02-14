@@ -48,7 +48,7 @@
 
 - (BOOL)downloadingVideoItem:(VideoItemMO *)item
 {
-    return [self.downloadController hasTaskForKey:item.videoId];
+    return [self.downloadController hasDownloadForKey:item.videoId];
 }
 
 - (double)getProgressForVideoItem:(VideoItemMO *)item
@@ -75,14 +75,14 @@
     }
 }
 
-- (void)downloadControllerDidFinishWithTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
+- (BOOL)downloadControllerDidFinish:(id<MEKDownloadControllerInputProtocol>)downloadController withTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     VideoItemMO *item = self.items[key];
     NSNumber *quality = params[@"quality"];
-    [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
+    return [item saveTempPathURL:url withQuality:quality.unsignedIntegerValue];
 }
 
-- (void)downloadControllerDidFinishWithError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
+- (void)downloadControllerDidFinish:(id<MEKDownloadControllerInputProtocol>)downloadController withError:(NSError *)error forKey:(NSString *)key withParams:(NSDictionary *)params
 {
     VideoItemMO *item = self.items[key];
     [self.items removeObjectForKey:key];

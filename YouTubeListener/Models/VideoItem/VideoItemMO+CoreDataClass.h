@@ -10,6 +10,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+static NSString * _Nonnull const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
+
 typedef NS_ENUM (NSUInteger, VideoItemQuality) {
     VideoItemQualitySmall144  = 17,
     VideoItemQualitySmall240  = 36,

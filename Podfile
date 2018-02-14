@@ -7,6 +7,7 @@ target 'YouTubeListener' do
 
   # Pods for YouTubeListener
   pod 'Masonry'
+  pod 'XCDYouTubeKit'
 
 	target 'YouTubeListenerTests' do
 		pod 'Expecta'

@@ -12,10 +12,10 @@
 @protocol MEKWebVideoParserProtocol <NSObject>
 
 @required
-- (void)parseQueryContent: (NSString*) content toVideoItem: (VideoItemMO*) item;
-
-@optional
 - (NSString*)generateIdForVideoItem: (VideoItemMO*) item;
 - (NSURL*)generateUrlForVideoItem: (VideoItemMO*)item;
+- (NSURLRequest*)generateRequestForVideoItem: (VideoItemMO*)item;
+- (BOOL)parseQueryContent: (NSString*) content toVideoItem: (VideoItemMO**) item;
+- (BOOL)shouldUseWebBrowser;
 
 @end

@@ -78,7 +78,7 @@
     
     if (![size isEqualToNumber:@(0)])
     {
-        name = [NSString stringWithFormat:@"%@ (%@MB)", qualityString, size];
+        name = [NSString stringWithFormat:@"%@ (%.1f MB)", qualityString, size.doubleValue];
     }
     
     UIAlertAction *action = [UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

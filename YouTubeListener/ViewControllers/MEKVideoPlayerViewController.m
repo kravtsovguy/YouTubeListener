@@ -372,6 +372,11 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     
     NSURL *downloadedURL = self.item.downloadedURLs[@(quality)];
     NSURL *webURL = self.item.urls[@(quality)];
+
+    if (!webURL)
+    {
+        webURL = self.item.urls[VideoItemHTTPLiveStreaming];
+    }
     
     if (!downloadedURL && !webURL)
     {

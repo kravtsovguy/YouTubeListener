@@ -9,26 +9,24 @@
 #import "MEKYouTubeVideoParser.h"
 #import "AppDelegate.h"
 #import "MEKDownloadController.h"
+#import <XCDYouTubeKit/XCDYouTubeVideoWebpage.h>
+#import <XCDYouTubeKit/XCDYouTubePlayerScript.h>
+#import <XCDYouTubeKit/XCDYouTubeVideo.h>
+#import <XCDYouTubeKit/XCDYouTubeVideo+Private.h>
 
 @implementation MEKYouTubeVideoParser
 
 #pragma mark - Private
 
-- (NSDictionary*)dictionaryWithQueryString: (NSString*) string
+- (XCDYouTubeVideo*)videoFromHTML: (NSString*) html
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary new];
-    NSArray *fields = [string componentsSeparatedByString:@"&"];
-    for (NSString *field in fields)
-    {
-        NSArray *pair = [field componentsSeparatedByString:@"="];
-        if (pair.count == 2)
-        {
-            NSString *key = pair[0];
-            NSString *value = [[pair[1] stringByRemovingPercentEncoding] stringByReplacingOccurrencesOfString:@"+" withString:@" "];
-            dictionary[key] = value;
-        }
-    }
-    return dictionary;
+    XCDYouTubeVideoWebpage *webpage = [[XCDYouTubeVideoWebpage alloc] initWithHTMLString:html];
+    NSString *script = [NSString stringWithContentsOfURL:webpage.javaScriptPlayerURL encoding:NSUTF8StringEncoding error:nil];
+    XCDYouTubePlayerScript *playerScript = [[XCDYouTubePlayerScript alloc] initWithString:script];
+    NSString *videoId = webpage.videoInfo[@"vid"];
+    XCDYouTubeVideo *video = [[XCDYouTubeVideo alloc] initWithIdentifier:videoId info:webpage.videoInfo playerScript:playerScript response:nil error:nil];
+
+    return video;
 }
 
 #pragma mark - MEKWebVideoParserProtocol
@@ -52,34 +50,25 @@
 
 - (NSURL*)generateUrlForVideoItem: (VideoItemMO*)item
 {
-    NSURL *infoUrl = [NSURL URLWithString:[NSString stringWithFormat:@"http://youtube.com/get_video_info?video_id=%@&hl=ru_RU", item.videoId]];
-    return infoUrl;
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://youtu.be/%@", item.videoId]];
+    return url;
 }
 
-- (void)parseQueryContent: (NSString*) content toVideoItem:(VideoItemMO *)item
+- (BOOL)parseQueryContent: (NSString*) content toVideoItem:(VideoItemMO **)itemRef
 {
-    NSDictionary *info = [self dictionaryWithQueryString:content];
-    
-    NSMutableDictionary *urls = [NSMutableDictionary new];
-    NSMutableDictionary *sizes = [NSMutableDictionary new];
+    XCDYouTubeVideo *video = [self videoFromHTML:content];
 
-    NSArray *streamQueries = [[info[@"url_encoded_fmt_stream_map"] componentsSeparatedByString:@","] mutableCopy];
-    for (NSString *streamQuery in streamQueries)
-    {
-        NSDictionary *params = [self dictionaryWithQueryString:streamQuery];
-        urls[@([params[@"itag"] integerValue])] = [NSURL URLWithString:params[@"url"]];
-        
-        NSDictionary *urlParams = [self dictionaryWithQueryString:params[@"url"]];
-        sizes[@([params[@"itag"] integerValue])] = @([urlParams[@"clen"] integerValue] / 1000 / 1000);
-    }
-    
-    item.title = info[@"title"];
-    item.author = info[@"author"];
-    item.length = ((NSString*)info[@"length_seconds"]).doubleValue;
-    item.thumbnailSmall = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/default.jpg", item.videoId]];
-    item.thumbnailBig = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", item.videoId]];
-    item.urls = urls;
-    item.sizes = sizes;
+    VideoItemMO *item = *itemRef;
+
+    item.title = video.title;
+    item.author = video.author;
+    item.length = video.duration;
+    item.thumbnailSmall = video.smallThumbnailURL;
+    item.thumbnailBig = video.largeThumbnailURL;
+    item.urls = video.streamURLs;
+    item.sizes = video.streamSizes;
+
+    return YES;
 }
 
 @end

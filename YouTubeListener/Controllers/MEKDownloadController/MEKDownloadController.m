@@ -57,18 +57,53 @@
     self.urlSession = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:self delegateQueue:[NSOperationQueue new]];
 }
 
+#pragma mark - Private
+
+- (NSURLSessionConfiguration*)createSessionConfigurationWithBackgroundMode: (BOOL) background
+{
+    self.backgroundMode = background;
+
+    NSURLSessionConfiguration *sessionConfiguration;
+    if (background)
+    {
+        NSString *sessionIdentifier = [NSString stringWithFormat:@"%@.background", NSBundle.mainBundle.bundleIdentifier];
+
+        sessionConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessionIdentifier];
+    }
+    else
+    {
+        sessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    }
+
+    return sessionConfiguration;
+}
+
+- (void)removeTaskForKey: (NSString *)key
+{
+    [self.tasks removeObjectForKey:key];
+    [self.params removeObjectForKey:key];
+}
+
+#pragma mark - MEKDownloadControllerInputProtocol
+
 - (void)downloadDataFromURL:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (!url || [self hasTaskForKey:key])
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [self downloadDataFromRequest:request forKey:key withParams:params];
+}
+
+- (void)downloadDataFromRequest:(NSURLRequest *)request forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    if (!request || !key || [self hasDownloadForKey:key])
     {
         return;
     }
-    
-    NSURLSessionDownloadTask *task = [self.urlSession downloadTaskWithURL:url];
+
+    NSURLSessionDownloadTask *task = [self.urlSession downloadTaskWithRequest:request];
     task.taskDescription = key;
     self.tasks[key] = task;
     self.params[key] = params;
-    
+
     [task resume];
 }
 
@@ -96,36 +131,9 @@
     return progress;
 }
 
-- (BOOL)hasTaskForKey:(NSString *)key
+- (BOOL)hasDownloadForKey:(NSString *)key
 {
     return self.tasks[key] != nil;
-}
-
-#pragma mark - Private
-
-- (NSURLSessionConfiguration*)createSessionConfigurationWithBackgroundMode: (BOOL) background
-{
-    self.backgroundMode = background;
-    
-    NSURLSessionConfiguration *sessionConfiguration;
-    if (background)
-    {
-        NSString *sessionIdentifier = [NSString stringWithFormat:@"%@.background", NSBundle.mainBundle.bundleIdentifier];
-        
-        sessionConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessionIdentifier];
-    }
-    else
-    {
-        sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    }
-    
-    return sessionConfiguration;
-}
-
-- (void)removeTaskForKey: (NSString *)key
-{
-    [self.tasks removeObjectForKey:key];
-    [self.params removeObjectForKey:key];
 }
 
 #pragma mark - NSURLSessionDownloadDelegate
@@ -149,9 +157,9 @@
     NSDictionary *params = self.params[key];
     [self removeTaskForKey:key];
     
-    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithTempUrl:forKey:withParams:)])
+    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinish:withTempUrl:forKey:withParams:)])
     {
-        [self.delegate downloadControllerDidFinishWithTempUrl:location forKey:key withParams:params];
+        [self.delegate downloadControllerDidFinish:self withTempUrl:location forKey:key withParams:params];
     }
 }
 
@@ -163,9 +171,9 @@
     NSDictionary *params = self.params[key];
     [self removeTaskForKey:key];
     
-    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinishWithError:forKey:withParams:)])
+    if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinish:withError:forKey:withParams:)])
     {
-        [self.delegate downloadControllerDidFinishWithError:error forKey:key withParams:params];
+        [self.delegate downloadControllerDidFinish:self withError:error forKey:key withParams:params];
     }
 }
 
