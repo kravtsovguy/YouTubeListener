@@ -31,6 +31,8 @@ static NSUInteger const MEKResultsCount = 10;
 
 @implementation MEKSearchResultsViewController
 
+#pragma mark - init
+
 - (instancetype)initWithAPI: (MEKYouTubeAPI*) youtubeAPI andQuery:(NSString *)query
 {
     self = [super init];

@@ -31,7 +31,7 @@
 
 - (UIViewController*)searchViewController
 {
-    MEKSearchViewController *searchViewController = [[MEKCachedSearchViewController alloc] initWithUserDefaults:[NSUserDefaults standardUserDefaults]];
+    MEKSearchViewController *searchViewController = [MEKCachedSearchViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:searchViewController];
     navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
     [navigationController.tabBarItem setValue:@"Search" forKey:@"internalTitle"];

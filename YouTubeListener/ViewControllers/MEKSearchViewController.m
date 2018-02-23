@@ -27,6 +27,13 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
 
 @implementation MEKSearchViewController
 
+#pragma mark - init
+
+- (instancetype)init
+{
+    return [self initWithQueries:nil];
+}
+
 - (instancetype)initWithQueries:(NSArray<NSString *> *)queries
 {
     self = [super init];
@@ -125,6 +132,9 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     self.title = @"Search";
     self.view.backgroundColor = [UIColor whiteColor];
 
+    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(clearAllPressed:)];
+    self.navigationItem.rightBarButtonItem = addItem;
+
     self.tableView = [UITableView new];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -213,5 +223,24 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
+#pragma mark - Selectors
+
+- (void)clearAllPressed: (id) sender
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@""
+                                                                   message:@"You will remove all saved queries"
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+
+    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Clear All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        self.queries = @[];
+    }];
+
+    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+
+    [alert addAction:deleteAction];
+    [alert addAction:cancedlAction];
+
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 @end

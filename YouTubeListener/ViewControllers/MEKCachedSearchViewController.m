@@ -18,6 +18,13 @@ static NSString * const MEKSearchQueriesDefaults = @"searchQueries";
 
 @implementation MEKCachedSearchViewController
 
+#pragma mark - init
+
+- (instancetype)init
+{
+    return [self initWithUserDefaults:[NSUserDefaults standardUserDefaults]];
+}
+
 - (instancetype)initWithUserDefaults:(NSUserDefaults *)userDefaults
 {
     NSArray *queries = [userDefaults objectForKey:MEKSearchQueriesDefaults];
