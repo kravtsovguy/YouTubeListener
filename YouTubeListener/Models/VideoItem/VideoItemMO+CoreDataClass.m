@@ -63,8 +63,17 @@
 
 + (VideoItemMO*)getEmptyWithContext:(NSManagedObjectContext *)context
 {
-    VideoItemMO *item =  [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
-    
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:context];
+    VideoItemMO *item = [[self alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
+
+    return item;
+}
+
++ (VideoItemMO *)disconnectedEntityWithContext:(NSManagedObjectContext *)context
+{
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:context];
+    VideoItemMO *item = [[self alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:nil];
+
     return item;
 }
 
@@ -132,6 +141,17 @@
 }
 
 #pragma mark - Basic
+
+- (void)setupWithDictionary:(NSDictionary *)json
+{
+    self.videoId = json[@"id"];
+    self.title = json[@"title"];
+    self.author = json[@"author"];
+    self.length = [json[@"length_seconds"] doubleValue];
+    self.thumbnailSmall = [NSURL URLWithString:json[@"thumbnail_small"]];
+    self.thumbnailBig = [NSURL URLWithString:json[@"thumbnail_large"]];
+    self.originURL = [NSURL URLWithString:json[@"source"]];
+}
 
 - (BOOL)saveObject
 {

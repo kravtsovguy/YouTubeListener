@@ -182,7 +182,8 @@
         df.dateFormat = @"HH:mm:ss";
     
     self.durationLabel.text = [df stringFromDate:date];
-    
+
+    self.thumbnailImageView.image = [UIImage imageNamed:@"placeholder"];
     [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig];
     
     if ([item hasDownloaded])

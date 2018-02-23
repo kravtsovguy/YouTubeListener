@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Creation
 + (VideoItemMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
++ (VideoItemMO*)disconnectedEntityWithContext: (NSManagedObjectContext*) context;
 
 // Instance Accessors
 + (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
@@ -53,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray<VideoItemMO*>*)getRecentVideoItemsWithContext: (NSManagedObjectContext*) context;
 
 // Basic
+- (void)setupWithDictionary: (NSDictionary*) json;
 - (BOOL)saveObject;
 - (BOOL)deleteObject;
 

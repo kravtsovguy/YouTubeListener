@@ -27,8 +27,7 @@
     self = [super init];
     if (self)
     {
-        _downloadController = [MEKDownloadController new];
-        [_downloadController configurateUrlSessionWithBackgroundMode:NO];
+        _downloadController = [[MEKDownloadController alloc] initWithBackgroundMode:NO];
         _downloadController.delegate = self;
 
         _webDownloadController = [MEKWebDownloadController new];

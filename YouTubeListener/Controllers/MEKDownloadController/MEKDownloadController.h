@@ -21,6 +21,7 @@
 @property (nonatomic, weak) id<MEKDownloadControllerDelegate> delegate;
 @property (nonatomic, readonly) BOOL backgroundMode;
 
+- (instancetype)initWithBackgroundMode: (BOOL) background;
 - (void)configurateUrlSessionWithBackgroundMode: (BOOL) background;
 - (void)configurateUrlSessionWithParams:(NSDictionary *)params backgroundMode: (BOOL) background;
 

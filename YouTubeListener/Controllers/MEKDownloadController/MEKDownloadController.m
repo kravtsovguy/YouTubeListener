@@ -33,6 +33,17 @@
     return self;
 }
 
+- (instancetype)initWithBackgroundMode:(BOOL)background
+{
+    self = [self init];
+    if (self)
+    {
+        [self configurateUrlSessionWithBackgroundMode:background];
+    }
+
+    return self;
+}
+
 #pragma mark - Public
 
 - (void)configurateUrlSessionWithBackgroundMode:(BOOL)background
@@ -94,9 +105,14 @@
 
 - (void)downloadDataFromRequest:(NSURLRequest *)request forKey:(NSString *)key withParams:(NSDictionary *)params
 {
-    if (!request || !key || [self hasDownloadForKey:key])
+    if (!request || !key)
     {
         return;
+    }
+
+    if ([self hasDownloadForKey:key])
+    {
+        [self cancelDownloadForKey:key];
     }
 
     NSURLSessionDownloadTask *task = [self.urlSession downloadTaskWithRequest:request];

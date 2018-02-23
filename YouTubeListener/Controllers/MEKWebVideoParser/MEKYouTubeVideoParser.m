@@ -23,7 +23,7 @@
     XCDYouTubeVideoWebpage *webpage = [[XCDYouTubeVideoWebpage alloc] initWithHTMLString:html];
     NSString *script = [NSString stringWithContentsOfURL:webpage.javaScriptPlayerURL encoding:NSUTF8StringEncoding error:nil];
     XCDYouTubePlayerScript *playerScript = [[XCDYouTubePlayerScript alloc] initWithString:script];
-    NSString *videoId = webpage.videoInfo[@"vid"];
+    NSString *videoId = webpage.videoInfo[@"vid"] ?: webpage.videoInfo[@"video_id"];
     XCDYouTubeVideo *video = [[XCDYouTubeVideo alloc] initWithIdentifier:videoId info:webpage.videoInfo playerScript:playerScript response:nil error:nil];
 
     return video;

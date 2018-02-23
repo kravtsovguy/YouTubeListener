@@ -11,12 +11,15 @@
 #import <AVFoundation/AVFoundation.h>
 #import "MEKPlaylistsViewController.h"
 #import "MEKDownloadsPlaylistViewController.h"
+#import "MEKYouTubeAPI.h"
+#import "MEKCachedSearchViewController.h"
 
 @interface AppDelegate ()
 
 @property (nonatomic, strong) MEKPlayerController *playerController;
 @property (nonatomic, strong) MEKVideoItemDownloadController *downloadController;
 
+@property (nonatomic, strong) UIViewController *searchViewController;
 @property (nonatomic, strong) UIViewController *playlistsViewController;
 @property (nonatomic, strong) UIViewController *downloadsPlaylistViewController;
 
@@ -26,11 +29,22 @@
 
 #pragma mark - Init View Controllers
 
+- (UIViewController*)searchViewController
+{
+    MEKSearchViewController *searchViewController = [[MEKCachedSearchViewController alloc] initWithUserDefaults:[NSUserDefaults standardUserDefaults]];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:searchViewController];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
+    [navigationController.tabBarItem setValue:@"Search" forKey:@"internalTitle"];
+    navigationController.navigationBar.prefersLargeTitles = YES;
+
+    return navigationController;
+}
+
 - (UIViewController*)playlistsViewController
 {
     MEKPlaylistsViewController *playlistsViewController = [MEKPlaylistsViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:playlistsViewController];
-    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:0];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
     [navigationController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
     navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -41,7 +55,7 @@
 {
     MEKDownloadsPlaylistViewController *downloadsPlaylistViewController = [MEKDownloadsPlaylistViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:downloadsPlaylistViewController];
-    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:1];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
     [navigationController.tabBarItem setValue:@"Downloads" forKey:@"internalTitle"];
     navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -53,7 +67,7 @@
 - (void)initTabBarController
 {
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[self.playlistsViewController, self.downloadsPlaylistViewController];
+    self.tabBarController.viewControllers = @[self.searchViewController, self.playlistsViewController, self.downloadsPlaylistViewController];
 }
 
 #pragma mark - Init Window
@@ -78,9 +92,7 @@
 
 - (void)initDownloadController
 {
-    MEKDownloadController *downloadController = [MEKDownloadController new];
-    [downloadController configurateUrlSessionWithBackgroundMode:YES];
-    
+    MEKDownloadController *downloadController = [[MEKDownloadController alloc] initWithBackgroundMode:YES];
     self.downloadController = [[MEKVideoItemDownloadController alloc] initWithDownloadController:downloadController];
 }
 
@@ -120,7 +132,7 @@
     [self initWindow];
     
     [self playExampleVideoIfNeeded];
-    
+
     return YES;
 }
 
