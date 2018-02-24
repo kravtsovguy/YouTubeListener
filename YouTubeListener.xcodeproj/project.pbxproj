@@ -245,21 +245,13 @@
 		BA70A68D20077992002AE1B4 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				BAF16FCE2040ED9600D0C9FA /* SearchViewControllers */,
+				BAF16FCD2040ED5000D0C9FA /* VideoItemTableViewControllers */,
 				BAB56F25200E9D10000DF5C6 /* PlaylistsViewControllers */,
-				BAB56F26200E9D25000DF5C6 /* PlaylistViewControllers */,
 				BABD356C1FDEAF740036B27F /* MEKVideoPlayerViewController.h */,
 				BABD356D1FDEAF740036B27F /* MEKVideoPlayerViewController.m */,
 				BAAE6D011FE1A3CD00438DF9 /* MEKPlayerViewController.h */,
 				BAAE6D021FE1A3CD00438DF9 /* MEKPlayerViewController.m */,
-				BA753A5B20404A8100EC2A2C /* MEKCachedSearchViewController.h */,
-				BA753A5C20404A8100EC2A2C /* MEKCachedSearchViewController.m */,
-				BA753A52203D8A5700EC2A2C /* MEKSearchViewController.h */,
-				BA753A53203D8A5700EC2A2C /* MEKSearchViewController.m */,
-				BA753A58203F12E600EC2A2C /* MEKSearchResultsViewController.h */,
-				BA753A59203F12E600EC2A2C /* MEKSearchResultsViewController.m */,
-				BA05C85B2040612700F18DB3 /* MEKVideoItemTableViewController.h */,
-				BA05C85C2040612700F18DB3 /* MEKVideoItemTableViewController.m */,
-				BAF16FCC2040E3C900D0C9FA /* MEKVideoItemTableViewController+Private.h */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -410,6 +402,30 @@
 				BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */,
 			);
 			path = YouTubeListener;
+			sourceTree = "<group>";
+		};
+		BAF16FCD2040ED5000D0C9FA /* VideoItemTableViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				BAB56F26200E9D25000DF5C6 /* PlaylistViewControllers */,
+				BA753A58203F12E600EC2A2C /* MEKSearchResultsViewController.h */,
+				BA753A59203F12E600EC2A2C /* MEKSearchResultsViewController.m */,
+				BA05C85B2040612700F18DB3 /* MEKVideoItemTableViewController.h */,
+				BA05C85C2040612700F18DB3 /* MEKVideoItemTableViewController.m */,
+				BAF16FCC2040E3C900D0C9FA /* MEKVideoItemTableViewController+Private.h */,
+			);
+			path = VideoItemTableViewControllers;
+			sourceTree = "<group>";
+		};
+		BAF16FCE2040ED9600D0C9FA /* SearchViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				BA753A5B20404A8100EC2A2C /* MEKCachedSearchViewController.h */,
+				BA753A5C20404A8100EC2A2C /* MEKCachedSearchViewController.m */,
+				BA753A52203D8A5700EC2A2C /* MEKSearchViewController.h */,
+				BA753A53203D8A5700EC2A2C /* MEKSearchViewController.m */,
+			);
+			path = SearchViewControllers;
 			sourceTree = "<group>";
 		};
 		BAF1F3A72031B3E300C5918C /* MEKDownloadController */ = {
