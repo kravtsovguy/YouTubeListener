@@ -7,22 +7,50 @@
 //
 
 #import "MEKDownloadsPlaylistViewController.h"
-
-@interface MEKPlaylistViewController (Private) <UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *items;
-
-- (void)updateData;
-- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath;
-
-@end
+#import "MEKVideoItemTableViewController+Private.h"
+#import "PlaylistMO+CoreDataClass.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @interface MEKDownloadsPlaylistViewController ()
 
 @end
 
 @implementation MEKDownloadsPlaylistViewController
+
+#pragma mark - Private
+
+- (void)unloadAllItems
+{
+    [self.videoItems makeObjectsPerformSelector:@selector(removeAllDownloads)];
+    self.videoItems = nil;
+
+    NSIndexSet *indexedSet = [NSIndexSet indexSetWithIndex:0];
+    [self.tableView reloadSections:indexedSet withRowAnimation:UITableViewRowAnimationFade];
+}
+
+#pragma mark - MEKVideoItemTableViewControllerInputProtocol
+
+- (void)updateData
+{
+    NSArray *items = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hasDownloaded == YES"];
+    items = [items filteredArrayUsingPredicate:predicate];
+
+    self.videoItems = items;
+}
+
+- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath
+{
+    VideoItemMO *item = self.videoItems[indexPath.row];
+    [item removeAllDownloads];
+
+    NSMutableArray *items = self.videoItems.mutableCopy;
+    [items removeObject:item];
+    self.videoItems = items;
+
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
 
 #pragma mark - UIViewController
 
@@ -35,37 +63,12 @@
     self.navigationItem.rightBarButtonItem = item;
 }
 
-#pragma mark - Private
+#pragma mark - UITableViewDelegate
 
-- (void)updateData
+- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *items = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hasDownloaded == YES"];
-    items = [items filteredArrayUsingPredicate:predicate];
-    
-    self.items = items;
-}
-
-- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath
-{
-    VideoItemMO *item = self.items[indexPath.row];
-    [item removeAllDownloads];
-    
-    NSMutableArray *items = self.items.mutableCopy;
-    [items removeObject:item];
-    self.items = items;
-    
-    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-- (void)unloadAllItems
-{
-    [self.items makeObjectsPerformSelector:@selector(removeAllDownloads)];
-    self.items = nil;
-    
-    NSIndexSet *indexedSet = [NSIndexSet indexSetWithIndex:0];
-    [self.tableView reloadSections:indexedSet withRowAnimation:UITableViewRowAnimationFade];
+    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
+    return @[actions[1]];
 }
 
 #pragma mark - Selectors
@@ -75,26 +78,18 @@
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Unload all saved videos?"
                                                                    message:@"You will remove all downloads"
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
-    
+
     UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Unload All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        
+
         [self unloadAllItems];
     }];
-    
+
     UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-    
+
     [alert addAction:deleteAction];
     [alert addAction:cancedlAction];
-    
+
     [self presentViewController:alert animated:YES completion:nil];
-}
-
-#pragma mark - UITableViewDelegate
-
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
-    return @[actions[1]];
 }
 
 @end

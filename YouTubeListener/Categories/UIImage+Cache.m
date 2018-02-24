@@ -7,8 +7,23 @@
 //
 
 #import "UIImage+Cache.h"
+#import <objc/runtime.h>
+
+static void *CachePropertyKey = &CachePropertyKey;
 
 @implementation UIImage(Cache)
+
+#pragma mark - Properties
+
++ (void)ch_setCache: (NSDictionary*)cache
+{
+    objc_setAssociatedObject(self, CachePropertyKey, cache, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (NSDictionary *)ch_cache
+{
+    return objc_getAssociatedObject(self, CachePropertyKey) ?: @{};
+}
 
 #pragma mark - Public Static
 
@@ -16,6 +31,14 @@
 {
     if (!url)
     {
+        return;
+    }
+
+    NSMutableDictionary *cache = [self ch_cache].mutableCopy;
+    UIImage *cachedImage = cache[url];
+    if (cachedImage)
+    {
+        completion(cachedImage);
         return;
     }
     
@@ -29,6 +52,10 @@
         }
         
         UIImage *image = [UIImage imageWithData:data];
+
+        cache[url] = image;
+        [self ch_setCache:cache];
+
         dispatch_async(dispatch_get_main_queue(), ^{
             
             completion(image);

@@ -7,23 +7,17 @@
 //
 
 #import "MEKSearchResultsViewController.h"
-#import <Masonry/Masonry.h>
+#import "MEKVideoItemTableViewController+Private.h"
 #import "MEKYouTubeAPI.h"
-#import "AppDelegate.h"
 #import "VideoItemMO+CoreDataClass.h"
-#import "MEKPlayerViewController.h"
 #import "MEKLoaderTableViewCell.h"
-#import "MEKVideoItemTableViewCell.h"
 
-static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 static NSString * const MEKLoaderTableViewCellID = @"MEKLoaderTableViewCell";
 static NSUInteger const MEKResultsCount = 10;
 
 @interface MEKSearchResultsViewController () <MEKYouTubeDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) MEKYouTubeAPI *youtubeAPI;
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray<VideoItemMO*> *videoItems;
 @property (nonatomic, copy) NSString *query;
 @property (nonatomic, copy) NSString *nextPageToken;
 
@@ -44,21 +38,6 @@ static NSUInteger const MEKResultsCount = 10;
         _youtubeAPI.delegate = self;
     }
     return self;
-}
-
-#pragma mark - Properties
-
-- (MEKPlayerController *)playerController
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-
-    return appDelegate.playerController;
-}
-
-- (NSManagedObjectContext*) coreDataContext
-{
-    return self.playerController.coreDataContext;
 }
 
 #pragma mark - Private
@@ -96,6 +75,13 @@ static NSUInteger const MEKResultsCount = 10;
     } completion:nil];
 }
 
+#pragma mark - MEKVideoItemTableViewControllerInputProtocol
+
+- (void)updateData
+{
+    [self.youtubeAPI searchVideosForQuery:self.query searchType:MEKYouTubeSearchQuery maxResults:MEKResultsCount pageToken:self.nextPageToken];
+}
+
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
@@ -103,20 +89,8 @@ static NSUInteger const MEKResultsCount = 10;
     [super viewDidLoad];
 
     self.title = self.query;
-    self.view.backgroundColor = [UIColor whiteColor];
 
-    self.tableView = [UITableView new];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    self.tableView.tableFooterView = [UIView new];
-    [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:MEKVideoItemTableViewCellID];
     [self.tableView registerClass:[MEKLoaderTableViewCell class] forCellReuseIdentifier:MEKLoaderTableViewCellID];
-
-    [self.view addSubview:self.tableView];
-
-    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
-    }];
 
     [self resetSearch];
 }
@@ -133,10 +107,7 @@ static NSUInteger const MEKResultsCount = 10;
 
     if (indexPath.row < self.videoItems.count)
     {
-        MEKVideoItemTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKVideoItemTableViewCellID forIndexPath:indexPath];
-        VideoItemMO *item = self.videoItems[indexPath.row];
-        [cell setWithVideoItem:item];
-        return cell;
+        return [super tableView:tableView cellForRowAtIndexPath:indexPath];
     }
 
     return nil;
@@ -144,7 +115,8 @@ static NSUInteger const MEKResultsCount = 10;
 
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.videoItems.count + (self.nextPageToken ? 1 : 0);
+    NSUInteger count = [super tableView:tableView numberOfRowsInSection:section];
+    return count + (self.nextPageToken ? 1 : 0);
 }
 
 #pragma mark - UITableViewDelegate
@@ -158,18 +130,10 @@ static NSUInteger const MEKResultsCount = 10;
 
     if (indexPath.row <= self.videoItems.count)
     {
-        return [MEKVideoItemTableViewCell height];
+        return [super tableView:tableView heightForRowAtIndexPath:indexPath];
     }
 
     return 0;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-    VideoItemMO *item = self.videoItems[indexPath.row];
-    [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -180,7 +144,7 @@ static NSUInteger const MEKResultsCount = 10;
     }
 
     [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    [self.youtubeAPI searchVideosForQuery:self.query searchType:MEKYouTubeSearchQuery maxResults:MEKResultsCount pageToken:self.nextPageToken];
+    [self updateData];
 }
 
 #pragma mark - MEKYouTubeDelegate

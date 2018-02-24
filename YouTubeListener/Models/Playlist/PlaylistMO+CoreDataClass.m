@@ -8,6 +8,7 @@
 //
 
 #import "PlaylistMO+CoreDataClass.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @interface PlaylistMO()
 

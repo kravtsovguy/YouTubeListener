@@ -6,15 +6,13 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "MEKVideoItemTableViewController.h"
 
 @class MEKYouTubeAPI;
 @class MEKPlayerController;
 
-@interface MEKSearchResultsViewController : UIViewController
+@interface MEKSearchResultsViewController : MEKVideoItemTableViewController
 
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
-@property (nonatomic, readonly) MEKPlayerController *playerController;
 @property (nonatomic, readonly) MEKYouTubeAPI *youtubeAPI;
 @property (nonatomic, copy, readonly) NSString *query;
 

@@ -6,17 +6,12 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "PlaylistMO+CoreDataClass.h"
-#import "UIViewController+VideoItemActions.h"
-#import "MEKPlayerController.h"
-#import "MEKVideoItemDownloadController.h"
+#import "MEKVideoItemTableViewController.h"
 
-@interface MEKPlaylistViewController : UIViewController
+@class PlaylistMO;
 
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
-@property (nonatomic, readonly) MEKPlayerController *playerController;
-@property (nonatomic, readonly) MEKVideoItemDownloadController *downloadController;
+@interface MEKPlaylistViewController : MEKVideoItemTableViewController
+
 @property (nonatomic, readonly) PlaylistMO *playlist;
 
 - (instancetype)initWithPlaylist: (PlaylistMO*) playlist;

@@ -21,7 +21,11 @@
     }
     
     [UIImage ch_downloadImageFromUrl:url completion:^(UIImage *image) {
-        
+        if (self.image == image)
+        {
+            return;
+        }
+
         [UIView transitionWithView:self
                           duration:0.2f
                            options:UIViewAnimationOptionTransitionCrossDissolve
