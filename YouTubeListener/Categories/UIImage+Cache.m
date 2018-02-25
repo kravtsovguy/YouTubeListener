@@ -9,21 +9,28 @@
 #import "UIImage+Cache.h"
 #import <objc/runtime.h>
 
-static void *CachePropertyKey = &CachePropertyKey;
+@interface UIImage(Cache_Properties)
 
-@implementation UIImage(Cache)
+@property (class, nonatomic, copy) NSDictionary *ch_cache;
 
-#pragma mark - Properties
+@end
 
-+ (void)ch_setCache: (NSDictionary*)cache
+@implementation UIImage(Cache_Properties)
+@dynamic ch_cache;
+
++ (void)setCh_cache: (NSDictionary*)cache
 {
-    objc_setAssociatedObject(self, CachePropertyKey, cache, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(ch_cache), [cache copy], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 + (NSDictionary *)ch_cache
 {
-    return objc_getAssociatedObject(self, CachePropertyKey) ?: @{};
+    return objc_getAssociatedObject(self, @selector(ch_cache)) ?: @{};
 }
+
+@end
+
+@implementation UIImage(Cache)
 
 #pragma mark - Public Static
 
@@ -34,53 +41,62 @@ static void *CachePropertyKey = &CachePropertyKey;
         return;
     }
 
-    NSMutableDictionary *cache = [self ch_cache].mutableCopy;
-    UIImage *cachedImage = cache[url];
-    if (cachedImage)
+    NSDictionary *cache = self.ch_cache;
+    UIImage *image = cache[url];
+    if (image)
     {
-        completion(cachedImage);
+        completion(image);
         return;
     }
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
-        
-        NSData *data = [self ch_getDataForUrl:url];
-        if (!data)
-        {
-            data = [NSData dataWithContentsOfURL:url];
-            [self ch_saveData:data ForUrl:url];
-        }
-        
-        UIImage *image = [UIImage imageWithData:data];
 
-        cache[url] = image;
-        [self ch_setCache:cache];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
+        UIImage *image = [self ch_imageForUrl:url];
+        self.ch_cache = [self ch_addImage:image forURL:url toCache:cache];
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            
             completion(image);
-            
         });
     });
 }
 
 #pragma mark - Private Static
 
-+ (void)ch_saveData:(NSData*)data ForUrl: (NSURL*)url
++ (NSDictionary*)ch_addImage: (UIImage*)image forURL: (NSURL*)url toCache: (NSDictionary*)cache
 {
-    NSString *path = [self ch_getPathForUrl:url];
-    
-    NSError *error;
-    if (![data writeToFile:path options:NSDataWritingAtomic error:&error])
+    if (!image)
     {
-        NSLog(@"Error Writing File : %@",error.localizedDescription);
+        return cache;
     }
+    
+    NSMutableDictionary *mutableCache = [cache mutableCopy];
+    mutableCache[url] = image;
+    return mutableCache;
 }
 
-+ (NSData*)ch_getDataForUrl: (NSURL*)url
++ (UIImage*)ch_imageForUrl: (NSURL*)url
+{
+    NSData *data = [self ch_dataForUrl:url];
+    if (!data)
+    {
+        data = [NSData dataWithContentsOfURL:url];
+        [self ch_saveData:data ForUrl:url];
+    }
+
+    UIImage *image = [UIImage imageWithData:data];
+    return image;
+}
+
++ (BOOL)ch_saveData:(NSData*)data ForUrl: (NSURL*)url
+{
+    NSString *path = [self ch_pathForUrl:url];
+    BOOL isSaved = [data writeToFile:path options:NSDataWritingAtomic error:nil];
+    return isSaved;
+}
+
++ (NSData*)ch_dataForUrl: (NSURL*)url
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [self ch_getPathForUrl:url];
+    NSString *path = [self ch_pathForUrl:url];
     if([fileManager fileExistsAtPath:path])
     {
         return [NSData dataWithContentsOfFile:path];
@@ -91,10 +107,10 @@ static void *CachePropertyKey = &CachePropertyKey;
     }
 }
 
-+ (NSString*)ch_getPathForUrl: (NSURL*)url
++ (NSString*)ch_pathForUrl: (NSURL*)url
 {
-    NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *urlName = [self ch_getNameFromUrl:url];
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *urlName = [self ch_nameFromUrl:url];
     path = [path stringByAppendingPathComponent:@"images"];
     
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -109,7 +125,7 @@ static void *CachePropertyKey = &CachePropertyKey;
     return path;
 }
 
-+ (NSString*)ch_getNameFromUrl: (NSURL*)url
++ (NSString*)ch_nameFromUrl: (NSURL*)url
 {
     NSString *path = url.path;
     path = [path stringByReplacingOccurrencesOfString:@"/" withString:@""];
