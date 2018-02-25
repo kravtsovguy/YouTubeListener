@@ -8,6 +8,9 @@
 
 #import "MEKPlaylistsViewController.h"
 
+@class PlaylistMO;
+@class VideoItemMO;
+
 @protocol MEKModalPlaylistsViewControllerDelegate <NSObject>
 
 @required

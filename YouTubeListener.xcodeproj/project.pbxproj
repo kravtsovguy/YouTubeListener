@@ -152,6 +152,7 @@
 		BABD357A1FDEAF740036B27F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BABD357B1FDEAF740036B27F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BAF16FCC2040E3C900D0C9FA /* MEKVideoItemTableViewController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MEKVideoItemTableViewController+Private.h"; sourceTree = "<group>"; };
+		BAF16FCF2042B00B00D0C9FA /* MEKPlaylistsViewController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MEKPlaylistsViewController+Private.h"; sourceTree = "<group>"; };
 		BAF1F39D20307D0200C5918C /* MEKY2MateParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKY2MateParser.h; sourceTree = "<group>"; };
 		BAF1F39E20307D0200C5918C /* MEKY2MateParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKY2MateParser.m; sourceTree = "<group>"; };
 		BAF1F3A02030D7F100C5918C /* MEKSavefromParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKSavefromParser.h; sourceTree = "<group>"; };
@@ -286,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				BA70A6632005EAE3002AE1B4 /* MEKPlaylistsViewController.h */,
+				BAF16FCF2042B00B00D0C9FA /* MEKPlaylistsViewController+Private.h */,
 				BA70A6642005EAE3002AE1B4 /* MEKPlaylistsViewController.m */,
 				BAB56F1C200E87CA000DF5C6 /* MEKModalPlaylistsViewController.h */,
 				BAB56F1D200E87CA000DF5C6 /* MEKModalPlaylistsViewController.m */,
@@ -411,8 +413,8 @@
 				BA753A58203F12E600EC2A2C /* MEKSearchResultsViewController.h */,
 				BA753A59203F12E600EC2A2C /* MEKSearchResultsViewController.m */,
 				BA05C85B2040612700F18DB3 /* MEKVideoItemTableViewController.h */,
-				BA05C85C2040612700F18DB3 /* MEKVideoItemTableViewController.m */,
 				BAF16FCC2040E3C900D0C9FA /* MEKVideoItemTableViewController+Private.h */,
+				BA05C85C2040612700F18DB3 /* MEKVideoItemTableViewController.m */,
 			);
 			path = VideoItemTableViewControllers;
 			sourceTree = "<group>";

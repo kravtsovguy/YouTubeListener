@@ -113,7 +113,7 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     }
 }
 
--(void)openResultsControllerWithQuery: (NSString *) query
+- (void)openResultsControllerWithQuery: (NSString *) query
 {
     [self addSearchForQuery:query];
     MEKYouTubeAPI *youtubeAPI = [MEKYouTubeAPI new];
@@ -121,7 +121,6 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
 
     [self.navigationController pushViewController:resultsController animated:YES];
 }
-
 
 #pragma mark - UIViewController
 

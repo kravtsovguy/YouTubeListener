@@ -6,12 +6,12 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import "MEKVideoItemTableViewController.h"
 #import "MEKVideoItemTableViewController+Private.h"
 #import "MEKPlayerController.h"
 #import "MEKVideoItemTableViewCell.h"
 #import "UIViewController+VideoItemActions.h"
 #import "AppDelegate.h"
+#import "PlaylistMO+CoreDataClass.h"
 
 static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 

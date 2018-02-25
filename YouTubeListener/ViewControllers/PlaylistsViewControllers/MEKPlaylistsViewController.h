@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PlaylistMO+CoreDataClass.h"
-#import "MEKPlayerController.h"
+
+@class MEKPlayerController;
 
 @interface MEKPlaylistsViewController : UIViewController
 

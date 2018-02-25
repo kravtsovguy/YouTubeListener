@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class VideoItemMO;
 @class MEKPlayerController;
 @class MEKVideoItemDownloadController;
 

@@ -7,15 +7,7 @@
 //
 
 #import "MEKModalPlaylistsViewController.h"
-
-@interface MEKPlaylistsViewController (Private) <UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *playlists;
-@property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
-
-@end
-
+#import "MEKPlaylistsViewController+Private.h"
 
 @interface MEKModalPlaylistsViewController ()
 

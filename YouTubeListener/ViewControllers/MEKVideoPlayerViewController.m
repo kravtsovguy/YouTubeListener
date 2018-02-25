@@ -15,6 +15,9 @@
 #import "UIImage+Cache.h"
 #import "UIViewController+VideoItemActions.h"
 #import "AppDelegate.h"
+#import "VideoItemMO+CoreDataClass.h"
+#import "PlaylistMO+CoreDataClass.h"
+#import "MEKVideoItemDownloadController.h"
 
 @import MediaPlayer;
 

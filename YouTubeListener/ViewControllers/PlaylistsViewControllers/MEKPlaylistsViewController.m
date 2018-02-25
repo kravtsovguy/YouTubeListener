@@ -6,39 +6,20 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import "MEKPlaylistsViewController.h"
+#import "MEKPlaylistsViewController+Private.h"
 #import <Masonry/Masonry.h>
-#import "MEKPlaylistTableViewCell.h"
-#import "PlaylistMO+CoreDataClass.h"
 #import "AppDelegate.h"
 #import "MEKPlaylistViewController.h"
 #import "MEKRecentPlaylistViewController.h"
 #import "MEKInfoView.h"
+#import "MEKPlayerController.h"
 
 static NSString * const MEKPlaylistTableViewCellID = @"MEKPlaylistTableViewCell";
 static NSString * const MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHeader";
 
-@interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate, UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *playlists;
-@property (nonatomic, strong) MEKPlaylistTableViewCell *headerCell;
-@property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
-
-@end
-
 @implementation MEKPlaylistsViewController
 
 #pragma mark - Properties
-
-- (NSManagedObjectContext*) coreDataContext
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-    
-    NSPersistentContainer *container = appDelegate.persistentContainer;
-    return container.viewContext;
-}
 
 - (MEKPlayerController *)playerController
 {
@@ -46,6 +27,11 @@ static NSString * const MEKPlaylistTableViewHeaderID = @"MEKPlaylistTableViewHea
     AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
     
     return appDelegate.playerController;
+}
+
+- (NSManagedObjectContext*)coreDataContext
+{
+    return self.playerController.coreDataContext;
 }
 
 #pragma mark - UIViewController
