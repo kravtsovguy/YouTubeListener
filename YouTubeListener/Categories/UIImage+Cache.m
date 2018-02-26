@@ -7,28 +7,6 @@
 //
 
 #import "UIImage+Cache.h"
-#import <objc/runtime.h>
-
-@interface UIImage(Cache_Properties)
-
-@property (class, nonatomic, copy) NSDictionary *ch_cache;
-
-@end
-
-@implementation UIImage(Cache_Properties)
-@dynamic ch_cache;
-
-+ (void)setCh_cache: (NSDictionary*)cache
-{
-    objc_setAssociatedObject(self, @selector(ch_cache), [cache copy], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-+ (NSDictionary *)ch_cache
-{
-    return objc_getAssociatedObject(self, @selector(ch_cache)) ?: @{};
-}
-
-@end
 
 @implementation UIImage(Cache)
 
@@ -41,7 +19,8 @@
         return;
     }
 
-    NSDictionary *cache = self.ch_cache;
+    static NSDictionary *cache;
+
     UIImage *image = cache[url];
     if (image)
     {
@@ -51,7 +30,7 @@
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
         UIImage *image = [self ch_imageForUrl:url];
-        self.ch_cache = [self ch_addImage:image forURL:url toCache:cache];
+        cache = [self ch_addImage:image forURL:url toCache:cache];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             completion(image);
@@ -63,11 +42,12 @@
 
 + (NSDictionary*)ch_addImage: (UIImage*)image forURL: (NSURL*)url toCache: (NSDictionary*)cache
 {
-    if (!image)
+    if (!url || !image)
     {
         return cache;
     }
-    
+
+    cache = cache ?: @{};
     NSMutableDictionary *mutableCache = [cache mutableCopy];
     mutableCache[url] = image;
     return mutableCache;
