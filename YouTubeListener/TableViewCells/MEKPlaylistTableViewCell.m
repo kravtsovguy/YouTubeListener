@@ -84,14 +84,11 @@
 {
     self.nameLabel.text = playlistName;
     self.countLabel.text = [NSString stringWithFormat:@"%li videos", count];
-    
+    self.titleImageView.image = [UIImage imageNamed:@"placeholder"];
+
     if (url)
     {
         [self.titleImageView ch_downloadImageFromUrl:url];
-    }
-    else
-    {
-        self.titleImageView.image = [UIImage imageNamed:@"placeholder"];
     }
 }
 

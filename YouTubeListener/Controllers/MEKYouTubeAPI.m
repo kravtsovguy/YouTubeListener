@@ -144,7 +144,8 @@ typedef NS_ENUM(NSUInteger, MEKYouTubeActionType)
 
         for (NSDictionary *item in items)
         {
-            [videoIds addObject:item[@"id"][@"videoId"]];
+            NSString *videoId = item[@"id"][@"videoId"] ?: item[@"id"][@"id"];
+            [videoIds addObject:videoId];
         }
 
         if ([self.delegate respondsToSelector:@selector(youTubeVideosDidSearch:nextPageToken:)])

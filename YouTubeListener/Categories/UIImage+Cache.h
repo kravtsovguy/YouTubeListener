@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class MEKImageDownloadController;
+
 @interface UIImage(Cache)
 
-+ (void)ch_downloadImageFromUrl: (NSURL*) url completion:(void (^)(UIImage *image))completion;
++ (void)ch_downloadImageFromUrl: (NSURL*) url completion:(void (^)(UIImage *image, BOOL fromCache))completion;
 
 @end

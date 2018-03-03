@@ -7,109 +7,58 @@
 //
 
 #import "UIImage+Cache.h"
+#import "MEKCombinedCache.h"
+#import "MEKDownloadController.h"
 
 @implementation UIImage(Cache)
 
++ (MEKCombinedCache *)ch_cache
+{
+    static MEKCombinedCache *cache;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        cache = [[MEKCombinedCache alloc] init];
+    });
+
+    return cache;
+}
+
 #pragma mark - Public Static
 
-+ (void)ch_downloadImageFromUrl:(NSURL *)url completion:(void (^)(UIImage *))completion
++ (void)ch_downloadImageFromUrl:(NSURL *)url completion:(void (^)(UIImage *, BOOL))completion
 {
     if (!url)
     {
         return;
     }
 
-    static NSDictionary *cache;
+    MEKCombinedCache *cache = [self ch_cache];
 
-    UIImage *image = cache[url];
+    UIImage *image = [cache.primaryCache objectForKey:url.absoluteString];
     if (image)
     {
-        completion(image);
+        completion(image, YES);
         return;
     }
 
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
-        UIImage *image = [self ch_imageForUrl:url];
-        cache = [self ch_addImage:image forURL:url toCache:cache];
+        NSData *data = [cache.secondaryCache objectForKey:url.absoluteString];
+        BOOL isCached = data;
+
+        if (!data)
+        {
+            data = [NSData dataWithContentsOfURL:url];
+            [cache.secondaryCache setObject:data forKey:url.absoluteString];
+        }
+
+        UIImage *image = [UIImage imageWithData:data];
+        [cache.primaryCache setObject:image forKey:url.absoluteString];
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            completion(image);
+            completion(image, isCached);
         });
     });
-}
-
-#pragma mark - Private Static
-
-+ (NSDictionary*)ch_addImage: (UIImage*)image forURL: (NSURL*)url toCache: (NSDictionary*)cache
-{
-    if (!url || !image)
-    {
-        return cache;
-    }
-
-    cache = cache ?: @{};
-    NSMutableDictionary *mutableCache = [cache mutableCopy];
-    mutableCache[url] = image;
-    return mutableCache;
-}
-
-+ (UIImage*)ch_imageForUrl: (NSURL*)url
-{
-    NSData *data = [self ch_dataForUrl:url];
-    if (!data)
-    {
-        data = [NSData dataWithContentsOfURL:url];
-        [self ch_saveData:data ForUrl:url];
-    }
-
-    UIImage *image = [UIImage imageWithData:data];
-    return image;
-}
-
-+ (BOOL)ch_saveData:(NSData*)data ForUrl: (NSURL*)url
-{
-    NSString *path = [self ch_pathForUrl:url];
-    BOOL isSaved = [data writeToFile:path options:NSDataWritingAtomic error:nil];
-    return isSaved;
-}
-
-+ (NSData*)ch_dataForUrl: (NSURL*)url
-{
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [self ch_pathForUrl:url];
-    if([fileManager fileExistsAtPath:path])
-    {
-        return [NSData dataWithContentsOfFile:path];
-    }
-    else
-    {
-        return nil;
-    }
-}
-
-+ (NSString*)ch_pathForUrl: (NSURL*)url
-{
-    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *urlName = [self ch_nameFromUrl:url];
-    path = [path stringByAppendingPathComponent:@"images"];
-    
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if (![fm fileExistsAtPath:path isDirectory:nil])
-    {
-        NSError *error;
-        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
-    }
-    
-    path = [path stringByAppendingPathComponent:urlName];
-    return path;
-}
-
-+ (NSString*)ch_nameFromUrl: (NSURL*)url
-{
-    NSString *path = url.path;
-    path = [path stringByReplacingOccurrencesOfString:@"/" withString:@""];
-    return path;
 }
 
 @end

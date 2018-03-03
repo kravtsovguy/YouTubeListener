@@ -349,7 +349,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     
     [self.downloadButton setProgress:progress];
     
-    [UIImage ch_downloadImageFromUrl:self.item.thumbnailSmall completion:^(UIImage *image) {
+    [UIImage ch_downloadImageFromUrl:self.item.thumbnailSmall completion:^(UIImage *image, BOOL fromCache) {
         
         MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size requestHandler:^UIImage * _Nonnull(CGSize size) {
             return image;

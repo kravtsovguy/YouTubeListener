@@ -183,8 +183,8 @@
     
     self.durationLabel.text = [df stringFromDate:date];
 
-    self.thumbnailImageView.image = [UIImage imageNamed:@"placeholder"];
-    [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig];
+    UIImage *placeholder = [UIImage imageNamed:@"placeholder"];
+    [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig usingPlaceholder:placeholder];
     
     if ([item hasDownloaded])
     {

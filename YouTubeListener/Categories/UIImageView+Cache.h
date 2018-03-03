@@ -11,5 +11,6 @@
 @interface UIImageView(Cache)
 
 - (void)ch_downloadImageFromUrl: (NSURL*) url;
+- (void)ch_downloadImageFromUrl: (NSURL*) url usingPlaceholder: (UIImage *)placeholder;
 
 @end
