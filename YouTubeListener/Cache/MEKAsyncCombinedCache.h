@@ -14,7 +14,7 @@
 
 - (id)asyncCombinedCache: (MEKAsyncCombinedCache *)combinedCache primaryObjectFromSecondaryObject: (id)secondaryObject;
 - (void)asyncCombinedCache: (MEKAsyncCombinedCache *)combinedCache objectNotFoundForKey: (NSString *)key;
-- (void)asyncCombinedCache: (MEKAsyncCombinedCache *)combinedCache primaryObjectFound: (id)object forKey: (NSString *)key fromCache: (id<MEKCacheInputProtocol>)cache;
+- (void)asyncCombinedCache: (MEKAsyncCombinedCache *)combinedCache primaryObjectFound: (id)primaryObject forKey: (NSString *)key fromCache: (id<MEKCacheInputProtocol>)cache;
 
 @end
 

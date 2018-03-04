@@ -89,10 +89,10 @@
     [self.ch_downloadController downloadDataFromURL:url forKey:@"image" withParams:@{@"url" : url}];
 }
 
-- (void)asyncCombinedCache:(MEKAsyncCombinedCache *)combinedCache primaryObjectFound:(id)object forKey:(NSString *)key fromCache:(id<MEKCacheInputProtocol>)cache
+- (void)asyncCombinedCache:(MEKAsyncCombinedCache *)combinedCache primaryObjectFound:(id)primaryObject forKey:(NSString *)key fromCache:(id<MEKCacheInputProtocol>)cache
 {
     NSTimeInterval duration = cache ? 0.0 : 0.2;
-    UIImage *image = object;
+    UIImage *image = primaryObject;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [UIView transitionWithView:self
