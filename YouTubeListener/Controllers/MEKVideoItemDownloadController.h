@@ -27,7 +27,7 @@
 
 - (void)downloadVideoItem: (VideoItemMO *) item withQuality: (VideoItemQuality) quality;
 - (void)cancelDownloadingVideoItem: (VideoItemMO *) item;
-- (double)getProgressForVideoItem: (VideoItemMO *) item;
+- (double)progressForVideoItem: (VideoItemMO *) item;
 - (BOOL)downloadingVideoItem: (VideoItemMO *) item;
 
 @end

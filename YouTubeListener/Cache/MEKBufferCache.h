@@ -7,24 +7,20 @@
 //
 
 #import "MEKCacheProtocol.h"
+#import "MEKBaseCache.h"
 
 @class MEKBufferCache;
 
-@protocol MEKBufferCacheDelegate
+@protocol MEKBufferCacheDelegate <NSObject>
 
 - (void)bufferCacheDidFilled: (MEKBufferCache *)bufferCache;
 
 @end
 
-@interface MEKBufferCache : NSObject <MEKCacheInputProtocol>
+@interface MEKBufferCache : MEKBaseCache <MEKCacheInputProtocol>
 
 @property (nonatomic, weak) id<MEKBufferCacheDelegate> delegate;
 
-@property (nonatomic, assign) NSUInteger totalCostLimit;
-@property (nonatomic, assign) NSUInteger countLimit;
-
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *buffer;
-
-- (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost;
 
 @end

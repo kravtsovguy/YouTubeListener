@@ -39,9 +39,7 @@
 - (instancetype)initWithDirectoryName:(NSString *)directoryName
 {
     MEKBufferCache *buffer = [[MEKBufferCache alloc] init];
-    buffer.countLimit = 20;
-    buffer.totalCostLimit = 100 * 1024;
-
+    
     return [self initWithDirectoryName:directoryName withBuffer:buffer];
 }
 
@@ -52,13 +50,13 @@
     {
         _directoryName = [directoryName copy];
 
-        _countLimit = 100;
-        _sizeBytesLimit = 1 * 1024 * 1024;
-
         _bufferCache = buffer;
         _bufferCache.delegate = self;
 
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bufferCacheDidFilled:) name:UIApplicationWillResignActiveNotification object:nil];
+        self.countLimit = 200;
+        self.totalCostLimit = 50 * 1024 * 1024;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_appWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
     }
 
     return self;
@@ -105,6 +103,11 @@
 }
 
 - (void)setObject:(id)object forKey:(NSString *)key
+{
+    [self setObject:object forKey:key withCost:0];
+}
+
+- (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost
 {
     NSString *filePath = [self p_filePathForKey:key];
 
@@ -176,8 +179,8 @@
 
     fileArray = [self p_sortedFileArray:fileArray];
     [fileArray enumerateObjectsUsingBlock:^(MEKFileItem * _Nonnull fileItem, NSUInteger idx, BOOL * _Nonnull stop) {
-        BOOL isOverCount = self.countLimit > 0 && (directoryFilesCount - removingCount) > self.countLimit;
-        BOOL isOverSize = self.sizeBytesLimit > 0 && (directorySizeBytes - removingSizeBytes) > self.sizeBytesLimit;
+        BOOL isOverCount = 0 < self.countLimit && self.countLimit < (directoryFilesCount - removingCount);
+        BOOL isOverSize =  0 < self.totalCostLimit && self.totalCostLimit < (directorySizeBytes - removingSizeBytes);
 
         BOOL shouldDelete = isOverCount ||isOverSize;
         BOOL shouldSave = fileItem.data;
@@ -231,10 +234,17 @@
     return filePath;
 }
 
+- (void)p_appWillResignActive
+{
+    MEKBufferCache *bufferCache = self.bufferCache;
+
+    [self p_saveBuffer:bufferCache.buffer.allValues];
+    [bufferCache removeAllObjects];
+}
+
 - (void)bufferCacheDidFilled:(MEKBufferCache *)bufferCache
 {
     [self p_saveBuffer:bufferCache.buffer.allValues];
-    [bufferCache removeAllObjects];
 }
 
 @end

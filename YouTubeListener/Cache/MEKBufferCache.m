@@ -25,6 +25,9 @@
     {
         _buffer = @{}.mutableCopy;
         _bufferCostDictionary = @{}.mutableCopy;
+
+        self.countLimit = 50;
+        self.totalCostLimit = 5 * 1024 * 1024;
     }
     return self;
 }

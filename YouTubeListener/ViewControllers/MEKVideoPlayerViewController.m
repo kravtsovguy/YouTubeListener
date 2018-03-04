@@ -341,7 +341,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
         return NO;
     }
     
-    double progress = [self.downloadController getProgressForVideoItem:item];
+    double progress = [self.downloadController progressForVideoItem:item];
     if ([item hasDownloaded])
     {
         progress = 1;

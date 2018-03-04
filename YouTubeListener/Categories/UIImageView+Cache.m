@@ -7,37 +7,54 @@
 //
 
 #import "UIImageView+Cache.h"
-#import "MEKImageDownloadController.h"
-#import "MEKCombinedCache.h"
+#import "MEKDownloadController.h"
+#import "MEKAsyncCombinedCache.h"
 #import <objc/runtime.h>
 
-@interface UIImageView(Cache_ImageDownloadController) <MEKImageDownloadControllerDelegate>
+@interface UIImageView(Cache_Properties)
 
-@property (nonatomic, strong, readonly) MEKImageDownloadController *ch_downloadController;
+@property (nonatomic, strong, readonly) MEKAsyncCombinedCache *ch_cache;
+@property (nonatomic, strong, readonly) MEKDownloadController *ch_downloadController;
 
 @end
 
-@implementation UIImageView(Cache_ImageDownloadController)
-@dynamic ch_downloadController;
+@interface UIImageView(Cache_Delegates) <MEKDownloadControllerDelegate, MEKAsyncCombinedCacheDelegate>
 
-+ (MEKCombinedCache *)ch_cache
+@end
+
+@implementation UIImageView(Cache_Properties)
+
++ (MEKAsyncCombinedCache *)ch_cache
 {
-    static MEKCombinedCache *cache;
+    static MEKAsyncCombinedCache *cache;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        cache = [[MEKCombinedCache alloc] init];
+        cache = [[MEKAsyncCombinedCache alloc] init];
     });
 
     return cache;
 }
 
-- (MEKImageDownloadController *)ch_downloadController
+- (MEKAsyncCombinedCache *)ch_cache
 {
-    MEKImageDownloadController *downloadController = objc_getAssociatedObject(self, @selector(ch_downloadController));
+    MEKAsyncCombinedCache *cache = objc_getAssociatedObject(self, @selector(ch_cache));
+    if (!cache)
+    {
+        cache = [[[self class] ch_cache] copy];
+        cache.delegate = self;
+
+        objc_setAssociatedObject(self, @selector(ch_cache), cache, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+
+    return cache;
+}
+
+- (MEKDownloadController *)ch_downloadController
+{
+    MEKDownloadController *downloadController = objc_getAssociatedObject(self, @selector(ch_downloadController));
     if (!downloadController)
     {
-        MEKCombinedCache *cache = [[self class] ch_cache];
-        downloadController = [[MEKImageDownloadController alloc] initWithCache:cache];
+        downloadController = [[MEKDownloadController alloc] initWithBackgroundMode:NO];
         downloadController.delegate = self;
 
         objc_setAssociatedObject(self, @selector(ch_downloadController), downloadController, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -46,16 +63,45 @@
     return downloadController;
 }
 
-- (void)imageDownloadController:(MEKImageDownloadController *)controller didLoadImage:(UIImage *)image fromCache:(BOOL)cached
-{
-    NSTimeInterval duration = cached ? 0.0 : 0.2;
+@end
 
-    [UIView transitionWithView:self
-                      duration:duration
-                       options:UIViewAnimationOptionTransitionCrossDissolve
-                    animations:^{
-                        self.image = image;
-                    } completion:nil];
+@implementation UIImageView(Cache_Delegates)
+
+- (BOOL)downloadControllerDidFinish:(id<MEKDownloadControllerInputProtocol>)downloadController withTempUrl:(NSURL *)url forKey:(NSString *)key withParams:(NSDictionary *)params
+{
+    NSURL *originURL = params[@"url"];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    [self.ch_cache setObject:data forKey:originURL.absoluteString withCost:data.length];
+
+    return YES;
+}
+
+- (id)asyncCombinedCache:(MEKAsyncCombinedCache *)combinedCache primaryObjectFromSecondaryObject:(id)secondaryObject
+{
+    NSData *data = secondaryObject;
+    UIImage *image = [UIImage imageWithData:data];
+    return image;
+}
+
+- (void)asyncCombinedCache:(MEKAsyncCombinedCache *)combinedCache objectNotFoundForKey:(NSString *)key
+{
+    NSURL *url = [NSURL URLWithString:key];
+    [self.ch_downloadController downloadDataFromURL:url forKey:@"image" withParams:@{@"url" : url}];
+}
+
+- (void)asyncCombinedCache:(MEKAsyncCombinedCache *)combinedCache primaryObjectFound:(id)object forKey:(NSString *)key fromCache:(id<MEKCacheInputProtocol>)cache
+{
+    NSTimeInterval duration = cache ? 0.0 : 0.2;
+    UIImage *image = object;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView transitionWithView:self
+                          duration:duration
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{
+                            self.image = image;
+                        } completion:nil];
+    });
 }
 
 @end
@@ -82,9 +128,8 @@
         self.image = placeholder;
     }
 
-    MEKImageDownloadController *downloadController = self.ch_downloadController;
-    [downloadController cancelDownloading];
-    [downloadController downloadImageFromURL:url];
+    [self.ch_downloadController cancelAllDownloads];
+    [self.ch_cache objectForKey:url.absoluteString];
 }
 
 @end

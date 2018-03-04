@@ -12,13 +12,8 @@
 
 - (id)objectForKey:(NSString *)key;
 - (void)setObject:(id)object forKey:(NSString *)key;
+- (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost;
 - (void)removeAllObjects;
 
 @end
 
-@protocol MEKCacheOutputProtocol <NSObject>
-
-@optional
-- (void)cache:(id<MEKCacheInputProtocol> *)cache willEvictObject:(id)object;
-
-@end

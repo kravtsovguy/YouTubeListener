@@ -89,7 +89,7 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
     cell.delegate = self;
     VideoItemMO *item = self.videoItems[indexPath.row];
 
-    double progress = [self.downloadController getProgressForVideoItem:item];
+    double progress = [self.downloadController progressForVideoItem:item];
 
     if ([item hasDownloaded])
         progress = 1;

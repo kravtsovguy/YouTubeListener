@@ -7,14 +7,11 @@
 //
 
 #import "MEKCacheProtocol.h"
+#import "MEKBaseCache.h"
 
-@interface MEKMemoryCache : NSObject<MEKCacheInputProtocol>
+@interface MEKMemoryCache : MEKBaseCache <MEKCacheInputProtocol>
 
 @property (nonatomic, readonly) NSCache *cache;
-@property (nonatomic, assign) NSUInteger totalCostLimit;
-@property (nonatomic, assign) NSUInteger countLimit;
-
-- (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost;
 
 - (instancetype)initWithCache: (NSCache *)cache;
 

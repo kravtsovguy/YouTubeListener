@@ -9,7 +9,6 @@
 #import "MEKCombinedCache.h"
 #import "MEKMemoryCache.h"
 #import "MEKFileCache.h"
-#import "MEKBufferCache.h"
 
 @interface MEKCombinedCache ()
 
@@ -20,15 +19,7 @@
 - (instancetype)init
 {
     MEKMemoryCache *memoryCache = [[MEKMemoryCache alloc] init];
-    memoryCache.countLimit = 20;
-
-    MEKBufferCache *buffer = [[MEKBufferCache alloc] init];
-    buffer.countLimit = 20;
-    buffer.totalCostLimit = 5 * 1024 * 1024;
-
-    MEKFileCache *fileCache = [[MEKFileCache alloc] initWithDirectoryName:@"Cache" withBuffer:buffer];
-    fileCache.countLimit = 100;
-    fileCache.sizeBytesLimit = 10 * 1024 * 1024;
+    MEKFileCache *fileCache = [[MEKFileCache alloc] init];
     
     return [self initWithPrimaryCache:memoryCache withSecondaryCache:fileCache];
 }
@@ -59,14 +50,24 @@
 
 - (void)setObject:(id)object forKey:(NSString *)key
 {
-    [self.primaryCache setObject:object forKey:key];
-    [self.secondaryCache setObject:object forKey:key];
+    [self setObject:object forKey:key withCost:0];
+}
+
+- (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost
+{
+    [self.primaryCache setObject:object forKey:key withCost:cost];
+    [self.secondaryCache setObject:object forKey:key withCost:cost];
 }
 
 - (void)removeAllObjects
 {
     [self.primaryCache removeAllObjects];
     [self.secondaryCache removeAllObjects];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [[[self class] allocWithZone:zone] initWithPrimaryCache:self.primaryCache withSecondaryCache:self.secondaryCache];
 }
 
 @end

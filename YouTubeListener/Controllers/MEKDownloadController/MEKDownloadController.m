@@ -26,8 +26,8 @@
     self = [super init];
     if (self)
     {
-        _tasks = [NSMutableDictionary new];
-        _params = [NSMutableDictionary new];
+        _tasks = @{}.mutableCopy;
+        _params = @{}.mutableCopy;
     }
     
     return self;
@@ -135,7 +135,19 @@
     [self removeTaskForKey:key];
 }
 
-- (double)getProgressForKey:(NSString *)key
+- (void)cancelAllDownloads
+{
+    if (self.tasks.count == 0)
+    {
+        return;
+    }
+
+    [self.tasks.allValues makeObjectsPerformSelector:@selector(cancel)];
+    self.tasks = @{}.mutableCopy;
+    self.params = @{}.mutableCopy;
+}
+
+- (double)progressForKey:(NSString *)key
 {
     NSURLSessionDownloadTask *task = self.tasks[key];
     if (!task || task.countOfBytesExpectedToReceive == 0)
@@ -159,7 +171,7 @@
     NSString *key = downloadTask.taskDescription;
     NSDictionary *params = self.params[key];
     
-    double progress = [self getProgressForKey:key];
+    double progress = [self progressForKey:key];
     
     if ([self.delegate respondsToSelector:@selector(downloadControllerProgress:forKey:withParams:)])
     {

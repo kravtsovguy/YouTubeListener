@@ -51,9 +51,9 @@
     return [self.downloadController hasDownloadForKey:item.videoId];
 }
 
-- (double)getProgressForVideoItem:(VideoItemMO *)item
+- (double)progressForVideoItem:(VideoItemMO *)item
 {
-    return [self.downloadController getProgressForKey:item.videoId];
+    return [self.downloadController progressForKey:item.videoId];
 }
 
 - (void)cancelDownloadingVideoItem:(VideoItemMO *)item

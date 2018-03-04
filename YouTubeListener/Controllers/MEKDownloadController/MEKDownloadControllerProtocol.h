@@ -17,8 +17,9 @@
 - (void)downloadDataFromURL: (NSURL*) url forKey: (NSString*) key withParams: (NSDictionary*) params;
 - (void)downloadDataFromRequest: (NSURLRequest*) request forKey: (NSString*) key withParams: (NSDictionary*) params;
 - (void)cancelDownloadForKey: (NSString*) key;
+- (void)cancelAllDownloads;
 - (BOOL)hasDownloadForKey: (NSString*) key;
-- (double)getProgressForKey: (NSString*) key;
+- (double)progressForKey: (NSString*) key;
 
 @end
 

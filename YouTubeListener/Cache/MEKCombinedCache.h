@@ -8,7 +8,7 @@
 
 #import "MEKCacheProtocol.h"
 
-@interface MEKCombinedCache : NSObject<MEKCacheInputProtocol>
+@interface MEKCombinedCache : NSObject <MEKCacheInputProtocol, NSCopying>
 
 @property (nonatomic, strong, readonly) id<MEKCacheInputProtocol> primaryCache;
 @property (nonatomic, strong, readonly) id<MEKCacheInputProtocol> secondaryCache;

@@ -25,8 +25,8 @@
     self = [super init];
     if (self)
     {
-        _webViews = [NSMutableDictionary new];
-        _params = [NSMutableDictionary new];
+        _webViews = @{}.mutableCopy;
+        _params = @{}.mutableCopy;
     }
 
     return self;
@@ -94,12 +94,25 @@
     [self removeDownloadForKey:key];
 }
 
+- (void)cancelAllDownloads
+{
+    if (self.webViews.count == 0)
+    {
+        return;
+    }
+    
+    [self.webViews.allValues makeObjectsPerformSelector:@selector(stopLoading)];
+    [self.webViews.allValues makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    self.webViews = @{}.mutableCopy;
+    self.params = @{}.mutableCopy;
+}
+
 - (BOOL)hasDownloadForKey:(NSString *)key
 {
     return self.webViews[key] != nil;
 }
 
-- (double)getProgressForKey:(NSString *)key
+- (double)progressForKey:(NSString *)key
 {
     UIWebView *webView = self.webViews[key];
     double progress = webView.isLoading ? 0 : 1;
@@ -122,15 +135,11 @@
     NSError *error = nil;
     [data writeToURL:fileURL options:NSDataWritingAtomic error:&error];
 
-    BOOL done;
+    BOOL done = YES;
 
     if ([self.delegate respondsToSelector:@selector(downloadControllerDidFinish:withTempUrl:forKey:withParams:)])
     {
         done = [self.delegate downloadControllerDidFinish:self withTempUrl:fileURL forKey:key withParams:params];
-    }
-    else
-    {
-        done = YES;
     }
 
     if (done)

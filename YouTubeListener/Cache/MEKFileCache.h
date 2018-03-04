@@ -7,16 +7,14 @@
 //
 
 #import "MEKCacheProtocol.h"
+#import "MEKBaseCache.h"
 
 @class MEKBufferCache;
 
-@interface MEKFileCache : NSObject <MEKCacheInputProtocol>
+@interface MEKFileCache : MEKBaseCache <MEKCacheInputProtocol>
 
 @property (nonatomic, copy, readonly) NSString *directoryName;
 @property (nonatomic, strong, readonly) MEKBufferCache *bufferCache;
-
-@property (nonatomic, assign) NSUInteger countLimit;
-@property (nonatomic, assign) NSUInteger sizeBytesLimit;
 
 - (instancetype)initWithDirectoryName: (NSString *)directoryName;
 - (instancetype)initWithDirectoryName: (NSString *)directoryName withBuffer: (MEKBufferCache *)buffer;
