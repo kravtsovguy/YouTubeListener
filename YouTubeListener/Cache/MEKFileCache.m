@@ -8,6 +8,7 @@
 
 #import "MEKFileCache.h"
 #import <UIKit/UIKit.h>
+#import "MEKBufferCache.h"
 
 @interface MEKFileItem : NSObject
 
@@ -21,14 +22,11 @@
 @implementation MEKFileItem
 @end
 
-@interface MEKFileCache ()
+@interface MEKFileCache () <MEKBufferCacheDelegate>
 
 @property (nonatomic, readonly) NSFileManager *fileManager;
 @property (nonatomic, readonly) NSString *directoryPath;
-
-@property (nonatomic, assign) NSUInteger bufferCount;
-@property (nonatomic, assign) NSUInteger bufferSizeBytes;
-@property (nonatomic, strong) NSMutableDictionary <NSString *, MEKFileItem *> *buffer;
+@property (nonatomic, readonly) NSDictionary <NSString *, MEKFileItem *> *buffer;
 
 @end
 
@@ -41,6 +39,15 @@
 
 - (instancetype)initWithDirectoryName:(NSString *)directoryName
 {
+    MEKBufferCache *buffer = [[MEKBufferCache alloc] init];
+    buffer.countLimit = 20;
+    buffer.totalCostLimit = 100 * 1024;
+
+    return [self initWithDirectoryName:directoryName withBuffer:buffer];
+}
+
+- (instancetype)initWithDirectoryName:(NSString *)directoryName withBuffer:(MEKBufferCache *)buffer
+{
     self = [super init];
     if (self)
     {
@@ -49,12 +56,10 @@
         _countLimit = 100;
         _sizeBytesLimit = 1 * 1024 * 1024;
 
-        _bufferCountLimit = 20;
-        _bufferSizeBytesLimit = 100 * 1024;
+        _bufferCache = buffer;
+        _bufferCache.delegate = self;
 
-        _buffer = @{}.mutableCopy;
-
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_appWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bufferCacheDidFilled:) name:UIApplicationWillResignActiveNotification object:nil];
     }
 
     return self;
@@ -76,6 +81,11 @@
     NSString *path = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     path = [path stringByAppendingPathComponent:self.directoryName];
     return path;
+}
+
+- (NSDictionary<NSString *,MEKFileItem *> *)buffer
+{
+    return self.bufferCache.buffer;
 }
 
 - (id)objectForKey:(NSString *)key
@@ -112,79 +122,27 @@
         fileItem.size = data.length;
         fileItem.data = data;
         fileItem.date = [NSDate new];
-        [self p_setObjectToBuffer:fileItem forKey:filePath];
-
-        BOOL isOverCount = self.bufferCountLimit > 0 && self.bufferCount > self.bufferCountLimit;
-        BOOL isOverSize = self.bufferSizeBytesLimit > 0 && self.bufferSizeBytes > self.bufferSizeBytesLimit;
-
-        if (isOverCount || isOverSize)
-        {
-            [self p_saveBuffer];
-        }
+        [self.bufferCache setObject:fileItem forKey:filePath withCost:fileItem.size];
     }
     else
     {
-        [self p_setObjectToBuffer:nil forKey:filePath];
+        [self.bufferCache setObject:nil forKey:filePath];
         [self.fileManager removeItemAtPath:filePath error:nil];
     }
 }
 
 - (void)removeAllObjects
 {
-    NSArray *fileArray = [self p_loadFilesForDirectory:self.directoryPath].allValues;
-    [self p_removeFiles:fileArray];
-    [self p_resetBuffer];
+    [self.fileManager removeItemAtPath:self.directoryPath error:nil];
+    [self.bufferCache removeAllObjects];
 }
 
-- (void)p_removeFiles: (NSArray <MEKFileItem *> *)fileArray
-{
-    [fileArray enumerateObjectsUsingBlock:^(MEKFileItem * _Nonnull fileItem, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self.fileManager removeItemAtPath:fileItem.path error:nil];
-    }];
-}
-
-- (void)p_resetBuffer
-{
-    self.bufferCount = 0;
-    self.bufferSizeBytes = 0;
-    self.buffer = @{}.mutableCopy;
-}
-
-- (void)p_setObjectToBuffer: (MEKFileItem *)fileItem forKey: (NSString *)key
-{
-    MEKFileItem *currentFileItem = self.buffer[key];
-
-    if (fileItem)
-    {
-        if (currentFileItem)
-        {
-            return;
-        }
-
-        self.buffer[key] = fileItem;
-        self.bufferSizeBytes += fileItem.size;
-        self.bufferCount += 1;
-    }
-    else
-    {
-        if (!currentFileItem)
-        {
-            return;
-        }
-
-        self.buffer[key] = nil;
-        self.bufferSizeBytes -= currentFileItem.size;
-        self.bufferCount -= 1;
-    }
-}
-
-- (void)p_saveBuffer
+- (void)p_saveBuffer: (NSDictionary *)buffer
 {
     NSArray *fileArray = [self p_loadFilesForDirectory:self.directoryPath].allValues;
-    fileArray = [fileArray arrayByAddingObjectsFromArray:self.buffer.allValues];
+    fileArray = [fileArray arrayByAddingObjectsFromArray:buffer.allValues];
 
     [self p_processFiles:fileArray];
-    [self p_resetBuffer];
 }
 
 - (NSArray<MEKFileItem *> *)p_sortedFileArray: (NSArray<MEKFileItem *> *) fileArray
@@ -244,20 +202,6 @@
     }];
 }
 
-- (NSString *)p_fileNameForKey: (NSString *) key
-{
-    NSString *name = key;
-    name = [name stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]];
-    return name;
-}
-
-- (NSString *)p_filePathForKey: (NSString *) key
-{
-    NSString *name = [self p_fileNameForKey:key];
-    NSString *filePath = [self.directoryPath stringByAppendingPathComponent:name];
-    return filePath;
-}
-
 - (NSMutableDictionary<NSString *, MEKFileItem *> *)p_loadFilesForDirectory: (NSString *)directoryPath
 {
     NSMutableDictionary *files = @{}.mutableCopy;
@@ -279,10 +223,24 @@
     return files;
 }
 
-- (void)p_appWillResignActive:(NSNotification*)note
+- (NSString *)p_fileNameForKey: (NSString *) key
 {
-    [self p_saveBuffer];
+    NSString *name = key;
+    name = [name stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]];
+    return name;
 }
 
+- (NSString *)p_filePathForKey: (NSString *) key
+{
+    NSString *name = [self p_fileNameForKey:key];
+    NSString *filePath = [self.directoryPath stringByAppendingPathComponent:name];
+    return filePath;
+}
+
+- (void)bufferCacheDidFilled:(MEKBufferCache *)bufferCache
+{
+    [self p_saveBuffer:bufferCache.buffer];
+    [bufferCache removeAllObjects];
+}
 
 @end

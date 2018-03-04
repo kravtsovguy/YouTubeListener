@@ -53,6 +53,7 @@
 		BAF16FDD2049614D00D0C9FA /* MEKFileCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF16FDC2049614D00D0C9FA /* MEKFileCache.m */; };
 		BAF16FE02049C9A900D0C9FA /* MEKCombinedCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF16FDF2049C9A900D0C9FA /* MEKCombinedCache.m */; };
 		BAF16FE6204AFF4B00D0C9FA /* MEKImageDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF16FE5204AFF4B00D0C9FA /* MEKImageDownloadController.m */; };
+		BAF16FE9204B71B600D0C9FA /* MEKBufferCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF16FE8204B71B600D0C9FA /* MEKBufferCache.m */; };
 		BAF1F39F20307D0200C5918C /* MEKY2MateParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF1F39E20307D0200C5918C /* MEKY2MateParser.m */; };
 		BAF1F3A22030D7F100C5918C /* MEKSavefromParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF1F3A12030D7F100C5918C /* MEKSavefromParser.m */; };
 		BAF1F3A520310C0A00C5918C /* MEKWebDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAF1F3A420310C0900C5918C /* MEKWebDownloadController.m */; };
@@ -166,6 +167,8 @@
 		BAF16FDF2049C9A900D0C9FA /* MEKCombinedCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKCombinedCache.m; sourceTree = "<group>"; };
 		BAF16FE4204AFF4B00D0C9FA /* MEKImageDownloadController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKImageDownloadController.h; sourceTree = "<group>"; };
 		BAF16FE5204AFF4B00D0C9FA /* MEKImageDownloadController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKImageDownloadController.m; sourceTree = "<group>"; };
+		BAF16FE7204B71B600D0C9FA /* MEKBufferCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKBufferCache.h; sourceTree = "<group>"; };
+		BAF16FE8204B71B600D0C9FA /* MEKBufferCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKBufferCache.m; sourceTree = "<group>"; };
 		BAF1F39D20307D0200C5918C /* MEKY2MateParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKY2MateParser.h; sourceTree = "<group>"; };
 		BAF1F39E20307D0200C5918C /* MEKY2MateParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKY2MateParser.m; sourceTree = "<group>"; };
 		BAF1F3A02030D7F100C5918C /* MEKSavefromParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKSavefromParser.h; sourceTree = "<group>"; };
@@ -450,6 +453,8 @@
 				BAF16FD0204958F200D0C9FA /* MEKCacheProtocol.h */,
 				BAF16FD820495F8100D0C9FA /* MEKMemoryCache.h */,
 				BAF16FD920495F8100D0C9FA /* MEKMemoryCache.m */,
+				BAF16FE7204B71B600D0C9FA /* MEKBufferCache.h */,
+				BAF16FE8204B71B600D0C9FA /* MEKBufferCache.m */,
 				BAF16FDB2049614D00D0C9FA /* MEKFileCache.h */,
 				BAF16FDC2049614D00D0C9FA /* MEKFileCache.m */,
 				BAF16FDE2049C9A900D0C9FA /* MEKCombinedCache.h */,
@@ -716,6 +721,7 @@
 				BAAE6D031FE1A3CD00438DF9 /* MEKPlayerViewController.m in Sources */,
 				BAB56F31200EAA6D000DF5C6 /* MEKWebVideoLoader.m in Sources */,
 				BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */,
+				BAF16FE9204B71B600D0C9FA /* MEKBufferCache.m in Sources */,
 				BABD357C1FDEAF740036B27F /* main.m in Sources */,
 				BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */,
 				BAB56F21200E8BCD000DF5C6 /* MEKRecentPlaylistViewController.m in Sources */,

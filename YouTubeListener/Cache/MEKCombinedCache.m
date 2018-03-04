@@ -9,6 +9,7 @@
 #import "MEKCombinedCache.h"
 #import "MEKMemoryCache.h"
 #import "MEKFileCache.h"
+#import "MEKBufferCache.h"
 
 @interface MEKCombinedCache ()
 
@@ -21,11 +22,13 @@
     MEKMemoryCache *memoryCache = [[MEKMemoryCache alloc] init];
     memoryCache.countLimit = 20;
 
-    MEKFileCache *fileCache = [[MEKFileCache alloc] init];
+    MEKBufferCache *buffer = [[MEKBufferCache alloc] init];
+    buffer.countLimit = 20;
+    buffer.totalCostLimit = 5 * 1024 * 1024;
+
+    MEKFileCache *fileCache = [[MEKFileCache alloc] initWithDirectoryName:@"Cache" withBuffer:buffer];
     fileCache.countLimit = 100;
     fileCache.sizeBytesLimit = 10 * 1024 * 1024;
-    fileCache.bufferCountLimit = 20;
-    fileCache.bufferSizeBytesLimit = 5 * 1024 * 1024;
     
     return [self initWithPrimaryCache:memoryCache withSecondaryCache:fileCache];
 }
