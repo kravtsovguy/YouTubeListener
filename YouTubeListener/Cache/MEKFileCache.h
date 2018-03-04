@@ -18,7 +18,7 @@
 @property (nonatomic, assign) NSUInteger countLimit;
 @property (nonatomic, assign) NSUInteger sizeBytesLimit;
 
-- (instancetype) initWithDirectoryName: (NSString *)directoryName;
-- (instancetype) initWithDirectoryName: (NSString *)directoryName withBuffer: (MEKBufferCache *)buffer;
+- (instancetype)initWithDirectoryName: (NSString *)directoryName;
+- (instancetype)initWithDirectoryName: (NSString *)directoryName withBuffer: (MEKBufferCache *)buffer;
 
 @end

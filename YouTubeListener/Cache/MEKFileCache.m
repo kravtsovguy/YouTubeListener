@@ -26,7 +26,6 @@
 
 @property (nonatomic, readonly) NSFileManager *fileManager;
 @property (nonatomic, readonly) NSString *directoryPath;
-@property (nonatomic, readonly) NSDictionary <NSString *, MEKFileItem *> *buffer;
 
 @end
 
@@ -83,17 +82,12 @@
     return path;
 }
 
-- (NSDictionary<NSString *,MEKFileItem *> *)buffer
-{
-    return self.bufferCache.buffer;
-}
-
 - (id)objectForKey:(NSString *)key
 {
     NSData *data;
 
     NSString *filePath = [self p_filePathForKey:key];
-    MEKFileItem *fileItem = self.buffer[filePath];
+    MEKFileItem *fileItem = [self.bufferCache objectForKey:filePath];
 
     if (fileItem)
     {
@@ -137,22 +131,22 @@
     [self.bufferCache removeAllObjects];
 }
 
-- (void)p_saveBuffer: (NSDictionary *)buffer
+- (void)p_saveBuffer:(NSArray<MEKFileItem *> *)buffer
 {
-    NSArray *fileArray = [self p_loadFilesForDirectory:self.directoryPath].allValues;
-    fileArray = [fileArray arrayByAddingObjectsFromArray:buffer.allValues];
+    NSArray *fileArray = [self p_loadFilesForDirectory:self.directoryPath];
+    fileArray = [fileArray arrayByAddingObjectsFromArray:buffer];
 
     [self p_processFiles:fileArray];
 }
 
-- (NSArray<MEKFileItem *> *)p_sortedFileArray: (NSArray<MEKFileItem *> *) fileArray
+- (NSArray<MEKFileItem *> *)p_sortedFileArray:(NSArray<MEKFileItem *> *)fileArray
 {
     NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES];
     fileArray = [fileArray sortedArrayUsingDescriptors:@[descriptor]];
     return fileArray;
 }
 
-- (NSUInteger)p_filesSizeFromArray: (NSArray<MEKFileItem *> *) fileArray
+- (NSUInteger)p_filesSizeFromArray:(NSArray<MEKFileItem *> *)fileArray
 {
     __block NSUInteger directorySizeBytes = 0;
     [fileArray enumerateObjectsUsingBlock:^(MEKFileItem * _Nonnull fileItem, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -162,7 +156,7 @@
     return directorySizeBytes;
 }
 
-- (void)p_createDirectoryIfNeeded: (NSString *)directoryPath
+- (void)p_createDirectoryIfNeeded:(NSString *)directoryPath
 {
     if (![self.fileManager fileExistsAtPath:directoryPath isDirectory:nil])
     {
@@ -170,7 +164,7 @@
     }
 }
 
-- (void)p_processFiles: (NSArray <MEKFileItem *> *)fileArray
+- (void)p_processFiles:(NSArray <MEKFileItem *> *)fileArray
 {
     [self p_createDirectoryIfNeeded:self.directoryPath];
 
@@ -202,9 +196,9 @@
     }];
 }
 
-- (NSMutableDictionary<NSString *, MEKFileItem *> *)p_loadFilesForDirectory: (NSString *)directoryPath
+- (NSArray<MEKFileItem *> *)p_loadFilesForDirectory:(NSString *)directoryPath
 {
-    NSMutableDictionary *files = @{}.mutableCopy;
+    NSMutableArray *fileArray = @[].mutableCopy;
 
     NSArray *filePathArray = [self.fileManager contentsOfDirectoryAtPath:directoryPath error:nil];
     [filePathArray enumerateObjectsUsingBlock:^(NSString * _Nonnull fileName, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -216,21 +210,21 @@
             fileItem.path = filePath;
             fileItem.size = [fileDictionary fileSize];
             fileItem.date = [fileDictionary fileCreationDate];
-            files[filePath] = fileItem;
+            [fileArray addObject:fileItem];
         }
     }];
 
-    return files;
+    return fileArray;
 }
 
-- (NSString *)p_fileNameForKey: (NSString *) key
+- (NSString *)p_fileNameForKey:(NSString *)key
 {
     NSString *name = key;
     name = [name stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]];
     return name;
 }
 
-- (NSString *)p_filePathForKey: (NSString *) key
+- (NSString *)p_filePathForKey:(NSString *)key
 {
     NSString *name = [self p_fileNameForKey:key];
     NSString *filePath = [self.directoryPath stringByAppendingPathComponent:name];
@@ -239,7 +233,7 @@
 
 - (void)bufferCacheDidFilled:(MEKBufferCache *)bufferCache
 {
-    [self p_saveBuffer:bufferCache.buffer];
+    [self p_saveBuffer:bufferCache.buffer.allValues];
     [bufferCache removeAllObjects];
 }
 
