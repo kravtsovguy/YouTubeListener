@@ -11,8 +11,8 @@
 @interface MEKBufferCache()
 
 @property (nonatomic, assign) NSUInteger bufferCost;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *bufferCostDictionary;
-@property (nonatomic, strong) NSDictionary<NSString *, id> *buffer;
+@property (nonatomic, copy) NSDictionary<NSString *, NSNumber *> *bufferCostDictionary;
+@property (nonatomic, copy) NSDictionary<NSString *, id> *buffer;
 
 @end
 
@@ -36,8 +36,7 @@
 
 - (id)objectForKey:(NSString *)key
 {
-    id object = self.buffer[key];
-    return object;
+    return self.buffer[key];
 }
 
 - (void)setObject:(id)object forKey:(NSString *)key
@@ -49,18 +48,17 @@
 {
     id currentObject = self.buffer[key];
     NSMutableDictionary *buffer = self.buffer.mutableCopy;
+    NSMutableDictionary *bufferCostDictionary = self.bufferCostDictionary.mutableCopy;
 
     if (object)
     {
         if (currentObject)
         {
-            [self setObject:nil forKey:key withCost:cost];
+            [self setObject:nil forKey:key];
         }
 
         buffer[key] = object;
-        self.buffer = buffer;
-
-        self.bufferCostDictionary[key] = @(cost);
+        bufferCostDictionary[key] = @(cost);
         self.bufferCost += cost;
 
         [self p_checkBuffer];
@@ -73,12 +71,12 @@
         }
 
         self.bufferCost -= self.bufferCostDictionary[key].unsignedIntegerValue;
-
         buffer[key] = nil;
-        self.buffer = buffer;
-
-        self.bufferCostDictionary[key] = nil;
+        bufferCostDictionary[key] = nil;
     }
+
+    self.buffer = buffer;
+    self.bufferCostDictionary = bufferCostDictionary;
 }
 
 - (void)removeAllObjects

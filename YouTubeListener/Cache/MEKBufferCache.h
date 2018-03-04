@@ -23,7 +23,7 @@
 @property (nonatomic, assign) NSUInteger totalCostLimit;
 @property (nonatomic, assign) NSUInteger countLimit;
 
-@property (nonatomic, strong, readonly) NSDictionary<NSString *, id> *buffer;
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *buffer;
 
 - (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost;
 
