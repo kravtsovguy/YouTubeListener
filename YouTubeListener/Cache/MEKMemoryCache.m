@@ -26,6 +26,7 @@
     if (self)
     {
         _cache = cache;
+        
         self.countLimit = 200;
         self.totalCostLimit = 100 * 1024 * 1024;
     }

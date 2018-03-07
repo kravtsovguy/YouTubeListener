@@ -10,6 +10,17 @@
 
 @implementation MEKAsyncCombinedCache
 
++ (instancetype)sharedInstance
+{
+    static id instance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [[self alloc] init];
+    });
+
+    return instance;
+}
+
 - (id)objectForKey:(NSString *)key
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
@@ -44,7 +55,11 @@
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
         //----
-        id primaryObject = [self.delegate asyncCombinedCache:self primaryObjectFromSecondaryObject:secondaryObject];
+        id primaryObject = secondaryObject;
+        if ([self.delegate respondsToSelector:@selector(asyncCombinedCache:primaryObjectFromSecondaryObject:)])
+        {
+            primaryObject = [self.delegate asyncCombinedCache:self primaryObjectFromSecondaryObject:secondaryObject];
+        }
 
         //-----
         id<MEKCacheInputProtocol> cache;

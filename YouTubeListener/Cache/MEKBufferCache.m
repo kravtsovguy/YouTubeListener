@@ -32,6 +32,11 @@
     return self;
 }
 
+- (NSUInteger)bufferCount
+{
+    return self.buffer.count;
+}
+
 - (NSDictionary<NSString *,id> *)dictionary
 {
     return self.buffer.copy;
@@ -91,8 +96,8 @@
 
 - (void)p_checkBuffer
 {
-    BOOL isOverCount = self.countLimit > 0 && self.buffer.count > self.countLimit;
-    BOOL isOverSize = self.totalCostLimit > 0 && self.bufferCost > self.totalCostLimit;
+    BOOL isOverCount = self.countLimit > 0 && self.bufferCount >= self.countLimit;
+    BOOL isOverSize = self.totalCostLimit > 0 && self.bufferCost >= self.totalCostLimit;
 
     if (isOverCount || isOverSize)
     {

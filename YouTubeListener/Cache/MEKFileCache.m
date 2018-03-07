@@ -96,6 +96,7 @@
         if ([self.fileManager fileExistsAtPath:filePath])
         {
             data = [NSData dataWithContentsOfFile:filePath];
+            [self setObject:data forKey:key];
         }
     }
 

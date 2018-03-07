@@ -21,6 +21,8 @@
 
 @property (nonatomic, weak) id<MEKBufferCacheDelegate> delegate;
 
+@property (nonatomic, assign, readonly) NSUInteger bufferCost;
+@property (nonatomic, assign, readonly) NSUInteger bufferCount;
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *buffer;
 
 @end
