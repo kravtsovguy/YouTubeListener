@@ -20,6 +20,7 @@ static NSUInteger const MEKResultsCount = 10;
 @property (nonatomic, strong) MEKYouTubeAPI *youtubeAPI;
 @property (nonatomic, copy) NSString *query;
 @property (nonatomic, copy) NSString *nextPageToken;
+@property (nonatomic, copy) NSArray <NSDictionary *> *jsonVideoItems;
 
 @end
 
@@ -42,14 +43,15 @@ static NSUInteger const MEKResultsCount = 10;
 
 #pragma mark - Private
 
-- (void)resetSearch
+- (void)p_resetSearch
 {
     self.nextPageToken = @"";
     self.videoItems = @[];
+    self.jsonVideoItems = @[];
     [self.tableView reloadData];
 }
 
-- (NSArray<VideoItemMO*>*)videoItemsFromJSONArray: (NSArray*) videosJSON
+- (NSArray<VideoItemMO *> *)p_videoItemsFromJSONArray: (NSArray*) videosJSON
 {
     NSMutableArray *videos = @[].mutableCopy;
 
@@ -64,15 +66,33 @@ static NSUInteger const MEKResultsCount = 10;
     return videos;
 }
 
-- (void)updateTableView: (UITableView*)tableView insertIndexPaths: (NSArray<NSIndexPath*>*)indexPaths loaderFromIndexPath: (NSIndexPath*) fromIndexPath loaderToIndexPath: (NSIndexPath*) toIndexPath
+- (void)p_checkVideos
 {
-    [tableView performBatchUpdates:^{
-        if (self.nextPageToken)
+    NSMutableArray<VideoItemMO *> *videoItems = [self.videoItems mutableCopy];
+    NSMutableArray<NSIndexPath *> *indexPaths = @[].mutableCopy;
+
+    [self.jsonVideoItems enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (!videoItems[idx].isFault)
         {
-            [tableView moveRowAtIndexPath:fromIndexPath toIndexPath:toIndexPath];
+            return;
         }
-        [tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+
+        videoItems[idx] = [self p_videoItemsFromJSONArray:@[obj]].firstObject;
+        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    }];
+
+    self.videoItems = videoItems;
+
+    [self.tableView performBatchUpdates:^{
+        [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     } completion:nil];
+}
+
+#pragma mark - MEKVideoItemDelegate
+
+- (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
+{
+    [self p_checkVideos];
 }
 
 #pragma mark - MEKVideoItemTableViewControllerInputProtocol
@@ -92,25 +112,26 @@ static NSUInteger const MEKResultsCount = 10;
 
     [self.tableView registerClass:[MEKLoaderTableViewCell class] forCellReuseIdentifier:MEKLoaderTableViewCellID];
 
-    [self resetSearch];
+    [self p_resetSearch];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self p_checkVideos];
 }
 
 #pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    if (indexPath.row == self.videoItems.count)
+    if (indexPath.row >= self.videoItems.count)
     {
         MEKLoaderTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKLoaderTableViewCellID forIndexPath:indexPath];
         return cell;
     }
 
-    if (indexPath.row < self.videoItems.count)
-    {
-        return [super tableView:tableView cellForRowAtIndexPath:indexPath];
-    }
-
-    return nil;
+    return [super tableView:tableView cellForRowAtIndexPath:indexPath];
 }
 
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -165,9 +186,16 @@ static NSUInteger const MEKResultsCount = 10;
         [indexPaths addObject:[NSIndexPath indexPathForRow:(self.videoItems.count + i) inSection:0]];
     }
 
-    self.videoItems = [self.videoItems arrayByAddingObjectsFromArray:[self videoItemsFromJSONArray:videos]];
+    self.jsonVideoItems = [self.jsonVideoItems arrayByAddingObjectsFromArray:videos];
+    self.videoItems = [self.videoItems arrayByAddingObjectsFromArray:[self p_videoItemsFromJSONArray:videos]];
 
-    [self updateTableView: self.tableView insertIndexPaths:indexPaths loaderFromIndexPath:loaderFromIndexPath loaderToIndexPath:loaderToIndexPath];
+    [self.tableView performBatchUpdates:^{
+        if (self.nextPageToken)
+        {
+            [self.tableView moveRowAtIndexPath:loaderFromIndexPath toIndexPath:loaderToIndexPath];
+        }
+        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+    } completion:nil];
 }
 
 @end

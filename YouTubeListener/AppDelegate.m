@@ -11,8 +11,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import "MEKPlaylistsViewController.h"
 #import "MEKDownloadsPlaylistViewController.h"
-#import "MEKYouTubeAPI.h"
 #import "MEKCachedSearchViewController.h"
+#import "MEKLibraryViewController.h"
 
 @interface AppDelegate ()
 
@@ -22,6 +22,7 @@
 @property (nonatomic, strong) UIViewController *searchViewController;
 @property (nonatomic, strong) UIViewController *playlistsViewController;
 @property (nonatomic, strong) UIViewController *downloadsPlaylistViewController;
+@property (nonatomic, strong) UIViewController *libraryViewController;
 
 @end
 
@@ -62,12 +63,23 @@
     return navigationController;
 }
 
+- (UIViewController *)libraryViewController
+{
+    MEKLibraryViewController *libraryViewController = [MEKLibraryViewController new];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:libraryViewController];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemFeatured tag:0];
+    [navigationController.tabBarItem setValue:@"Library" forKey:@"internalTitle"];
+    navigationController.navigationBar.prefersLargeTitles = YES;
+
+    return navigationController;
+}
+
 #pragma mark - Init Tab Bar
 
 - (void)initTabBarController
 {
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[self.playlistsViewController, self.searchViewController];
+    self.tabBarController.viewControllers = @[self.playlistsViewController, self.libraryViewController, self.searchViewController];
 }
 
 #pragma mark - Init Window
