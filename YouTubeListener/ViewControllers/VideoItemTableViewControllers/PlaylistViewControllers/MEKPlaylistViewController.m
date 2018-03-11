@@ -57,18 +57,6 @@
     self.videoItems = [self.playlist getVideoItems];
 }
 
-- (void)removeItemAtIndexPath: (NSIndexPath *) indexPath
-{
-    VideoItemMO *item = self.videoItems[indexPath.row];
-    [self.playlist deleteVideoItem:item];
-    
-    NSMutableArray *items = self.videoItems.mutableCopy;
-    [items removeObjectAtIndex:indexPath.row];
-    self.videoItems = items;
-    
-    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
@@ -99,7 +87,6 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-
     self.searchController.active = NO;
 }
 
@@ -113,23 +100,12 @@
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
-
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        
-        [self removeItemAtIndexPath:indexPath];
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        VideoItemMO *item = self.videoItems[indexPath.row];
+        [self.actionController videoItem:item removeFromPlaylist:self.playlist];
     }];
 
-    if (actions.count > 0)
-    {
-        actions = @[deleteAction, actions[0]];
-    }
-    else
-    {
-        actions = @[deleteAction];
-    }
-
-    return actions;
+    return @[deleteAction];
 }
 
 #pragma mark - UISearchResultsUpdating
@@ -150,6 +126,25 @@
     
     [self.tableView reloadData];
     
+}
+
+#pragma mark - MEKVideoItemDelegate
+
+- (void)videoItem:(VideoItemMO *)item removeFromPlaylist:(PlaylistMO *)playlist
+{
+    if (playlist != self.playlist)
+    {
+        return;
+    }
+
+    NSUInteger index = [self.videoItems indexOfObject:item];
+
+    NSMutableArray *items = self.videoItems.mutableCopy;
+    [items removeObjectAtIndex:index];
+    self.videoItems = items;
+
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 @end

@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "VideoItemMO+CoreDataClass.h"
+#import "MEKVideoItemActionProtocol.h"
 
 @interface MEKVideoItemTableViewCell : UITableViewCell
 
-@property (nonatomic, weak) id<MEKVideoItemDelegate> delegate;
+@property (nonatomic, weak) id<MEKVideoItemActionProtocol> delegate;
 @property (nonatomic, readonly) VideoItemMO *item;
 
-- (void)setWithVideoItem: (VideoItemMO*) item;
+- (void)setWithVideoItem: (VideoItemMO*) item addedToLibrary: (BOOL)isAddedToLibrary;
 - (void)setDownloadProgress: (double)progress;
 + (CGFloat)height;
 

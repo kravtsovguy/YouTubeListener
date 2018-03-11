@@ -132,7 +132,7 @@
     OCMExpect(ClassMethod([item getVideoItemForURL:url withContext:OCMOCK_ANY])).andReturn(nil);
     
     OCMExpect(self.playerController.coreDataContext).andReturn(context);
-    OCMExpect(ClassMethod([item getEmptyWithContext:context])).andReturn(item);
+    OCMExpect(ClassMethod([item connectedEntityWithContext:context])).andReturn(item);
     
     OCMExpect([self.playerController openVideoItem:item withVisibleState:state]);
     

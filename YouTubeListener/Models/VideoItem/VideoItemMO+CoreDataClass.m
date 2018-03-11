@@ -11,7 +11,7 @@
 
 @interface VideoItemMO()
 
-- (NSURL*)getPathUrlWithQuality: (VideoItemQuality) quality;
+- (NSURL*)pathUrlWithQuality: (VideoItemQuality) quality;
 
 @end
 
@@ -61,7 +61,7 @@
 
 #pragma mark - Creation
 
-+ (VideoItemMO*)getEmptyWithContext:(NSManagedObjectContext *)context
++ (VideoItemMO*)connectedEntityWithContext:(NSManagedObjectContext *)context
 {
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:context];
     VideoItemMO *item = [[self alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
@@ -153,6 +153,21 @@
     self.originURL = [NSURL URLWithString:json[@"source"]];
 }
 
+- (NSDictionary *)toDictionary
+{
+    NSMutableDictionary *dictionary = @{}.mutableCopy;
+
+    dictionary[@"id"] = self.videoId;
+    dictionary[@"title"] = self.title;
+    dictionary[@"author"] = self.author;
+    dictionary[@"length_seconds"] = @(self.length).stringValue;
+    dictionary[@"thumbnail_small"] = self.thumbnailSmall.absoluteString;
+    dictionary[@"thumbnail_large"] = self.thumbnailBig.absoluteString;
+    dictionary[@"source"] = self.originURL.absoluteString;
+
+    return dictionary;
+}
+
 - (BOOL)saveObject
 {
     NSError *error = nil;
@@ -171,6 +186,41 @@
     
     [self.managedObjectContext deleteObject:self];
     return [self saveObject];
+}
+
+#pragma mark - Library
+
+- (BOOL)addedToLibrary:(NSManagedObjectContext *)context
+{
+    NSFetchRequest *fetchRequest = [[self class] fetchRequest];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"videoId == %@", self.videoId];
+
+    NSError *error;
+    NSUInteger count = [context countForFetchRequest:fetchRequest error:&error];
+
+    return (count != NSNotFound) ? count : 0;
+}
+
+- (void)addToLibrary:(NSManagedObjectContext *)context
+{
+    if ([self addedToLibrary:context])
+    {
+        return;
+    }
+
+    self.added = [NSDate new];
+    [context insertObject:self];
+    [self saveObject];
+}
+
+- (void)removeFromLibrary
+{
+//    NSManagedObjectContext *context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+//    context.persistentStoreCoordinator = self.managedObjectContext.persistentStoreCoordinator;
+//    VideoItemMO *item = [context objectWithID:self.objectID];
+//
+//    NSLog(@"item id - %@", item.videoId);
+    [self deleteObject];
 }
 
 #pragma mark - Downloading Public
@@ -200,7 +250,7 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSError *error;
-    BOOL isMoved = [fileManager moveItemAtURL:url toURL:[self getPathUrlWithQuality:quality] error:&error];
+    BOOL isMoved = [fileManager moveItemAtURL:url toURL:[self pathUrlWithQuality:quality] error:&error];
     
     return isMoved;
 }
@@ -225,7 +275,7 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSError *error;
-    BOOL isRemoved = [fileManager removeItemAtURL:[self getPathUrlWithQuality:quality] error:&error];
+    BOOL isRemoved = [fileManager removeItemAtURL:[self pathUrlWithQuality:quality] error:&error];
     
     return isRemoved;
 }
@@ -302,7 +352,7 @@
 
 #pragma mark - Downloading Private
 
-- (NSURL *)getPathUrlWithQuality:(VideoItemQuality)quality
+- (NSURL *)pathUrlWithQuality:(VideoItemQuality)quality
 {
     NSString * path = [self getPathDirectory];
     path = [path stringByAppendingPathComponent:@(quality).stringValue];

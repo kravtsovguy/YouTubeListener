@@ -67,8 +67,14 @@
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
-    return @[actions[1]];
+    UITableViewRowAction *unloadAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Unload"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+
+        [self unloadItemAtIndexPath:indexPath];
+    }];
+
+    unloadAction.backgroundColor = [UIColor orangeColor];
+    
+    return @[unloadAction];
 }
 
 #pragma mark - Selectors

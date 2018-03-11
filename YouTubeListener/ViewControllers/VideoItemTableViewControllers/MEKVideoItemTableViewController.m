@@ -8,10 +8,7 @@
 
 #import "MEKVideoItemTableViewController+Private.h"
 #import "MEKPlayerController.h"
-#import "MEKVideoItemTableViewCell.h"
-#import "UIViewController+VideoItemActions.h"
 #import "AppDelegate.h"
-#import "PlaylistMO+CoreDataClass.h"
 
 static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCell";
 
@@ -24,8 +21,8 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
     self = [super init];
     if (self)
     {
-        _loader = [MEKWebVideoLoader new];
-        _loader.output = self;
+        _actionController = [[MEKVideoItemActionController alloc] init];
+        _actionController.delegate = self;
     }
     return self;
 }
@@ -42,25 +39,12 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
 
 - (MEKVideoItemDownloadController *)downloadController
 {
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-
-    return appDelegate.downloadController;
+    return self.actionController.downloadController;
 }
 
 - (NSManagedObjectContext*) coreDataContext
 {
-    return self.playerController.coreDataContext;
-}
-
-#pragma mark - MEKVideoItemTableViewControllerInputProtocol
-
-- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath
-{
-    VideoItemMO *item = self.videoItems[indexPath.row];
-    [item removeAllDownloads];
-
-    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    return self.actionController.coreDataContext;
 }
 
 #pragma mark - UIViewController
@@ -72,6 +56,11 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
     
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerClass:[MEKVideoItemTableViewCell class] forCellReuseIdentifier:MEKVideoItemTableViewCellID];
+
+    UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(p_handleLongPress:)];
+    gesture.minimumPressDuration = 0.5;
+    [self.tableView addGestureRecognizer:gesture];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -86,17 +75,14 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
 
     MEKVideoItemTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MEKVideoItemTableViewCellID forIndexPath:indexPath];
 
-    cell.delegate = self;
+    cell.delegate = self.actionController;
     VideoItemMO *item = self.videoItems[indexPath.row];
 
-    double progress = [self.downloadController progressForVideoItem:item];
-
-    if ([item hasDownloaded])
-        progress = 1;
-
+    double progress = [item hasDownloaded] ? 1 : [self.downloadController progressForVideoItem:item];
     [cell setDownloadProgress:progress];
 
-    [cell setWithVideoItem:item];
+    BOOL isAdded = [item addedToLibrary:self.coreDataContext];
+    [cell setWithVideoItem:item addedToLibrary:isAdded];
 
     return cell;
 }
@@ -126,81 +112,36 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
 }
 
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewRowAction *unloadAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Unload"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-
-        [self unloadItemAtIndexPath:indexPath];
-    }];
-
-    unloadAction.backgroundColor = [UIColor orangeColor];
-
-    NSArray *actions = @[];
-
-    VideoItemMO *item = self.videoItems[indexPath.row];
-    if ([item hasDownloaded])
-    {
-        actions = @[unloadAction];
-    }
-
-    return actions;
-}
-
 #pragma mark - MEKVideoItemDelegate
 
-- (void)videoItemAddToPlaylist:(VideoItemMO *)item
+- (void)videoItemAddToLibrary:(VideoItemMO *)item
 {
-    [self vi_choosePlaylistForVideoItem:item];
+    [self p_updateItem:item];
 }
 
-- (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
+- (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
 {
-    [playlist addVideoItem:item];
+    [self p_updateItem:item];
 }
 
-- (void)videoItemDownload: (VideoItemMO*) item
+- (void)videoItemRemoveDownload:(VideoItemMO *)item
 {
-    if (item.urls)
-    {
-        [self vi_showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
-            [self videoItemDownload:item withQuality:quality];
-        }];
-    }
-    else
-    {
-        [self.loader loadVideoItem:item];
-    }
-}
-
-- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
-{
-    [self.downloadController downloadVideoItem:item withQuality:quality];
-}
-
-- (void)videoItemCancelDownload:(VideoItemMO *)item
-{
-    [self.downloadController cancelDownloadingVideoItem:item];
-}
-
-#pragma mark - MEKWebVideoLoaderOutputProtocol
-
-- (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
-{
-    [self videoItemDownload:item];
+    [self p_updateItem:item];
 }
 
 #pragma mark - MEKVideoItemDownloadControllerDelegate
 
 - (void)videoItemDownloadControllerProgress:(double)progress forVideoItem:(VideoItemMO *)item
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"item.videoId = %@", item.videoId];
-    MEKVideoItemTableViewCell *cell = [self.tableView.visibleCells filteredArrayUsingPredicate:predicate].firstObject;
-
-    [cell setDownloadProgress:progress];
+    MEKVideoItemTableViewCell *cell = [self p_cellForItem:item];
 
     if (progress == 1)
     {
-        [cell setWithVideoItem:item];
+        [self p_updateCell:cell];
+    }
+    else
+    {
+        [cell setDownloadProgress:progress];
     }
 }
 
@@ -209,11 +150,41 @@ static NSString * const MEKVideoItemTableViewCellID = @"MEKVideoItemTableViewCel
     [self videoItemDownloadControllerProgress: (error ? 0 : 1) forVideoItem:item];
 }
 
-#pragma mark - MEKModalPlaylistsViewControllerDelegate
+#pragma mark - Private
 
-- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist forVideoItem:(VideoItemMO *)item
+- (MEKVideoItemTableViewCell *)p_cellForItem: (VideoItemMO *)item
 {
-    [self videoItemAddToPlaylist:item playlist:playlist];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"item.videoId = %@", item.videoId];
+    MEKVideoItemTableViewCell *cell = [self.tableView.visibleCells filteredArrayUsingPredicate:predicate].firstObject;
+    return cell;
+}
+
+- (void)p_updateCell: (MEKVideoItemTableViewCell *)cell
+{
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)p_updateItem: (VideoItemMO *)item
+{
+    MEKVideoItemTableViewCell *cell = [self p_cellForItem:item];
+    [self p_updateCell:cell];
+}
+
+- (void)p_handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    CGPoint point = [gestureRecognizer locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
+    if (!indexPath)
+    {
+        return;
+    }
+
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan)
+    {
+        VideoItemMO *item = self.videoItems[indexPath.row];
+        [self.actionController videoItemShowActions:item];
+    }
 }
 
 @end

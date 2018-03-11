@@ -31,47 +31,11 @@
     [self.tableView reloadSections:indexedSet withRowAnimation:UITableViewRowAnimationFade];
 }
 
-- (void)showDeleteItemDialogAtIndexPath: (NSIndexPath *) indexPath
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@""
-                                                                   message:@"Delete the video from ALL playlists?"
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-
-    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-
-        [self removeItemAtIndexPath:indexPath];
-
-    }];
-
-    UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-
-    [alert addAction:deleteAction];
-    [alert addAction:cancedlAction];
-
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
 #pragma mark - MEKVideoItemTableViewControllerInputProtocol
 
 - (void)updateData
 {
     self.videoItems = [VideoItemMO getRecentVideoItemsWithContext:self.coreDataContext];
-}
-
-- (void)removeItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    VideoItemMO *item = self.videoItems[indexPath.row];
-
-    NSArray *playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
-    [playlists makeObjectsPerformSelector:@selector(deleteVideoItem:) withObject:item];
-
-    NSMutableArray *items = self.videoItems.mutableCopy;
-    [items removeObject:item];
-    self.videoItems = items;
-
-    [item deleteObject];
-
-    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 #pragma mark - UIViewController
@@ -81,7 +45,7 @@
     [super viewDidLoad];
     self.title = [PlaylistMO recentPlaylistName];
     
-    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAllPressed:)];
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(p_deleteAllPressed:)];
     self.navigationItem.rightBarButtonItem = removeItem;
 }
 
@@ -89,28 +53,19 @@
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *actions = [super tableView:tableView editActionsForRowAtIndexPath:indexPath];
-    
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        
-        [self showDeleteItemDialogAtIndexPath:indexPath];
-    }];
-    
-    if (actions.count > 1)
-    {
-        actions = @[deleteAction, actions[1]];
-    }
-    else
-    {
-        actions = @[deleteAction];
-    }
-    
-    return actions;
+    return @[];
 }
 
-#pragma mark - Selectors
+#pragma mark - MEKVideoItemDelegate
 
-- (void)deleteAllPressed: (id) sender
+- (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
+{
+    [self videoItem:item removeFromPlaylist:nil];
+}
+
+#pragma mark - Private
+
+- (void)p_deleteAllPressed: (id) sender
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Delete all videos and playlists?"
                                                                    message:@"You will remove all data"
@@ -128,6 +83,5 @@
 
     [self presentViewController:alert animated:YES completion:nil];
 }
-
 
 @end

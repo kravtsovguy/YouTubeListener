@@ -98,7 +98,7 @@
     VideoItemMO *item = [VideoItemMO getVideoItemForURL:videoURL withContext:self.coreDataContext];
     if (!item)
     {
-        item = [VideoItemMO getEmptyWithContext:self.coreDataContext];
+        item = [VideoItemMO connectedEntityWithContext:self.coreDataContext];
         item.originURL = videoURL;
     }
     

@@ -7,23 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@class MEKPlayerController;
-@class MEKVideoItemDownloadController;
+#import "MEKPropertyManagedObjectContextProtocol.h"
+#import "MEKPropertyDownloadControllerProtocol.h"
+#import "MEKPropertyPlayerControllerProtocol.h"
 
 @protocol MEKVideoItemTableViewControllerInputProtocol
 
 @optional
 - (void)updateData;
-- (void)unloadItemAtIndexPath: (NSIndexPath *) indexPath;
-- (void)removeItemAtIndexPath: (NSIndexPath *) indexPath;
 
 @end
 
-@interface MEKVideoItemTableViewController : UITableViewController <MEKVideoItemTableViewControllerInputProtocol>
-
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
-@property (nonatomic, readonly) MEKPlayerController *playerController;
-@property (nonatomic, readonly) MEKVideoItemDownloadController *downloadController;
+@interface MEKVideoItemTableViewController : UITableViewController <MEKVideoItemTableViewControllerInputProtocol, MEKPropertyManagedObjectContextProtocol, MEKPropertyDownloadControllerProtocol, MEKPropertyPlayerControllerProtocol>
 
 @end

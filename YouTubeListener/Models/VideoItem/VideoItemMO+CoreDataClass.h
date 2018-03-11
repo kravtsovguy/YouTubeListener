@@ -27,10 +27,16 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MEKVideoItemDelegate <NSObject>
 
 @optional
+- (void)videoItemAddToLibrary: (VideoItemMO*) item;
+- (void)videoItemRemoveFromLibrary: (VideoItemMO*) item;
+- (void)videoItemRemove: (VideoItemMO*) item;
+- (void)videoItemRemoveDownload: (VideoItemMO*) item;
+- (void)videoItemOpenURL: (VideoItemMO*) item;
+- (void)videoItem: (VideoItemMO*) item removeFromPlaylist: (PlaylistMO*) playlist;
 - (void)videoItemAddToPlaylist: (VideoItemMO*) item;
-- (void)videoItemAddToPlaylist: (VideoItemMO*) item playlist: (PlaylistMO*) playlist;
+- (void)videoItem: (VideoItemMO*) item addToPlaylist: (PlaylistMO*) playlist;
 - (void)videoItemDownload: (VideoItemMO*) item;
-- (void)videoItemDownload: (VideoItemMO*) item withQuality: (VideoItemQuality) quality;
+- (void)videoItem: (VideoItemMO*) item downloadWithQuality: (VideoItemQuality) quality;
 - (void)videoItemCancelDownload: (VideoItemMO*) item;
 
 @end
@@ -43,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString*)entityName;
 
 // Creation
-+ (VideoItemMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
++ (VideoItemMO*)connectedEntityWithContext: (NSManagedObjectContext*) context;
 + (VideoItemMO*)disconnectedEntityWithContext: (NSManagedObjectContext*) context;
 
 // Instance Accessors
@@ -55,8 +61,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Basic
 - (void)setupWithDictionary: (NSDictionary*) json;
+- (NSDictionary *)toDictionary;
 - (BOOL)saveObject;
 - (BOOL)deleteObject;
+
+// Library
+- (BOOL)addedToLibrary: (NSManagedObjectContext*) context;
+- (void)addToLibrary: (NSManagedObjectContext*) context;
+- (void)removeFromLibrary;
 
 // Downloading
 - (BOOL)saveTempPathURL: (NSURL*) url withQuality: (VideoItemQuality) quality;

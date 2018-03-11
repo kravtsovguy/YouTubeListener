@@ -10,6 +10,7 @@
 #import <Masonry/Masonry.h>
 #import "UIImageView+Cache.h"
 #import "MEKDowloadButton.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @interface MEKVideoItemTableViewCell ()
 
@@ -143,7 +144,7 @@
     
     [self.downloadButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.addButton.mas_top);
-        make.left.equalTo(self.addButton.mas_right).with.offset(10);
+        make.left.equalTo(self.addButton.mas_left);
         make.width.equalTo(@30);
         make.height.equalTo(@30);
     }];
@@ -159,7 +160,7 @@
 
 #pragma mark - Public
 
-- (void)setWithVideoItem:(VideoItemMO *)item
+- (void)setWithVideoItem:(VideoItemMO *)item addedToLibrary:(BOOL)isAddedToLibrary
 {
     if (!item)
     {
@@ -185,6 +186,10 @@
 
     UIImage *placeholder = [UIImage imageNamed:@"placeholder"];
     [self.thumbnailImageView ch_downloadImageFromUrl:item.thumbnailBig usingPlaceholder:placeholder];
+
+    self.addButton.hidden = isAddedToLibrary;
+    self.downloadButton.hidden = !self.addButton.hidden;
+    self.downloadInfoLabel.hidden = self.downloadButton.hidden;
     
     if ([item hasDownloaded])
     {
@@ -214,9 +219,9 @@
 
 - (void)addButtonPressed:(UIButton *)button
 {
-    if ([self.delegate respondsToSelector:@selector(videoItemAddToPlaylist:)])
+    if ([self.delegate respondsToSelector:@selector(videoItemAddToLibrary:)])
     {
-        [self.delegate videoItemAddToPlaylist:self.item];
+        [self.delegate videoItemAddToLibrary:self.item];
     }
 }
 

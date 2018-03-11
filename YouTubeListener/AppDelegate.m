@@ -44,7 +44,7 @@
 {
     MEKPlaylistsViewController *playlistsViewController = [MEKPlaylistsViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:playlistsViewController];
-    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:1];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:0];
     [navigationController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
     navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -67,7 +67,7 @@
 - (void)initTabBarController
 {
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[self.searchViewController, self.playlistsViewController, self.downloadsPlaylistViewController];
+    self.tabBarController.viewControllers = @[self.playlistsViewController, self.searchViewController];
 }
 
 #pragma mark - Init Window
