@@ -11,14 +11,17 @@
 #import "MEKVideoItemDownloadController.h"
 #import "MEKVideoItemActionController.h"
 #import "MEKVideoItemTableViewCell.h"
+#import "MEKInfoView.h"
 
-@interface MEKVideoItemTableViewController () <MEKVideoItemActionProtocol,MEKVideoItemDownloadControllerDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface MEKVideoItemTableViewController () <MEKVideoItemActionProtocol, MEKVideoItemDownloadControllerDelegate>
 
 @property (nonatomic, copy) NSArray<VideoItemMO*> *videoItems;
+@property (nonatomic, strong) MEKInfoView *infoView;
 @property (nonatomic, strong) MEKVideoItemActionController *actionController;
 
 - (MEKVideoItemTableViewCell *)p_cellForItem: (VideoItemMO *)item;
 - (void)p_updateCell: (MEKVideoItemTableViewCell *)cell;
 - (void)p_updateItem: (VideoItemMO *)item;
+- (void)p_removeItem: (VideoItemMO *)item;
 
 @end

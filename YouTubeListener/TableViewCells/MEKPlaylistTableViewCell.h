@@ -12,10 +12,7 @@
 
 @interface MEKPlaylistTableViewCell : UITableViewCell
 
-@property (nonatomic, readonly) PlaylistMO *playlist;
-
-- (void)setWithName: (NSString *) playlistName itemsCount: (NSUInteger) count imageURL: (NSURL*) url;
-- (void)setWithPlaylist: (PlaylistMO*) playlist andVideoItem: (VideoItemMO*) item;
+- (void)setWithName: (NSString *)playlistName itemsCount: (NSUInteger)count imageURL: (NSURL *)url;
 + (CGFloat)height;
 
 @end

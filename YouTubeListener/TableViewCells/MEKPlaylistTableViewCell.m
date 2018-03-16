@@ -80,7 +80,7 @@
 
 #pragma mark - Public
 
-- (void)setWithName:(NSString *)playlistName itemsCount: (NSUInteger)count imageURL:(NSURL*)url
+- (void)setWithName:(NSString *)playlistName itemsCount:(NSUInteger)count imageURL:(NSURL *)url
 {
     self.nameLabel.text = playlistName;
     self.countLabel.text = [NSString stringWithFormat:@"%li videos", count];
@@ -90,13 +90,6 @@
     {
         [self.titleImageView ch_downloadImageFromUrl:url];
     }
-}
-
-- (void)setWithPlaylist:(PlaylistMO *)playlist andVideoItem:(VideoItemMO *)item
-{
-    self.playlist = playlist;
-    
-    [self setWithName:playlist.name itemsCount:playlist.items.count imageURL:item.thumbnailBig];
 }
 
 + (CGFloat)height

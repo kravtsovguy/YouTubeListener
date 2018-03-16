@@ -11,12 +11,13 @@
 #import "PlaylistMO+CoreDataClass.h"
 #import "MEKVideoItemDownloadController.h"
 #import "MEKWebVideoLoader.h"
-#import "AppDelegate.h"
 #import "MEKVideoItemAlertController.h"
+#import "MEKPlayerController.h"
 
 @interface MEKVideoItemActionController () <MEKWebVideoLoaderOutputProtocol>
 
-@property (nonatomic, strong) MEKWebVideoLoader *loader;
+@property (nonatomic, strong) MEKWebVideoLoader *downloadLoader;
+@property (nonatomic, strong) MEKWebVideoLoader *playLoader;
 @property (nonatomic, strong) MEKVideoItemAlertController *alertController;
 
 @end
@@ -30,8 +31,11 @@
     self = [super init];
     if (self)
     {
-        _loader = [[MEKWebVideoLoader alloc] init];
-        _loader.output = self;
+        _downloadLoader = [[MEKWebVideoLoader alloc] init];
+        _downloadLoader.output = self;
+
+        _playLoader = [[MEKWebVideoLoader alloc] init];
+        _playLoader.output = self;
 
         _alertController = [[MEKVideoItemAlertController alloc] init];
         _alertController.delegate = self;
@@ -41,20 +45,9 @@
 
 #pragma mark Property
 
-- (MEKVideoItemDownloadController *)downloadController
+- (NSUserDefaults *)userDefaults
 {
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-
-    return appDelegate.downloadController;
-}
-
-- (NSManagedObjectContext *)coreDataContext
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-
-    return appDelegate.persistentContainer.viewContext;
+    return _userDefaults ?: [NSUserDefaults standardUserDefaults];
 }
 
 #pragma mark MEKVideoItemActionProtocol
@@ -62,6 +55,36 @@
 - (void)videoItemShowActions:(VideoItemMO *)item
 {
     [self.alertController showActionsForVideoItem:item];
+}
+
+- (void)videoItemPlay:(VideoItemMO *)item
+{
+    [item addToHistoryForUserDefaults:self.userDefaults];
+
+    [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
+
+    if ([self.delegate respondsToSelector:_cmd])
+    {
+        [self.delegate videoItemPlay:item];
+    }
+}
+
+- (void)videoItemPlayURL:(NSURL *)url
+{
+    if (!url || ![MEKWebVideoLoader parserForURL:url])
+    {
+        [self.alertController showAlertWithTitle:@"Can't Parse Given Url" message:url.absoluteString];
+        return;
+    }
+
+    VideoItemMO *item = [VideoItemMO getVideoItemForURL:url withContext:self.coreDataContext];
+    if (!item)
+    {
+        item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
+        item.originURL = url;
+    }
+
+    [self.playLoader loadVideoItem:item];
 }
 
 - (void)videoItemAddToLibrary:(VideoItemMO *)item
@@ -83,7 +106,7 @@
         [self videoItem:item removeFromPlaylist:playlist];
     }];
 
-    [item removeFromLibrary];
+    [item removeFromLibrary: self.coreDataContext];
 
     if ([self.delegate respondsToSelector:_cmd])
     {
@@ -120,7 +143,7 @@
     }
     else
     {
-        [self.loader loadVideoItem:item];
+        [self.downloadLoader loadVideoItem:item];
     }
 }
 
@@ -153,7 +176,15 @@
 
 - (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
-    [self videoItemDownload:item];
+    if (loader == self.downloadLoader)
+    {
+        [self videoItemDownload:item];
+    }
+
+    if (loader == self.playLoader)
+    {
+        [self videoItemPlay:item];
+    }
 }
 
 @end

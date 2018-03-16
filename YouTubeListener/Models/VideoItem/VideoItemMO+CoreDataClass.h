@@ -57,7 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (VideoItemMO*)getVideoItemForURL: (NSURL*) videoURL withContext: (NSManagedObjectContext*) context;
 + (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
 + (NSArray<VideoItemMO*>*)getVideoItemsWithContext: (NSManagedObjectContext*) context;
-+ (NSArray<VideoItemMO*>*)getRecentVideoItemsWithContext: (NSManagedObjectContext*) context;
++ (NSArray<VideoItemMO*>*)addedVideoItemsWithContext: (NSManagedObjectContext*) context;
++ (NSArray<VideoItemMO*>*)videoItemsFromJSON:(NSArray<NSDictionary *> *)videosJSON withContext: (NSManagedObjectContext*) context;
 
 // Basic
 - (void)setupWithDictionary: (NSDictionary*) json;
@@ -65,10 +66,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveObject;
 - (BOOL)deleteObject;
 
+// History
++ (NSArray<VideoItemMO*>*)historyVideoItemsFromUserDefaults:(NSUserDefaults *)userDefaults withContext: (NSManagedObjectContext*) context;
+- (void)addToHistoryForUserDefaults: (NSUserDefaults *)userDefaults;
+
 // Library
 - (BOOL)addedToLibrary: (NSManagedObjectContext*) context;
 - (void)addToLibrary: (NSManagedObjectContext*) context;
-- (void)removeFromLibrary;
+- (void)removeFromLibrary: (NSManagedObjectContext *)context;
 
 // Downloading
 - (BOOL)saveTempPathURL: (NSURL*) url withQuality: (VideoItemQuality) quality;

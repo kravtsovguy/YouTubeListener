@@ -6,17 +6,12 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import "MEKPropertyManagedObjectContextProtocol.h"
+#import "MEKAlertController.h"
 #import "MEKVideoItemActionProtocol.h"
 
-@interface MEKVideoItemAlertController : NSObject <MEKPropertyManagedObjectContextProtocol>
+@interface MEKVideoItemAlertController : MEKAlertController
 
 @property (nonatomic, weak) id<MEKVideoItemActionProtocol> delegate;
-@property (nonatomic, strong, readonly) UIViewController *viewController;
-
-- (instancetype)initWithViewController: (UIViewController *)viewController;
 
 - (void)showActionsForVideoItem: (VideoItemMO *)item;
 - (void)showPlaylistSelectionForVideoItem:(VideoItemMO *)item;

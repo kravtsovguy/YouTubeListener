@@ -10,43 +10,12 @@
 #import "MEKModalPlaylistsViewController.h"
 #import "VideoItemMO+CoreDataClass.h"
 #import "MEKVideoItemActionController.h"
-#import "AppDelegate.h"
 
 @interface MEKVideoItemAlertController () <MEKModalPlaylistsViewControllerDelegate>
 
 @end
 
 @implementation MEKVideoItemAlertController
-
-#pragma mark init
-
-- (instancetype)init
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    UIViewController *viewController = application.keyWindow.rootViewController;
-
-    return [self initWithViewController:viewController];
-}
-
-- (instancetype)initWithViewController:(UIViewController *)viewController
-{
-    self = [super init];
-    if (self)
-    {
-        _viewController = viewController;
-    }
-    return self;
-}
-
-#pragma mark Properties
-
-- (NSManagedObjectContext *)coreDataContext
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-
-    return appDelegate.persistentContainer.viewContext;
-}
 
 #pragma mark Public
 
@@ -63,37 +32,15 @@
 
 - (void)showActionsForVideoItem:(VideoItemMO *)item
 {
-    [self p_showDialogWithTitle:@"" message:@"Choose Action" actions:[self p_actionsForVideoItem:item]];
+    [self showDialogWithTitle:@"" message:@"Choose Action" actions:[self p_actionsForVideoItem:item]];
 }
 
 - (void)showDownloadingDialogForVideoItem: (VideoItemMO*)item
 {
-    [self p_showDialogWithTitle:@"Select Quality" message:@"Available formats" actions:[self p_downloadActionsForVideoItem:item]];
+    [self showDialogWithTitle:@"Select Quality" message:@"Available formats" actions:[self p_downloadActionsForVideoItem:item]];
 }
 
 #pragma mark Private
-
-- (UIAlertAction *)p_actionWithTitle: (NSString *)title handler: (void (^ __nullable)(void)) handler
-{
-    return [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        handler();
-    }];
-}
-
-- (void)p_showDialogWithTitle: (NSString *)title message: (NSString *)message actions: (NSArray<UIAlertAction *> *)actions
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-
-    [actions enumerateObjectsUsingBlock:^(UIAlertAction * _Nonnull action, NSUInteger idx, BOOL * _Nonnull stop) {
-        [alert addAction:action];
-    }];
-
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-
-    [self.viewController presentViewController:alert animated:YES completion:nil];
-}
 
 - (NSArray<UIAlertAction *> *)p_actionsForVideoItem: (VideoItemMO *)item
 {
@@ -106,37 +53,37 @@
     {
         if (downloaded)
         {
-            [actions addObject: [self p_actionWithTitle:@"Remove from Library" handler:^{
+            [actions addObject: [self actionWithTitle:@"Remove from Library" handler:^{
                 [self.delegate videoItemRemoveFromLibrary:item];
             }]];
 
-            [actions addObject: [self p_actionWithTitle:@"Remove Download" handler:^{
+            [actions addObject: [self actionWithTitle:@"Remove Download" handler:^{
                 [self.delegate videoItemRemoveDownload:item];
             }]];
         }
         else
         {
-            [actions addObject: [self p_actionWithTitle:@"Download" handler:^{
+            [actions addObject: [self actionWithTitle:@"Download" handler:^{
                 [self.delegate videoItemDownload:item];
             }]];
 
-            [actions addObject: [self p_actionWithTitle:@"Remove from Library" handler:^{
+            [actions addObject: [self actionWithTitle:@"Remove from Library" handler:^{
                 [self.delegate videoItemRemoveFromLibrary:item];
             }]];
         }
     }
     else
     {
-        [actions addObject: [self p_actionWithTitle:@"Add to Library" handler:^{
+        [actions addObject: [self actionWithTitle:@"Add to Library" handler:^{
             [self.delegate videoItemAddToLibrary:item];
         }]];
     }
 
-    [actions addObject: [self p_actionWithTitle:@"Add to a Playlist" handler:^{
+    [actions addObject: [self actionWithTitle:@"Add to a Playlist" handler:^{
         [self.delegate videoItemAddToPlaylist:item];
     }]];
 
-    [actions addObject: [self p_actionWithTitle:@"Open in YouTube" handler:^{
+    [actions addObject: [self actionWithTitle:@"Open in YouTube" handler:^{
         [self.delegate videoItemOpenURL:item];
     }]];
 
@@ -154,7 +101,7 @@
         NSString *qualityString = [VideoItemMO getQualityString:quality];
         NSString *title = [NSString stringWithFormat:@"%@ (%.1f MB)", qualityString, size.doubleValue];
 
-        [actions addObject: [self p_actionWithTitle:title handler:^{
+        [actions addObject: [self actionWithTitle:title handler:^{
             [self.delegate videoItem:item downloadWithQuality:quality];
         }]];
     }];

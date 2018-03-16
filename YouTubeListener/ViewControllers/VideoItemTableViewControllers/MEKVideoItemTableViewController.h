@@ -8,16 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "MEKPropertyManagedObjectContextProtocol.h"
-#import "MEKPropertyDownloadControllerProtocol.h"
-#import "MEKPropertyPlayerControllerProtocol.h"
 
-@protocol MEKVideoItemTableViewControllerInputProtocol
+@protocol MEKTableViewControllerInputProtocol
 
-@optional
+@required
 - (void)updateData;
 
 @end
 
-@interface MEKVideoItemTableViewController : UITableViewController <MEKVideoItemTableViewControllerInputProtocol, MEKPropertyManagedObjectContextProtocol, MEKPropertyDownloadControllerProtocol, MEKPropertyPlayerControllerProtocol>
+@interface MEKVideoItemTableViewController : UITableViewController <MEKTableViewControllerInputProtocol, MEKPropertyManagedObjectContextProtocol>
+
+@property (nonatomic, assign, getter=isOfflineMode) BOOL offlineMode;
 
 @end

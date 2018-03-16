@@ -6,8 +6,8 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "MEKRecentVideoItemTableViewController.h"
 
-@interface MEKLibraryViewController : UIViewController
+@interface MEKLibraryViewController : MEKRecentVideoItemTableViewController
 
 @end

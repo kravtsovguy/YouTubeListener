@@ -150,6 +150,8 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     self.navigationItem.searchController = searchController;
     self.definesPresentationContext = YES;
 
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+
     self.searchController = searchController;
 
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {

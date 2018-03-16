@@ -62,7 +62,9 @@
 - (BOOL)rename: (NSString*) name
 {
     if ([PlaylistMO getPlaylistForName:name withContext:self.managedObjectContext])
+    {
         return NO;
+    }
     
     self.name = name;
     return [self saveObject];

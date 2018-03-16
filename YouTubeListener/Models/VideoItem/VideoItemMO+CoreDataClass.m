@@ -130,7 +130,7 @@
     return result;
 }
 
-+ (NSArray<VideoItemMO *> *)getRecentVideoItemsWithContext:(NSManagedObjectContext *)context
++ (NSArray<VideoItemMO *> *)addedVideoItemsWithContext:(NSManagedObjectContext *)context
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
     NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"added" ascending:NO];
@@ -138,6 +138,42 @@
     
     NSArray *result = [self executeFetchRequest:fetchRequest withContext:context];
     return result;
+}
+
++ (NSArray<VideoItemMO *> *)videoItemsFromJSON:(NSArray<NSDictionary *> *)videosJSON withContext:(NSManagedObjectContext *)context
+{
+    NSMutableArray<VideoItemMO *> *videos = @[].mutableCopy;
+
+    [videosJSON enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        VideoItemMO *video = [VideoItemMO disconnectedEntityWithContext:context];
+        [video setupWithDictionary:obj];
+        [videos addObject:video];
+    }];
+
+    return videos;
+}
+
+#pragma mark - History
+
++ (NSArray<VideoItemMO *> *)historyVideoItemsFromUserDefaults:(NSUserDefaults *)userDefaults withContext:(NSManagedObjectContext *)context
+{
+    NSArray<NSDictionary *> *videosJSON = [userDefaults objectForKey:@"history"];
+    return [self videoItemsFromJSON:videosJSON withContext:context];
+}
+
+- (void)addToHistoryForUserDefaults:(NSUserDefaults *)userDefaults
+{
+    id object = [userDefaults objectForKey:@"history"] ?: @[];
+    NSMutableArray<NSDictionary *> *videosJSON = [object mutableCopy];
+
+    [videosJSON filterUsingPredicate:[NSPredicate predicateWithFormat:@"SELF[\"id\"] != %@", self.videoId]];
+    [videosJSON insertObject:[self toDictionary] atIndex:0];
+
+    NSRange removingRange = videosJSON.count > 10 ? NSMakeRange(10, videosJSON.count - 10) : NSMakeRange(0, 0);
+    [videosJSON removeObjectsInRange:removingRange];
+
+    [userDefaults setObject:videosJSON forKey:@"history"];
+    [userDefaults synchronize];
 }
 
 #pragma mark - Basic
@@ -213,14 +249,10 @@
     [self saveObject];
 }
 
-- (void)removeFromLibrary
+- (void)removeFromLibrary:(NSManagedObjectContext *)context
 {
-//    NSManagedObjectContext *context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-//    context.persistentStoreCoordinator = self.managedObjectContext.persistentStoreCoordinator;
-//    VideoItemMO *item = [context objectWithID:self.objectID];
-//
-//    NSLog(@"item id - %@", item.videoId);
-    [self deleteObject];
+    VideoItemMO *item = [[self class] getVideoItemForId:self.videoId withContext:context];
+    [item deleteObject];
 }
 
 #pragma mark - Downloading Public

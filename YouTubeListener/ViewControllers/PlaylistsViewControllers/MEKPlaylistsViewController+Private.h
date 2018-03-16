@@ -7,14 +7,15 @@
 //
 
 #import "MEKPlaylistsViewController.h"
-#import "MEKPlaylistTableViewCell.h"
 #import "PlaylistMO+CoreDataClass.h"
+#import "MEKPlaylistActionController.h"
+#import "MEKInfoView.h"
 
-@interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate, MEKPlaylistActionProtocol>
 
-@property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSArray<PlaylistMO*> *playlists;
-@property (nonatomic, strong) MEKPlaylistTableViewCell *headerCell;
+@property (nonatomic, strong) MEKInfoView *infoView;
+@property (nonatomic, strong) MEKPlaylistActionController *actionController;
 @property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
 
 @end

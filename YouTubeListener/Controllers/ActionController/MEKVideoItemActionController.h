@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MEKActionController.h"
 #import "MEKVideoItemActionProtocol.h"
-#import "MEKPropertyManagedObjectContextProtocol.h"
-#import "MEKPropertyDownloadControllerProtocol.h"
 
-@interface MEKVideoItemActionController : NSObject <MEKPropertyManagedObjectContextProtocol, MEKPropertyDownloadControllerProtocol, MEKVideoItemActionProtocol>
+@interface MEKVideoItemActionController : MEKActionController <MEKVideoItemActionProtocol>
 
 @property (nonatomic, weak) id<MEKVideoItemActionProtocol> delegate;
+
+@property (nonatomic, strong) NSUserDefaults *userDefaults;
 
 @end

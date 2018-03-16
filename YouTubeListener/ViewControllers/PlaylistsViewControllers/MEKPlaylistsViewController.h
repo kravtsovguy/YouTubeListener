@@ -7,12 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MEKPropertyManagedObjectContextProtocol.h"
 
-@class MEKPlayerController;
+@interface MEKPlaylistsViewController : UITableViewController <MEKPropertyManagedObjectContextProtocol>
 
-@interface MEKPlaylistsViewController : UIViewController
-
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
-@property (nonatomic, readonly) MEKPlayerController *playerController;
+@property (nonatomic, assign, getter=isOfflineMode) BOOL offlineMode;
 
 @end

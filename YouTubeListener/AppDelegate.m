@@ -10,7 +10,6 @@
 #import "MEKVideoPlayerViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "MEKPlaylistsViewController.h"
-#import "MEKDownloadsPlaylistViewController.h"
 #import "MEKCachedSearchViewController.h"
 #import "MEKLibraryViewController.h"
 
@@ -20,8 +19,6 @@
 @property (nonatomic, strong) MEKVideoItemDownloadController *downloadController;
 
 @property (nonatomic, strong) UIViewController *searchViewController;
-@property (nonatomic, strong) UIViewController *playlistsViewController;
-@property (nonatomic, strong) UIViewController *downloadsPlaylistViewController;
 @property (nonatomic, strong) UIViewController *libraryViewController;
 
 @end
@@ -35,31 +32,9 @@
     MEKSearchViewController *searchViewController = [MEKCachedSearchViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:searchViewController];
     navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
-    [navigationController.tabBarItem setValue:@"Search" forKey:@"internalTitle"];
+    [navigationController.tabBarItem setValue:searchViewController.title forKey:@"internalTitle"];
     navigationController.navigationBar.prefersLargeTitles = YES;
 
-    return navigationController;
-}
-
-- (UIViewController*)playlistsViewController
-{
-    MEKPlaylistsViewController *playlistsViewController = [MEKPlaylistsViewController new];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:playlistsViewController];
-    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemMostViewed tag:0];
-    [navigationController.tabBarItem setValue:@"Playlists" forKey:@"internalTitle"];
-    navigationController.navigationBar.prefersLargeTitles = YES;
-    
-    return navigationController;
-}
-
-- (UIViewController*)downloadsPlaylistViewController
-{
-    MEKDownloadsPlaylistViewController *downloadsPlaylistViewController = [MEKDownloadsPlaylistViewController new];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:downloadsPlaylistViewController];
-    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:2];
-    [navigationController.tabBarItem setValue:@"Downloads" forKey:@"internalTitle"];
-    navigationController.navigationBar.prefersLargeTitles = YES;
-    
     return navigationController;
 }
 
@@ -68,7 +43,7 @@
     MEKLibraryViewController *libraryViewController = [MEKLibraryViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:libraryViewController];
     navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemFeatured tag:0];
-    [navigationController.tabBarItem setValue:@"Library" forKey:@"internalTitle"];
+    [navigationController.tabBarItem setValue:libraryViewController.title forKey:@"internalTitle"];
     navigationController.navigationBar.prefersLargeTitles = YES;
 
     return navigationController;
@@ -79,7 +54,7 @@
 - (void)initTabBarController
 {
     self.tabBarController = [UITabBarController new];
-    self.tabBarController.viewControllers = @[self.playlistsViewController, self.libraryViewController, self.searchViewController];
+    self.tabBarController.viewControllers = @[self.libraryViewController, self.searchViewController];
 }
 
 #pragma mark - Init Window

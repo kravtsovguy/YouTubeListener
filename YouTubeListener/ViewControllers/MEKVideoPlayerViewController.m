@@ -151,9 +151,6 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     
     self.loader = [MEKWebVideoLoader new];
     self.loader.output = self;
-
-    self.item.added = [NSDate new];
-    [self.item saveObject];    
     
     BOOL isSetUI = [self setUIwithVideoItem:self.item];
     BOOL isSetVideo = [self setVideoWithQuality:self.quality];
