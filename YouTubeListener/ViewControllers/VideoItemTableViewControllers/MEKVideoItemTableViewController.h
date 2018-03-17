@@ -7,14 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MEKTableViewControllerProtocol.h"
 #import "MEKPropertyManagedObjectContextProtocol.h"
-
-@protocol MEKTableViewControllerInputProtocol
-
-@required
-- (void)updateData;
-
-@end
 
 @interface MEKVideoItemTableViewController : UITableViewController <MEKTableViewControllerInputProtocol, MEKPropertyManagedObjectContextProtocol>
 

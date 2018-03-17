@@ -8,7 +8,7 @@
 
 #import "MEKLibraryViewController.h"
 #import "MEKVideoItemTableViewController+Private.h"
-#import "MEKPlaylistsViewController.h"
+#import "MEKCompletePlaylistsController.h"
 #import "MEKHistoryVideoItemTableViewController.h"
 #import <objc/runtime.h>
 #import "MEKVideoItemActionController.h"
@@ -111,6 +111,12 @@ typedef UIViewController *(^ViewControllerBlock)(void);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     UIViewController *viewController = self.cells[indexPath.row].viewControllerBlock();
+
+    if (!viewController)
+    {
+        return;
+    }
+    
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -177,7 +183,7 @@ typedef UIViewController *(^ViewControllerBlock)(void);
     cell.textLabel.text = @"Playlists";
 
     return [[CellToViewControllerObject alloc] initWithCell:cell usingViewControllerBlock:^UIViewController *{
-        MEKPlaylistsViewController *viewController = [[MEKPlaylistsViewController alloc] init];
+        MEKCompletePlaylistsController *viewController = [[MEKCompletePlaylistsController alloc] init];
         viewController.offlineMode = self.offlineMode;
         
         return viewController;

@@ -8,8 +8,6 @@
 
 #import "MEKVideoItemActionController+Alerts.h"
 #import "MEKVideoItemActionController+Private.h"
-#import "VideoItemMO+CoreDataClass.h"
-#import "MEKWebVideoLoader.h"
 #import "MEKPlaylistActionController+Alerts.h"
 
 @implementation MEKVideoItemActionController (Alerts)
@@ -31,14 +29,14 @@
     }
 }
 
-- (void)showPlayQualityDialog:(VideoItemMO *)item
+- (void)showPlayQualityDialog:(VideoItemMO *)item withCurrentQuality:(VideoItemQuality)currentQuality
 {
-
+    [self.alertController showDialogWithTitle:@"Select Quality" message:@"Available formats" actions:[self p_qualityActionsForVideoItem:item withCurrentQuality:currentQuality]];
 }
 
 #pragma mark Private
 
-- (NSArray<UIAlertAction *> *)p_actionsForVideoItem: (VideoItemMO *)item
+- (NSArray<UIAlertAction *> *)p_actionsForVideoItem:(VideoItemMO *)item
 {
     NSMutableArray *actions = @[].mutableCopy;
 
@@ -86,19 +84,37 @@
     return actions;
 }
 
-- (NSArray<UIAlertAction *> *)p_downloadActionsForVideoItem: (VideoItemMO *)item
+- (NSArray<UIAlertAction *> *)p_downloadActionsForVideoItem:(VideoItemMO *)item
 {
     NSMutableArray *actions = @[].mutableCopy;
 
     NSArray<NSNumber *> *qualities = [VideoItemMO getAllQualities];
     [qualities enumerateObjectsUsingBlock:^(NSNumber * _Nonnull qualityNumber, NSUInteger idx, BOOL * _Nonnull stop) {
         VideoItemQuality quality = qualityNumber.integerValue;
-        NSNumber *size = item.sizes[qualityNumber];
         NSString *qualityString = [VideoItemMO getQualityString:quality];
+        NSNumber *size = item.sizes[qualityNumber];
         NSString *title = [NSString stringWithFormat:@"%@ (%.1f MB)", qualityString, size.doubleValue];
 
         [actions addObject: [self.alertController actionWithTitle:title handler:^{
             [self videoItem:item downloadWithQuality:quality];
+        }]];
+    }];
+
+    return actions;
+}
+
+- (NSArray<UIAlertAction *> *)p_qualityActionsForVideoItem:(VideoItemMO *)item withCurrentQuality:(VideoItemQuality)currentQuality
+{
+    NSMutableArray *actions = @[].mutableCopy;
+
+    NSArray<NSNumber *> *qualities = [VideoItemMO getAllQualities];
+    [qualities enumerateObjectsUsingBlock:^(NSNumber * _Nonnull qualityNumber, NSUInteger idx, BOOL * _Nonnull stop) {
+        VideoItemQuality quality = qualityNumber.integerValue;
+        NSString *qualityString = [VideoItemMO getQualityString:quality];
+        NSString *title = [NSString stringWithFormat:@"%@%@", qualityString, currentQuality == quality ? @" (Currend)" : @""];
+
+        [actions addObject: [self.alertController actionWithTitle:title handler:^{
+            [self.delegate videoItem:item playWithQuality:quality];
         }]];
     }];
 

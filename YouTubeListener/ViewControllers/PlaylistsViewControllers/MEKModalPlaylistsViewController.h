@@ -6,7 +6,7 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import "MEKPlaylistsViewController.h"
+#import "MEKCompletePlaylistsController.h"
 
 @class PlaylistMO;
 @class VideoItemMO;
@@ -18,7 +18,7 @@
 
 @end
 
-@interface MEKModalPlaylistsViewController : MEKPlaylistsViewController
+@interface MEKModalPlaylistsViewController : MEKCompletePlaylistsController
 
 @property (nonatomic, weak) id<MEKModalPlaylistsViewControllerDelegate> delegate;
 

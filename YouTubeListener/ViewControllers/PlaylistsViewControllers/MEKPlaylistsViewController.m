@@ -9,7 +9,7 @@
 #import "MEKPlaylistsViewController+Private.h"
 #import "MEKPlaylistViewController.h"
 #import "MEKPlaylistTableViewCell.h"
-#import "MEKPlaylistActionController+Alerts.h"
+#import "MEKPlaylistActionController.h"
 
 @implementation MEKPlaylistsViewController
 
@@ -41,37 +41,21 @@
 
 #pragma mark - UIViewController
 
-- (NSString *)title
-{
-    return @"PLAYLISTS";
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    
-    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(p_createPlaylistPressed:)];
-    self.navigationItem.rightBarButtonItem = addItem;
 
     self.infoView = [[MEKInfoView alloc] initWithFrame:CGRectMake(0, 0, 0, 60)];
     self.tableView.tableFooterView = self.infoView;
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:NSStringFromClass([MEKPlaylistTableViewCell class])];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-
-    [self updateData];
-    [self.tableView reloadData];
-}
-
 #pragma mark - Private
 
 - (void)updateData
 {
-    self.playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
+    self.playlists = @[];
 }
 
 #pragma mark MEKPlaylistActionProtocol
@@ -101,7 +85,6 @@
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    
     MEKPlaylistTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:NSStringFromClass([MEKPlaylistTableViewCell class])];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
@@ -140,22 +123,6 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [MEKPlaylistTableViewCell height];
-}
-
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    PlaylistMO *playlist = self.playlists[indexPath.row];
-
-    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        [self.actionController.playlistActionController showRenamePlaylistDialog:playlist];
-    }];
-    renameAction.backgroundColor = [UIColor lightGrayColor];
-    
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        [self.actionController.playlistActionController showRemovePlaylistDialog:playlist];
-    }];
-    
-    return @[deleteAction, renameAction];
 }
 
 #pragma mark - UITraitCollection
@@ -205,13 +172,5 @@
 {
     [self.navigationController showViewController:viewControllerToCommit sender:nil];
 }
-
-#pragma mark - Private
-
-- (void)p_createPlaylistPressed: (id) sender
-{
-    [self.actionController.playlistActionController showCreatePlaylistDialog];
-}
-
 
 @end

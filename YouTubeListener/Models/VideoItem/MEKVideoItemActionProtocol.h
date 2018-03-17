@@ -21,6 +21,7 @@ typedef NS_ENUM(NSUInteger, VideoItemQuality);
 - (void)videoItemAddToLibrary: (VideoItemMO *) item;
 - (void)videoItemRemoveFromLibrary: (VideoItemMO *) item;
 
+- (void)videoItem: (VideoItemMO *)item playWithQuality: (VideoItemQuality)quality;
 - (void)videoItem: (VideoItemMO *)item downloadWithQuality: (VideoItemQuality)quality;
 - (void)videoItemCancelDownload: (VideoItemMO *)item;
 - (void)videoItemRemoveDownload: (VideoItemMO *)item;

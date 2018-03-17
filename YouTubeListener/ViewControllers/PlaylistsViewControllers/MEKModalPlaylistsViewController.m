@@ -41,18 +41,8 @@
 {
     [super viewDidLoad];
     
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelView:)];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(p_cancelView:)];
     self.navigationItem.leftBarButtonItem = item;
-    
-    self.tableView.sectionHeaderHeight = 0;
-    self.tableView.tableFooterView = [UIView new];
-}
-
-#pragma mark - Selectors
-
-- (void)cancelView: (id) sender
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UITableViewDataSource
@@ -97,6 +87,13 @@
     
     [self unregisterForPreviewingWithContext:self.previewingContext];
     self.previewingContext = nil;
+}
+
+#pragma mark - Private
+
+- (void)p_cancelView: (id) sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

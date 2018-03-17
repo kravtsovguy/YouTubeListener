@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MEKTableViewControllerProtocol.h"
 #import "MEKPropertyManagedObjectContextProtocol.h"
 
-@interface MEKPlaylistsViewController : UITableViewController <MEKPropertyManagedObjectContextProtocol>
+@interface MEKPlaylistsViewController : UITableViewController <MEKTableViewControllerInputProtocol, MEKPropertyManagedObjectContextProtocol>
 
 @property (nonatomic, assign, getter=isOfflineMode) BOOL offlineMode;
 
