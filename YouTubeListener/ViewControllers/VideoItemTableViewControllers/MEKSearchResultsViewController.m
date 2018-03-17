@@ -49,7 +49,7 @@ static NSUInteger const MEKResultsCount = 10;
     [self p_checkVideos];
 }
 
-#pragma mark - MEKVideoItemTableViewControllerInputProtocol
+#pragma mark - MEKTableViewControllerInputProtocol
 
 - (void)updateData
 {

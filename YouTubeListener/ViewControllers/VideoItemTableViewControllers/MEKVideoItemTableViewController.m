@@ -69,7 +69,7 @@
     self.actionController.downloadController.delegate = self;
 }
 
-#pragma mark - MEKVideoItemTableViewControllerInputProtocol
+#pragma mark - MEKTableViewControllerInputProtocol
 
 - (void)updateData
 {

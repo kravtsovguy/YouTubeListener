@@ -12,6 +12,8 @@
 
 @implementation MEKCompletePlaylistsController
 
+#pragma mark MEKTableViewControllerInputProtocol
+
 - (void)updateData
 {
     self.playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];

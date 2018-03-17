@@ -33,7 +33,7 @@
     return self;
 }
 
-#pragma mark - MEKVideoItemTableViewControllerInputProtocol
+#pragma mark - MEKTableViewControllerInputProtocol
 
 - (void)updateData
 {

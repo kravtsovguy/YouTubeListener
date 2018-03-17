@@ -51,7 +51,7 @@
     [self.tableView registerClass:[MEKPlaylistTableViewCell class] forCellReuseIdentifier:NSStringFromClass([MEKPlaylistTableViewCell class])];
 }
 
-#pragma mark - Private
+#pragma mark - MEKTableViewControllerInputProtocol
 
 - (void)updateData
 {

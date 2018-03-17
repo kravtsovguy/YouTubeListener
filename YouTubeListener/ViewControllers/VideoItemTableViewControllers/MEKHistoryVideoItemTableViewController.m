@@ -57,7 +57,7 @@
     [self.tableView reloadData];
 }
 
-#pragma mark - MEKVideoItemTableViewControllerInputProtocol
+#pragma mark - MEKTableViewControllerInputProtocol
 
 - (void)updateData
 {
