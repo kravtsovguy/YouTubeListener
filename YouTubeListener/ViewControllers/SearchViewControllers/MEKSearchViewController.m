@@ -229,10 +229,10 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
 - (void)clearAllPressed: (id) sender
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@""
-                                                                   message:@"You will remove all saved queries"
+                                                                   message:@"Clear you search history?"
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
 
-    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Clear All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         self.queries = @[];
     }];
 
