@@ -9,6 +9,7 @@
 #import "MEKHistoryVideoItemTableViewController.h"
 #import "MEKVideoItemTableViewController+Private.h"
 #import "MEKVideoItemActionController.h"
+#import "MEKVideoItemActionController+Alerts.h"
 
 @interface MEKHistoryVideoItemTableViewController ()
 
@@ -40,6 +41,14 @@
     return @"History";
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(p_removeAllPressed:)];
+    self.navigationItem.rightBarButtonItem = removeItem;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -61,6 +70,19 @@
 {
     [self updateData];
     [self.tableView reloadData];
+}
+
+- (void)videoItemRemoveHistory
+{
+    [self updateData];
+    [self.tableView reloadData];
+}
+
+#pragma mark Private
+
+- (void)p_removeAllPressed: (id) sender
+{
+    [self.actionController.videoItemActionController showRemoveHistoryDialog];
 }
 
 @end

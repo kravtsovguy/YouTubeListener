@@ -34,6 +34,15 @@
     [self.alertController showDialogWithTitle:@"Select Quality" message:@"Available formats" actions:[self p_qualityActionsForVideoItem:item withCurrentQuality:currentQuality]];
 }
 
+- (void)showRemoveHistoryDialog
+{
+    UIAlertAction *action = [self.alertController actionWithTitle:@"Clear" handler:^{
+        [self videoItemRemoveHistory];
+    }];
+
+    [self.alertController showDialogWithTitle:@"" message:@"Clear your history?" actions:@[action]];
+}
+
 #pragma mark Private
 
 - (NSArray<UIAlertAction *> *)p_actionsForVideoItem:(VideoItemMO *)item

@@ -122,6 +122,16 @@
     [[UIApplication sharedApplication] openURL:item.originURL options:@{} completionHandler:^(BOOL success) {}];
 }
 
+- (void)videoItemRemoveHistory
+{
+    [VideoItemMO removeHistoryForUserDefaults:self.userDefaults];
+
+    if ([self.delegate respondsToSelector:_cmd])
+    {
+        [self.delegate videoItemRemoveHistory];
+    }
+}
+
 - (void)videoItemRemoveAll
 {
     NSArray<VideoItemMO *> *videoItemArray = [VideoItemMO executeFetchRequest:[VideoItemMO fetchRequest] withContext:self.coreDataContext];
@@ -129,6 +139,11 @@
     [videoItemArray enumerateObjectsUsingBlock:^(VideoItemMO * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [obj deleteObject];
     }];
+
+    if ([self.delegate respondsToSelector:_cmd])
+    {
+        [self.delegate videoItemRemoveAll];
+    }
 }
 
 #pragma mark MEKWebVideoLoaderOutputProtocol

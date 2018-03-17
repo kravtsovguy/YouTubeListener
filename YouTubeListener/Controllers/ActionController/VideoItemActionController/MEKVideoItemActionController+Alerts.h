@@ -14,5 +14,6 @@
 - (void)showActionDialog:(VideoItemMO *)item;
 - (void)showDownloadQualityDialog:(VideoItemMO *)item;
 - (void)showPlayQualityDialog:(VideoItemMO *)item withCurrentQuality:(VideoItemQuality)currentQuality;
+- (void)showRemoveHistoryDialog;
 
 @end

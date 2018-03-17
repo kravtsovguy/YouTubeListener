@@ -28,6 +28,7 @@ typedef NS_ENUM(NSUInteger, VideoItemQuality);
 
 - (void)videoItemOpenURL: (VideoItemMO *)item;
 
+- (void)videoItemRemoveHistory;
 - (void)videoItemRemoveAll;
 
 @end

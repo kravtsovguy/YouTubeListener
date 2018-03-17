@@ -44,4 +44,10 @@
     [self p_removeItem:item];
 }
 
+- (void)videoItemRemoveAll
+{
+    [self updateData];
+    [self.tableView reloadData];
+}
+
 @end

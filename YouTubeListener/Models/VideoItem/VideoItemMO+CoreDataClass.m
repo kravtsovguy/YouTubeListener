@@ -161,6 +161,11 @@
     return [self videoItemsFromJSON:videosJSON withContext:context];
 }
 
++ (void)removeHistoryForUserDefaults:(NSUserDefaults *)userDefaults
+{
+    [userDefaults removeObjectForKey:@"history"];
+}
+
 - (void)addToHistoryForUserDefaults:(NSUserDefaults *)userDefaults
 {
     id object = [userDefaults objectForKey:@"history"] ?: @[];

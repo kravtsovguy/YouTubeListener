@@ -68,6 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // History
 + (NSArray<VideoItemMO*>*)historyVideoItemsFromUserDefaults:(NSUserDefaults *)userDefaults withContext: (NSManagedObjectContext*) context;
++ (void)removeHistoryForUserDefaults: (NSUserDefaults *)userDefaults;
 - (void)addToHistoryForUserDefaults: (NSUserDefaults *)userDefaults;
 
 // Library
