@@ -8,7 +8,7 @@
 
 #import "MEKPlayerController.h"
 #import "AppDelegate.h"
-#import "MEKWebVideoLoader.h"
+#import "MEKVideoPlayerViewController.h"
 
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
@@ -29,15 +29,6 @@
 @implementation MEKPlayerController
 
 #pragma mark - Properties
-
-- (NSManagedObjectContext*) coreDataContext
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
-    
-    NSPersistentContainer *container = appDelegate.persistentContainer;
-    return container.viewContext;
-}
 
 - (UITabBarController *)tabBarController
 {
@@ -82,30 +73,6 @@
 }
 
 #pragma mark - Public
-
-- (BOOL)openURL:(NSURL *)videoURL
-{
-    return [self openURL:videoURL withVisibleState:MEKPlayerVisibleStateMinimized];
-}
-
-- (BOOL)openURL:(NSURL *)videoURL withVisibleState:(MEKPlayerVisibleState)state
-{
-    if (!videoURL || ![MEKWebVideoLoader parserForURL:videoURL])
-    {
-        return NO;
-    }
-    
-    VideoItemMO *item = [VideoItemMO getVideoItemForURL:videoURL withContext:self.coreDataContext];
-    if (!item)
-    {
-        item = [VideoItemMO connectedEntityWithContext:self.coreDataContext];
-        item.originURL = videoURL;
-    }
-    
-    [self openVideoItem:item withVisibleState:state];
-    
-    return YES;
-}
 
 - (void)openVideoItem:(VideoItemMO *)item
 {

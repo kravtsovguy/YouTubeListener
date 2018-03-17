@@ -6,37 +6,14 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import "MEKPlaylistActionController.h"
-#import "MEKPlaylistAlertController.h"
+#import "MEKPlaylistActionController+Private.h"
+#import "MEKPlaylistActionController+Alerts.h"
 #import "PlaylistMO+CoreDataClass.h"
-
-@interface MEKPlaylistActionController ()
-
-@property (nonatomic, strong) MEKPlaylistAlertController *alertController;
-
-@end
+#import "MEKVideoItemActionController.h"
 
 @implementation MEKPlaylistActionController
 
-#pragma mark init
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self)
-    {
-        _alertController = [[MEKPlaylistAlertController alloc] init];
-        _alertController.delegate = self;
-    }
-    return self;
-}
-
 #pragma mark MEKPlaylistActionProtocol
-
-- (void)playlistCreate
-{
-    [self.alertController showCreatePlaylistDialog];
-}
 
 - (void)playlistCreateWithName:(NSString *)name
 {
@@ -59,11 +36,6 @@
     {
         [self.delegate playlistCreateWithName:name];
     }
-}
-
-- (void)playlistRename:(PlaylistMO *)playlist
-{
-    [self.alertController showRenameDialogForPlaylist:playlist];
 }
 
 - (void)playlistRename:(PlaylistMO *)playlist toName:(NSString *)name
@@ -95,16 +67,51 @@
 
 - (void)playlistRemove:(PlaylistMO *)playlist
 {
-    [self.alertController showRemoveDialogForPlaylist:playlist];
-}
-
-- (void)playlistForceRemove:(PlaylistMO *)playlist
-{
     [playlist deleteObject];
 
     if ([self.delegate respondsToSelector:_cmd])
     {
-        [self.delegate playlistForceRemove:playlist];
+        [self.delegate playlistRemove:playlist];
     }
 }
+
+- (void)playlistsRemoveVideoItem:(VideoItemMO *)item
+{
+    NSArray<PlaylistMO *> *playlistArray = [PlaylistMO executeFetchRequest:[PlaylistMO fetchRequest] withContext:self.coreDataContext];
+
+    [playlistArray enumerateObjectsUsingBlock:^(PlaylistMO * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self playlist:obj removeVideoItem:item];
+    }];
+}
+
+- (void)playlist:(PlaylistMO *)playlist removeVideoItem:(VideoItemMO *)item
+{
+    [playlist deleteVideoItem:item];
+
+    if ([self.delegate respondsToSelector:_cmd])
+    {
+        [self.delegate playlist:playlist removeVideoItem:item];
+    }
+}
+
+- (void)playlist:(PlaylistMO *)playlist addVideoItem:(VideoItemMO *)item
+{
+    [self.videoItemActionController videoItemAddToLibrary:item];
+    [playlist addVideoItem:item];
+
+    if ([self.delegate respondsToSelector:_cmd])
+    {
+        [self.delegate playlist:playlist addVideoItem:item];
+    }
+}
+
+- (void)playlistRemoveAll
+{
+    NSArray<PlaylistMO *> *playlistArray = [PlaylistMO executeFetchRequest:[PlaylistMO fetchRequest] withContext:self.coreDataContext];
+
+    [playlistArray enumerateObjectsUsingBlock:^(PlaylistMO * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj deleteObject];
+    }];
+}
+
 @end

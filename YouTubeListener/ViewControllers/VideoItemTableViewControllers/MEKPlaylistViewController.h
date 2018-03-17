@@ -7,10 +7,11 @@
 //
 
 #import "MEKVideoItemTableViewController.h"
+#import "MEKPlaylistActionProtocol.h"
 
 @class PlaylistMO;
 
-@interface MEKPlaylistViewController : MEKVideoItemTableViewController
+@interface MEKPlaylistViewController : MEKVideoItemTableViewController <MEKPlaylistActionProtocol>
 
 @property (nonatomic, readonly) PlaylistMO *playlist;
 

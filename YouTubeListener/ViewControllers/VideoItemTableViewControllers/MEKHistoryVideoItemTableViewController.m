@@ -8,6 +8,7 @@
 
 #import "MEKHistoryVideoItemTableViewController.h"
 #import "MEKVideoItemTableViewController+Private.h"
+#import "MEKVideoItemActionController.h"
 
 @interface MEKHistoryVideoItemTableViewController ()
 
@@ -27,7 +28,7 @@
     self = [super init];
     if (self)
     {
-        _userDefaults = userDefaults ?: self.actionController.userDefaults;
+        _userDefaults = userDefaults ?: self.actionController.videoItemActionController.userDefaults;
     }
     return self;
 }
@@ -54,7 +55,7 @@
     self.videoItems = [VideoItemMO historyVideoItemsFromUserDefaults:self.userDefaults withContext:self.coreDataContext] ?: @[];
 }
 
-#pragma mark - MEKVideoItemDelegate
+#pragma mark - MEKVideoItemActionProtocol
 
 - (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
 {

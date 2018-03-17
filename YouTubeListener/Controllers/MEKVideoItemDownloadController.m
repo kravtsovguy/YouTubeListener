@@ -7,6 +7,8 @@
 //
 
 #import "MEKVideoItemDownloadController.h"
+#import "VideoItemMO+CoreDataClass.h"
+#import "MEKDownloadController.h"
 
 @interface MEKVideoItemDownloadController() <MEKDownloadControllerDelegate>
 

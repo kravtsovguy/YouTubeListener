@@ -6,21 +6,11 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import "MEKVideoItemActionController.h"
-#import "VideoItemMO+CoreDataClass.h"
-#import "PlaylistMO+CoreDataClass.h"
-#import "MEKVideoItemDownloadController.h"
-#import "MEKWebVideoLoader.h"
-#import "MEKVideoItemAlertController.h"
+#import "MEKVideoItemActionController+Private.h"
+#import "MEKVideoItemActionController+Alerts.h"
 #import "MEKPlayerController.h"
-
-@interface MEKVideoItemActionController () <MEKWebVideoLoaderOutputProtocol>
-
-@property (nonatomic, strong) MEKWebVideoLoader *downloadLoader;
-@property (nonatomic, strong) MEKWebVideoLoader *playLoader;
-@property (nonatomic, strong) MEKVideoItemAlertController *alertController;
-
-@end
+#import "MEKVideoItemDownloadController.h"
+#import "MEKPlaylistActionController.h"
 
 @implementation MEKVideoItemActionController
 
@@ -36,14 +26,11 @@
 
         _playLoader = [[MEKWebVideoLoader alloc] init];
         _playLoader.output = self;
-
-        _alertController = [[MEKVideoItemAlertController alloc] init];
-        _alertController.delegate = self;
     }
     return self;
 }
 
-#pragma mark Property
+#pragma mark Properties
 
 - (NSUserDefaults *)userDefaults
 {
@@ -52,13 +39,14 @@
 
 #pragma mark MEKVideoItemActionProtocol
 
-- (void)videoItemShowActions:(VideoItemMO *)item
-{
-    [self.alertController showActionsForVideoItem:item];
-}
-
 - (void)videoItemPlay:(VideoItemMO *)item
 {
+    if (!item.urls)
+    {
+        [self.playLoader loadVideoItem:item];
+        return;
+    }
+
     [item addToHistoryForUserDefaults:self.userDefaults];
 
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
@@ -84,7 +72,7 @@
         item.originURL = url;
     }
 
-    [self.playLoader loadVideoItem:item];
+    [self videoItemPlay:item];
 }
 
 - (void)videoItemAddToLibrary:(VideoItemMO *)item
@@ -99,51 +87,13 @@
 
 - (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
 {
+    [self.playlistActionController playlistsRemoveVideoItem:item];
     [self videoItemCancelDownload:item];
-
-    NSArray<PlaylistMO *> *playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
-    [playlists enumerateObjectsUsingBlock:^(PlaylistMO * _Nonnull playlist, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self videoItem:item removeFromPlaylist:playlist];
-    }];
-
     [item removeFromLibrary: self.coreDataContext];
 
     if ([self.delegate respondsToSelector:_cmd])
     {
         [self.delegate videoItemRemoveFromLibrary:item];
-    }
-}
-
-- (void)videoItemAddToPlaylist:(VideoItemMO *)item
-{
-    [self.alertController showPlaylistSelectionForVideoItem:item];
-}
-
-- (void)videoItem:(VideoItemMO *)item addToPlaylist:(PlaylistMO *)playlist
-{
-    [self videoItemAddToLibrary:item];
-    [playlist addVideoItem:item];
-}
-
-- (void)videoItem:(VideoItemMO *)item removeFromPlaylist:(PlaylistMO *)playlist
-{
-    [playlist deleteVideoItem:item];
-
-    if ([self.delegate respondsToSelector:_cmd])
-    {
-        [self.delegate videoItem:item removeFromPlaylist:playlist];
-    }
-}
-
-- (void)videoItemDownload:(VideoItemMO *)item
-{
-    if (item.urls)
-    {
-        [self.alertController showDownloadingDialogForVideoItem:item];
-    }
-    else
-    {
-        [self.downloadLoader loadVideoItem:item];
     }
 }
 
@@ -172,13 +122,22 @@
     [[UIApplication sharedApplication] openURL:item.originURL options:@{} completionHandler:^(BOOL success) {}];
 }
 
+- (void)videoItemRemoveAll
+{
+    NSArray<VideoItemMO *> *videoItemArray = [VideoItemMO executeFetchRequest:[VideoItemMO fetchRequest] withContext:self.coreDataContext];
+
+    [videoItemArray enumerateObjectsUsingBlock:^(VideoItemMO * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj deleteObject];
+    }];
+}
+
 #pragma mark MEKWebVideoLoaderOutputProtocol
 
 - (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
     if (loader == self.downloadLoader)
     {
-        [self videoItemDownload:item];
+        [self showDownloadQualityDialog:item];
     }
 
     if (loader == self.playLoader)

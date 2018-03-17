@@ -11,6 +11,7 @@
 #import "UIImageView+Cache.h"
 #import "MEKDowloadButton.h"
 #import "VideoItemMO+CoreDataClass.h"
+#import "MEKVideoItemActionController+Alerts.h"
 
 @interface MEKVideoItemTableViewCell ()
 
@@ -219,27 +220,18 @@
 
 - (void)addButtonPressed:(UIButton *)button
 {
-    if ([self.delegate respondsToSelector:@selector(videoItemAddToLibrary:)])
-    {
-        [self.delegate videoItemAddToLibrary:self.item];
-    }
+    [self.videoItemActionController videoItemAddToLibrary:self.item];
 }
 
 - (void)downloadButtonPressed:(UIButton *)button
 {
     if (!self.downloadButton.isLoading)
     {
-        if ([self.delegate respondsToSelector:@selector(videoItemDownload:)])
-        {
-            [self.delegate videoItemDownload:self.item];
-        }
+        [self.videoItemActionController showDownloadQualityDialog:self.item];
     }
     else
     {
-        if ([self.delegate respondsToSelector:@selector(videoItemCancelDownload:)])
-        {
-            [self.delegate videoItemCancelDownload:self.item];
-        }
+        [self.videoItemActionController videoItemCancelDownload:self.item];
     }
 }
 

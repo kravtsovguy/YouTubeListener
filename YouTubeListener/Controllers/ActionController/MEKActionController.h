@@ -11,7 +11,10 @@
 #import "MEKPropertyDownloadControllerProtocol.h"
 #import "MEKPropertyPlayerControllerProtocol.h"
 
+@class MEKAlertController;
+
 @interface MEKActionController : NSObject <MEKPropertyManagedObjectContextProtocol, MEKPropertyDownloadControllerProtocol, MEKPropertyPlayerControllerProtocol>
 
+@property (nonatomic, strong) MEKAlertController *alertController;
 
 @end

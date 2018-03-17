@@ -32,11 +32,14 @@
 
 #pragma mark - UIViewController
 
+- (NSString *)title
+{
+    return @"Choose Playlist";
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.title = @"Choose Playlist";
     
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelView:)];
     self.navigationItem.leftBarButtonItem = item;

@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MEKVideoItemActionProtocol.h"
+
+@class MEKVideoItemActionController;
+@class VideoItemMO;
 
 @interface MEKVideoItemTableViewCell : UITableViewCell
 
-@property (nonatomic, weak) id<MEKVideoItemActionProtocol> delegate;
+@property (nonatomic, weak) MEKVideoItemActionController *videoItemActionController;
 @property (nonatomic, readonly) VideoItemMO *item;
 
 - (void)setWithVideoItem: (VideoItemMO*) item addedToLibrary: (BOOL)isAddedToLibrary;

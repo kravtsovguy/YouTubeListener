@@ -11,6 +11,7 @@
 #import "MEKPlaylistsViewController.h"
 #import "MEKHistoryVideoItemTableViewController.h"
 #import <objc/runtime.h>
+#import "MEKVideoItemActionController.h"
 
 @interface CellToViewControllerObject : NSObject
 
@@ -55,8 +56,11 @@ typedef UIViewController *(^ViewControllerBlock)(void);
         return;
     }
     
-    UIBarButtonItem *goItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(p_playPressed:)];
-    self.navigationItem.leftBarButtonItem = goItem;
+    UIBarButtonItem *playItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(p_playPressed:)];
+    self.navigationItem.leftBarButtonItem = playItem;
+
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(p_removeAllPressed:)];
+    self.navigationItem.rightBarButtonItem = removeItem;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -121,7 +125,12 @@ typedef UIViewController *(^ViewControllerBlock)(void);
     }
 
     NSURL *url = [NSURL URLWithString:pasteboard.string];
-    [self.actionController videoItemPlayURL:url];
+    [self.actionController.videoItemActionController videoItemPlayURL:url];
+}
+
+- (void)p_removeAllPressed: (id) sender
+{
+    [self.actionController showClearLibraryDialog];
 }
 
 @end

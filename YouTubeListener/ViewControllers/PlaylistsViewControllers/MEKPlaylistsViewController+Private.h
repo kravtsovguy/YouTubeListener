@@ -8,14 +8,14 @@
 
 #import "MEKPlaylistsViewController.h"
 #import "PlaylistMO+CoreDataClass.h"
-#import "MEKPlaylistActionController.h"
+#import "MEKCombinedActionController.h"
 #import "MEKInfoView.h"
 
 @interface MEKPlaylistsViewController () <UIViewControllerPreviewingDelegate, MEKPlaylistActionProtocol>
 
 @property (nonatomic, copy) NSArray<PlaylistMO*> *playlists;
 @property (nonatomic, strong) MEKInfoView *infoView;
-@property (nonatomic, strong) MEKPlaylistActionController *actionController;
+@property (nonatomic, strong) MEKCombinedActionController *actionController;
 @property (nonatomic, strong) id<UIViewControllerPreviewing> previewingContext;
 
 @end

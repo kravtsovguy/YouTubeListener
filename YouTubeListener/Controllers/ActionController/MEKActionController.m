@@ -8,8 +8,19 @@
 
 #import "MEKActionController.h"
 #import "AppDelegate.h"
+#import "MEKAlertController.h"
 
 @implementation MEKActionController
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self)
+    {
+        _alertController = [[MEKAlertController alloc] init];
+    }
+    return self;
+}
 
 #pragma mark Property
 

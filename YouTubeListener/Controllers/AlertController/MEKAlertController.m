@@ -7,32 +7,12 @@
 //
 
 #import "MEKAlertController.h"
-#import "AppDelegate.h"
 
 @interface MEKAlertController ()
-
-@property (nonatomic, strong) UIViewController *viewController;
 
 @end
 
 @implementation MEKAlertController
-
-#pragma mark init
-
-- (instancetype)init
-{
-    return [self initWithViewController:nil];
-}
-
-- (instancetype)initWithViewController:(UIViewController *)viewController
-{
-    self = [super init];
-    if (self)
-    {
-        _viewController = viewController;
-    }
-    return self;
-}
 
 #pragma mark Properties
 
@@ -53,12 +33,12 @@
 
     return viewController;
 }
-- (NSManagedObjectContext *)coreDataContext
-{
-    UIApplication *application = [UIApplication sharedApplication];
-    AppDelegate *appDelegate =  (AppDelegate*)application.delegate;
 
-    return appDelegate.persistentContainer.viewContext;
+#pragma mark Public
+
+- (void)showViewController:(UIViewController *)viewController
+{
+    [self.viewController presentViewController:viewController animated:YES completion:nil];
 }
 
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
@@ -73,7 +53,7 @@
 
     [alert addAction:okAction];
 
-    [self.viewController presentViewController:alert animated:YES completion:nil];
+    [self showViewController:alert];
 }
 
 - (void)showDialogWithTitle: (NSString *)title message: (NSString *)message actions: (NSArray<UIAlertAction *> *)actions
@@ -88,7 +68,7 @@
 
     [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
 
-    [self.viewController presentViewController:alert animated:YES completion:nil];
+    [self showViewController:alert];
 }
 
 - (UIAlertAction *)actionWithTitle: (NSString *)title handler: (void (^ __nullable)(void)) handler

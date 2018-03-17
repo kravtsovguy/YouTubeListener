@@ -6,13 +6,15 @@
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "MEKActionController.h"
 #import "MEKVideoItemActionProtocol.h"
+
+@class MEKPlaylistActionController;
 
 @interface MEKVideoItemActionController : MEKActionController <MEKVideoItemActionProtocol>
 
 @property (nonatomic, weak) id<MEKVideoItemActionProtocol> delegate;
+@property (nonatomic, strong) MEKPlaylistActionController *playlistActionController;
 
 @property (nonatomic, strong) NSUserDefaults *userDefaults;
 

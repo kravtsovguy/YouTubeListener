@@ -9,6 +9,7 @@
 #import "MEKPlaylistsViewController+Private.h"
 #import "MEKPlaylistViewController.h"
 #import "MEKPlaylistTableViewCell.h"
+#import "MEKPlaylistActionController+Alerts.h"
 
 @implementation MEKPlaylistsViewController
 
@@ -19,8 +20,8 @@
     self = [super init];
     if (self)
     {
-        _actionController = [[MEKPlaylistActionController alloc] init];
-        _actionController.delegate = self;
+        _actionController = [[MEKCombinedActionController alloc] init];
+        _actionController.playlistActionController.delegate = self;
     }
     return self;
 }
@@ -40,10 +41,14 @@
 
 #pragma mark - UIViewController
 
+- (NSString *)title
+{
+    return @"PLAYLISTS";
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = @"PLAYLISTS";
     self.view.backgroundColor = [UIColor whiteColor];
     
     UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(p_createPlaylistPressed:)];
@@ -69,13 +74,15 @@
     self.playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
 }
 
+#pragma mark MEKPlaylistActionProtocol
+
 - (void)playlistRename:(PlaylistMO *)playlist toName:(NSString *)name
 {
     [self updateData];
     [self.tableView reloadData];
 }
 
-- (void)playlistForceRemove:(PlaylistMO *)playlist
+- (void)playlistRemove:(PlaylistMO *)playlist
 {
     NSMutableArray *playlists = self.playlists.mutableCopy;
     [playlists removeObject:playlist];
@@ -88,13 +95,6 @@
 {
     [self updateData];
     [self.tableView reloadData];
-}
-
-#pragma mark - Private
-
-- (void)p_createPlaylistPressed: (id) sender
-{
-    [self.actionController playlistCreate];
 }
 
 #pragma mark - UITableViewDataSource
@@ -147,12 +147,12 @@
     PlaylistMO *playlist = self.playlists[indexPath.row];
 
     UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        [self.actionController playlistRename:playlist];
+        [self.actionController.playlistActionController showRenamePlaylistDialog:playlist];
     }];
     renameAction.backgroundColor = [UIColor lightGrayColor];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        [self.actionController playlistRemove:playlist];
+        [self.actionController.playlistActionController showRemovePlaylistDialog:playlist];
     }];
     
     return @[deleteAction, renameAction];
@@ -205,5 +205,13 @@
 {
     [self.navigationController showViewController:viewControllerToCommit sender:nil];
 }
+
+#pragma mark - Private
+
+- (void)p_createPlaylistPressed: (id) sender
+{
+    [self.actionController.playlistActionController showCreatePlaylistDialog];
+}
+
 
 @end

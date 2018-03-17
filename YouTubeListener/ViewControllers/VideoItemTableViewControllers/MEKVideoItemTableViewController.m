@@ -8,6 +8,7 @@
 
 #import "MEKVideoItemTableViewController+Private.h"
 #import "MEKPlaylistTableViewCell.h"
+#import "MEKVideoItemActionController+Alerts.h"
 
 @implementation MEKVideoItemTableViewController
 
@@ -18,8 +19,8 @@
     self = [super init];
     if (self)
     {
-        _actionController = [[MEKVideoItemActionController alloc] init];
-        _actionController.delegate = self;
+        _actionController = [[MEKCombinedActionController alloc] init];
+        _actionController.videoItemActionController.delegate = self;
     }
     return self;
 }
@@ -81,7 +82,7 @@
 
     MEKVideoItemTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([MEKVideoItemTableViewCell class])];
 
-    cell.delegate = self.actionController;
+    cell.videoItemActionController = self.actionController.videoItemActionController;
     VideoItemMO *item = self.videoItems[indexPath.row];
 
     double progress = [item hasDownloaded] ? 1 : [self.actionController.downloadController progressForVideoItem:item];
@@ -115,10 +116,10 @@
     }
     
     VideoItemMO *item = self.videoItems[indexPath.row];
-    [self.actionController videoItemPlay:item];
+    [self.actionController.videoItemActionController videoItemPlay:item];
 }
 
-#pragma mark - MEKVideoItemDelegate
+#pragma mark - MEKVideoItemActionProtocol
 
 - (void)videoItemAddToLibrary:(VideoItemMO *)item
 {
@@ -233,7 +234,7 @@
     }
 
     VideoItemMO *item = cell.item;
-    [self.actionController videoItemShowActions:item];
+    [self.actionController.videoItemActionController showActionDialog:item];
 }
 
 @end

@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "VideoItemMO+CoreDataClass.h"
-#import "MEKVideoPlayerViewController.h"
+
+@class VideoItemMO;
 
 static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
 
@@ -20,12 +20,8 @@ typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
 
 @interface MEKPlayerController : NSObject
 
-@property (nonatomic, readonly) NSManagedObjectContext *coreDataContext;
 @property (nonatomic, readonly) MEKPlayerVisibleState visibleState;
 @property (nonatomic, readonly) BOOL isOpened;
-
-- (BOOL)openURL: (NSURL*) videoURL;
-- (BOOL)openURL: (NSURL*) videoURL withVisibleState:(MEKPlayerVisibleState) state;
 
 - (void)openVideoItem: (VideoItemMO*) item;
 - (void)openVideoItem: (VideoItemMO*) item withVisibleState:(MEKPlayerVisibleState) state;

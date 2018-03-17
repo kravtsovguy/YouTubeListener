@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "VideoItemMO+CoreDataClass.h"
-#import "MEKDownloadController.h"
+
+typedef NS_ENUM (NSUInteger, VideoItemQuality);
+
+@class VideoItemMO;
+@class MEKDownloadController;
 
 @protocol MEKVideoItemDownloadControllerDelegate <NSObject>
 

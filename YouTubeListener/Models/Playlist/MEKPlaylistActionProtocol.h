@@ -15,16 +15,16 @@
 
 @optional
 
-- (void)playlistCreate;
 - (void)playlistCreateWithName: (NSString *)name;
 
-- (void)playlistRename: (PlaylistMO *)playlist;
 - (void)playlistRename: (PlaylistMO *)playlist toName: (NSString *)name;
 
 - (void)playlist: (PlaylistMO *)playlist addVideoItem: (VideoItemMO *)item;
 - (void)playlist: (PlaylistMO *)playlist removeVideoItem: (VideoItemMO *)item;
+- (void)playlistsRemoveVideoItem: (VideoItemMO *)item;
 
 - (void)playlistRemove: (PlaylistMO *)playlist;
-- (void)playlistForceRemove: (PlaylistMO *)playlist;
+
+- (void)playlistRemoveAll;
 
 @end

@@ -37,7 +37,7 @@
     self.videoItems = [VideoItemMO addedVideoItemsWithContext:self.coreDataContext];
 }
 
-#pragma mark - MEKVideoItemDelegate
+#pragma mark - MEKVideoItemActionProtocol
 
 - (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
 {

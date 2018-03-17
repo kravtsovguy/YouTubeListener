@@ -9,6 +9,7 @@
 #import "MEKPlaylistViewController.h"
 #import "MEKVideoItemTableViewController+Private.h"
 #import "PlaylistMO+CoreDataClass.h"
+#import "MEKPlaylistActionController.h"
 
 @interface MEKPlaylistViewController ()
 
@@ -26,6 +27,7 @@
     if (self)
     {
         _playlist = playlist;
+        super.actionController.playlistActionController.delegate = self;
     }
 
     return self;
@@ -59,15 +61,15 @@
 {
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         VideoItemMO *item = self.videoItems[indexPath.row];
-        [self.actionController videoItem:item removeFromPlaylist:self.playlist];
+        [self.actionController.playlistActionController playlist:self.playlist removeVideoItem:item];
     }];
 
     return @[deleteAction];
 }
 
-#pragma mark - MEKVideoItemDelegate
+#pragma mark - MEKPlaylistActionProtocol
 
-- (void)videoItem:(VideoItemMO *)item removeFromPlaylist:(PlaylistMO *)playlist
+- (void)playlist:(PlaylistMO *)playlist removeVideoItem:(VideoItemMO *)item
 {
     if (playlist != self.playlist)
     {

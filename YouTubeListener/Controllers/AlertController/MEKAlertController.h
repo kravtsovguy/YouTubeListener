@@ -8,14 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "MEKPropertyManagedObjectContextProtocol.h"
 
-@interface MEKAlertController : NSObject<MEKPropertyManagedObjectContextProtocol>
+@interface MEKAlertController : NSObject
 
-@property (nonatomic, strong, readonly) UIViewController *viewController;
+@property (nonatomic, strong) UIViewController *viewController;
 
-- (instancetype)initWithViewController: (UIViewController *)viewController;
-
+- (void)showViewController: (UIViewController *)viewController;
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
 - (void)showDialogWithTitle: (NSString *)title message: (NSString *)message actions: (NSArray<UIAlertAction *> *)actions;
 - (UIAlertAction *)actionWithTitle: (NSString *)title handler: (void (^)(void)) handler;
