@@ -23,23 +23,22 @@
 
 - (id)objectForKey:(NSString *)key
 {
+    id primaryObject = [self.primaryCache objectForKey:key];
+    if (primaryObject)
+    {
+        [self.delegate asyncCombinedCache:self primaryObjectFound:primaryObject forKey:key fromCache:self.primaryCache];
+        return primaryObject;
+    }
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) , ^{
-        id primaryObject = [self.primaryCache objectForKey:key];
-        if (primaryObject)
+        id secondaryObject = [self.secondaryCache objectForKey:key];
+        if (secondaryObject)
         {
-            [self.delegate asyncCombinedCache:self primaryObjectFound:primaryObject forKey:key fromCache:self.primaryCache];
+            [self setObject:secondaryObject forKey:key];
         }
         else
         {
-            id secondaryObject = [self.secondaryCache objectForKey:key];
-            if (secondaryObject)
-            {
-                [self setObject:secondaryObject forKey:key];
-            }
-            else
-            {
-                [self.delegate asyncCombinedCache:self objectNotFoundForKey:key];
-            }
+            [self.delegate asyncCombinedCache:self objectNotFoundForKey:key];
         }
     });
 

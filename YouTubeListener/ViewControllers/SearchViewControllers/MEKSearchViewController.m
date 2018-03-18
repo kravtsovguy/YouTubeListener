@@ -7,15 +7,11 @@
 //
 
 #import "MEKSearchViewController.h"
-#import <Masonry/Masonry.h>
 #import "MEKYouTubeAPI.h"
 #import "MEKSearchResultsViewController.h"
 
-static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
+@interface MEKSearchViewController () <UISearchResultsUpdating, UISearchBarDelegate>
 
-@interface MEKSearchViewController () <UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating, UISearchBarDelegate>
-
-@property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, copy) NSArray<NSString*> *queries;
 
@@ -84,44 +80,6 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     }
 }
 
-#pragma mark - Private
-
-- (void)removeSearchForQuery: (NSString *) query
-{
-    NSMutableArray *queries = self.queries.mutableCopy;
-    [queries removeObject:query];
-
-    self.queries = queries;
-
-    if ([self.delegate respondsToSelector:@selector(searchViewController:didRemoveQuery:)])
-    {
-        [self.delegate searchViewController:self didRemoveQuery:query];
-    }
-}
-
-- (void)addSearchForQuery: (NSString *) query
-{
-    NSMutableArray *queries = self.queries.mutableCopy;
-    [queries removeObject:query];
-    [queries insertObject:query atIndex:0];
-
-    self.queries = queries;
-
-    if ([self.delegate respondsToSelector:@selector(searchViewController:didAddQuery:)])
-    {
-        [self.delegate searchViewController:self didAddQuery:query];
-    }
-}
-
-- (void)openResultsControllerWithQuery: (NSString *) query
-{
-    [self addSearchForQuery:query];
-    MEKYouTubeAPI *youtubeAPI = [MEKYouTubeAPI new];
-    MEKSearchResultsViewController *resultsController = [[MEKSearchResultsViewController alloc] initWithAPI:youtubeAPI andQuery:query];
-
-    [self.navigationController pushViewController:resultsController animated:YES];
-}
-
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
@@ -131,16 +89,11 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     self.title = @"Search";
     self.view.backgroundColor = [UIColor whiteColor];
 
-    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(clearAllPressed:)];
-    self.navigationItem.rightBarButtonItem = addItem;
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(p_removeAllPressed:)];
+    self.navigationItem.rightBarButtonItem = removeItem;
 
-    self.tableView = [UITableView new];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:MEKUITableViewCellID];
-
-    [self.view addSubview:self.tableView];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 
     UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     searchController.searchResultsUpdater = self;
@@ -148,15 +101,10 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     searchController.searchBar.placeholder = @"Search by videos";
     searchController.dimsBackgroundDuringPresentation = NO;
     self.navigationItem.searchController = searchController;
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
     self.definesPresentationContext = YES;
 
-    self.navigationItem.hidesSearchBarWhenScrolling = NO;
-
     self.searchController = searchController;
-
-    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
-    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -170,7 +118,7 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:MEKUITableViewCellID forIndexPath:indexPath];
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class])];
     cell.textLabel.text = self.filteredQueries[indexPath.row];
     return cell;
 }
@@ -181,11 +129,6 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
 }
 
 #pragma mark - UITableViewDelegate
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 50;
-}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -200,11 +143,9 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
 
         NSString *query = self.filteredQueries[indexPath.row];
-        [self removeSearchForQuery:query];
+        [self p_removeSearchForQuery:query];
 
-        [self.tableView performBatchUpdates:^{
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        } completion:nil];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }];
 
     return @[deleteAction];
@@ -214,7 +155,7 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    [self openResultsControllerWithQuery:self.query];
+    [self p_openResultsControllerWithQuery:self.query];
 }
 
 #pragma mark - UISearchResultsUpdating
@@ -224,9 +165,45 @@ static NSString * const MEKUITableViewCellID = @"MEKUITableViewCell";
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-#pragma mark - Selectors
+#pragma mark - Private
 
-- (void)clearAllPressed: (id) sender
+- (void)p_removeSearchForQuery: (NSString *) query
+{
+    NSMutableArray *queries = self.queries.mutableCopy;
+    [queries removeObject:query];
+
+    self.queries = queries;
+
+    if ([self.delegate respondsToSelector:@selector(searchViewController:didRemoveQuery:)])
+    {
+        [self.delegate searchViewController:self didRemoveQuery:query];
+    }
+}
+
+- (void)p_addSearchForQuery: (NSString *) query
+{
+    NSMutableArray *queries = self.queries.mutableCopy;
+    [queries removeObject:query];
+    [queries insertObject:query atIndex:0];
+
+    self.queries = queries;
+
+    if ([self.delegate respondsToSelector:@selector(searchViewController:didAddQuery:)])
+    {
+        [self.delegate searchViewController:self didAddQuery:query];
+    }
+}
+
+- (void)p_openResultsControllerWithQuery: (NSString *) query
+{
+    [self p_addSearchForQuery:query];
+    MEKYouTubeAPI *youtubeAPI = [MEKYouTubeAPI new];
+    MEKSearchResultsViewController *resultsController = [[MEKSearchResultsViewController alloc] initWithAPI:youtubeAPI andQuery:query];
+
+    [self.navigationController pushViewController:resultsController animated:YES];
+}
+
+- (void)p_removeAllPressed: (id) sender
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@""
                                                                    message:@"Clear you search history?"

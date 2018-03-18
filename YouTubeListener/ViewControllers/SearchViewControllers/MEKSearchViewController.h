@@ -19,7 +19,7 @@
 
 @end
 
-@interface MEKSearchViewController : UIViewController
+@interface MEKSearchViewController : UITableViewController
 
 @property (nonatomic, weak) id <MEKSearchViewControllerDelegate> delegate;
 @property (nonatomic, copy, readonly) NSArray<NSString*> *queries;

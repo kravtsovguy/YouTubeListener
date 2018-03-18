@@ -103,7 +103,7 @@
 
 - (void)asyncCombinedCache:(MEKAsyncCombinedCache *)combinedCache primaryObjectFound:(id)primaryObject forKey:(NSString *)key fromCache:(id<MEKCacheInputProtocol>)cache
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    void (^completion)(void) = ^{
         UIImage *image = primaryObject;
         BOOL cached = cache;
 
@@ -117,7 +117,16 @@
 
         NSURL *url = [NSURL URLWithString:key];
         [self.delegate imageDownloader:self didLoadImage:image forUrl:url fromCache:cached];
-    });
+    };
+
+    if (cache == combinedCache.primaryCache)
+    {
+        completion();
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(), completion);
+    }
 }
 
 @end
