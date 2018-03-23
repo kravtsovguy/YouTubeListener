@@ -174,7 +174,8 @@
     [videosJSON filterUsingPredicate:[NSPredicate predicateWithFormat:@"SELF[\"id\"] != %@", self.videoId]];
     [videosJSON insertObject:[self toDictionary] atIndex:0];
 
-    NSRange removingRange = videosJSON.count > 10 ? NSMakeRange(10, videosJSON.count - 10) : NSMakeRange(0, 0);
+    NSUInteger limit = 50;
+    NSRange removingRange = videosJSON.count > limit ? NSMakeRange(limit, videosJSON.count - limit) : NSMakeRange(0, 0);
     [videosJSON removeObjectsInRange:removingRange];
 
     [userDefaults setObject:videosJSON forKey:@"history"];

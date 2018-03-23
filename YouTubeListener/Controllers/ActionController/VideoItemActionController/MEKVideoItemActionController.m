@@ -41,7 +41,7 @@
 
 - (void)videoItemPlay:(VideoItemMO *)item
 {
-    if (!item.urls)
+    if (!item.urls && !item.downloadedURLs)
     {
         [self.playLoader loadVideoItem:item];
         return;

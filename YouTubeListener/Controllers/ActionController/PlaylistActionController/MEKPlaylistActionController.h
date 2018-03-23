@@ -14,6 +14,6 @@
 @interface MEKPlaylistActionController : MEKActionController <MEKPlaylistActionProtocol>
 
 @property (nonatomic, weak) id<MEKPlaylistActionProtocol> delegate;
-@property (nonatomic, strong) MEKVideoItemActionController *videoItemActionController;
+@property (nonatomic, weak) MEKVideoItemActionController *videoItemActionController;
 
 @end
