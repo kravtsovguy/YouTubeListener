@@ -8,7 +8,7 @@
 
 #import "MEKSearchViewController.h"
 #import "MEKYouTubeAPI.h"
-#import "MEKSearchResultsViewController.h"
+#import "MEKCombinedSearchResultsViewController.h"
 
 @interface MEKSearchViewController () <UISearchResultsUpdating, UISearchBarDelegate>
 
@@ -18,6 +18,8 @@
 @property (nonatomic, copy) NSString *query;
 @property (nonatomic, readonly) NSPredicate *predicate;
 @property (nonatomic, readonly) NSArray<NSString*> *filteredQueries;
+
+@property (nonatomic, strong) MEKCombinedSearchResultsViewController *resultsViewController;
 
 @end
 
@@ -45,6 +47,7 @@
 - (void)setQuery:(NSString *)query
 {
     self.searchController.searchBar.text = query;
+    self.searchController.active = YES;
 }
 
 - (NSString *)query
@@ -95,10 +98,17 @@
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 
-    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    self.resultsViewController = [[MEKCombinedSearchResultsViewController alloc] init];
+
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:self.resultsViewController];
     searchController.searchResultsUpdater = self;
+
     searchController.searchBar.delegate = self;
     searchController.searchBar.placeholder = @"Search by videos";
+    searchController.searchBar.scopeButtonTitles = @[@"Global", @"Local"];
+    searchController.searchBar.selectedScopeButtonIndex = 1;
+    searchController.searchBar.showsScopeBar = NO;
+
     searchController.dimsBackgroundDuringPresentation = NO;
     self.navigationItem.searchController = searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
@@ -110,8 +120,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.searchController.active = NO;
-    [self.tableView reloadData];
+//    self.searchController.active = NO;
+//    [self.tableView reloadData];
 }
 
 #pragma mark - UITableViewDataSource
@@ -155,7 +165,15 @@
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    [self p_openResultsControllerWithQuery:self.query];
+    [searchBar resignFirstResponder];
+
+    [self p_addSearchForQuery:self.query];
+    [self p_updateResultsControllerWithSearchBar:searchBar];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope
+{
+    [self p_updateResultsControllerWithSearchBar:searchBar];
 }
 
 #pragma mark - UISearchResultsUpdating
@@ -163,9 +181,32 @@
 - (void)updateSearchResultsForSearchController:(nonnull UISearchController *)searchController
 {
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+
+    if (searchController.searchBar.selectedScopeButtonIndex == 0)
+    {
+        self.resultsViewController.view.hidden = YES;
+    }
+
+    if (searchController.searchBar.selectedScopeButtonIndex == 1)
+    {
+        [self p_updateResultsControllerWithSearchBar:searchController.searchBar];
+    }
 }
 
 #pragma mark - Private
+
+- (void)p_updateResultsControllerWithSearchBar: (UISearchBar *)searchBar
+{
+    if (self.query.length == 0)
+    {
+        self.resultsViewController.view.hidden = YES;
+        return;
+    }
+
+    self.resultsViewController.view.hidden = NO;
+    self.resultsViewController.currentType = searchBar.selectedScopeButtonIndex == 0 ? MEKResultsGlobal : MEKResultsLocal;
+    self.resultsViewController.query = self.query;
+}
 
 - (void)p_removeSearchForQuery: (NSString *) query
 {
@@ -192,15 +233,6 @@
     {
         [self.delegate searchViewController:self didAddQuery:query];
     }
-}
-
-- (void)p_openResultsControllerWithQuery: (NSString *) query
-{
-    [self p_addSearchForQuery:query];
-    MEKYouTubeAPI *youtubeAPI = [MEKYouTubeAPI new];
-    MEKSearchResultsViewController *resultsController = [[MEKSearchResultsViewController alloc] initWithAPI:youtubeAPI andQuery:query];
-
-    [self.navigationController pushViewController:resultsController animated:YES];
 }
 
 - (void)p_removeAllPressed: (id) sender

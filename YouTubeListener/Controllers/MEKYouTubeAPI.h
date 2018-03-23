@@ -27,5 +27,6 @@ typedef NS_ENUM(NSUInteger, MEKYouTubeSearchType)
 
 - (void)searchVideosForQuery: (NSString *)query searchType: (MEKYouTubeSearchType) type maxResults: (NSUInteger) results pageToken: (NSString*) pageToken;
 - (void)loadDataForVideos: (NSArray*)videoIds;
+- (void)cancel;
 
 @end

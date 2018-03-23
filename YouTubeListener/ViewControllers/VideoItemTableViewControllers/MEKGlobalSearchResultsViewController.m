@@ -1,48 +1,46 @@
 //
-//  MEKSearchResultsViewController.m
+//  MEKGlobalSearchResultsViewController.m
 //  YouTubeListener
 //
 //  Created by Matvey Kravtsov on 22/02/2018.
 //  Copyright © 2018 Matvey Kravtsov. All rights reserved.
 //
 
-#import "MEKSearchResultsViewController.h"
+#import "MEKGlobalSearchResultsViewController.h"
 #import "MEKVideoItemTableViewController+Private.h"
 #import "MEKYouTubeAPI.h"
 
 static NSUInteger const MEKResultsCount = 10;
 
-@interface MEKSearchResultsViewController () <MEKYouTubeDelegate>
+@interface MEKGlobalSearchResultsViewController () <MEKYouTubeDelegate>
 
-@property (nonatomic, strong) MEKYouTubeAPI *youtubeAPI;
-@property (nonatomic, copy) NSString *query;
 @property (nonatomic, copy) NSString *nextPageToken;
 @property (nonatomic, copy) NSArray <NSDictionary *> *jsonVideoItems;
 
 @end
 
-@implementation MEKSearchResultsViewController
+@implementation MEKGlobalSearchResultsViewController
 
 #pragma mark - init
 
-- (instancetype)initWithAPI: (MEKYouTubeAPI*) youtubeAPI andQuery:(NSString *)query
+- (instancetype)init
 {
     self = [super init];
     if (self)
     {
-        _query = [query copy];
-
-        _youtubeAPI = youtubeAPI;
+        _youtubeAPI = [[MEKYouTubeAPI alloc] init];
         _youtubeAPI.delegate = self;
-
-        _nextPageToken = @"";
-        _jsonVideoItems = @[];
-        super.videoItems = @[];
     }
     return self;
 }
 
-#pragma mark - MEKVideoItemDelegate
+- (void)setQuery:(NSString *)query
+{
+    super.query = [query copy];
+    [self p_reset];
+}
+
+#pragma mark - MEKVideoItemActionProtocol
 
 - (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
 {
@@ -53,20 +51,16 @@ static NSUInteger const MEKResultsCount = 10;
 
 - (void)updateData
 {
+    [self.youtubeAPI cancel];
     [self.youtubeAPI searchVideosForQuery:self.query searchType:MEKYouTubeSearchQuery maxResults:MEKResultsCount pageToken:self.nextPageToken];
 }
 
 #pragma mark - UIViewController
 
-- (NSString *)title
-{
-    return self.query;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self updateData];
+    [self p_reset];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -74,6 +68,7 @@ static NSUInteger const MEKResultsCount = 10;
     [super viewWillAppear:animated];
     [self p_checkVideos];
 }
+
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -110,6 +105,16 @@ static NSUInteger const MEKResultsCount = 10;
 }
 
 #pragma mark - Private
+
+- (void)p_reset
+{
+    self.nextPageToken = @"";
+    self.jsonVideoItems = @[];
+    self.videoItems = @[];
+    [self.tableView reloadData];
+
+    [self updateData];
+}
 
 - (void)p_checkVideos
 {

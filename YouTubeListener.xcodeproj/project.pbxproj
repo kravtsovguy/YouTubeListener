@@ -35,7 +35,7 @@
 		BA753A4E203B4A2F00EC2A2C /* MEKYouTubeAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A4D203B4A2F00EC2A2C /* MEKYouTubeAPI.m */; };
 		BA753A54203D8A5800EC2A2C /* MEKSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A53203D8A5700EC2A2C /* MEKSearchViewController.m */; };
 		BA753A57203EEBC300EC2A2C /* MEKLoaderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A56203EEBC300EC2A2C /* MEKLoaderTableViewCell.m */; };
-		BA753A5A203F12E600EC2A2C /* MEKSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A59203F12E600EC2A2C /* MEKSearchResultsViewController.m */; };
+		BA753A5A203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A59203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m */; };
 		BA753A5D20404A8100EC2A2C /* MEKCachedSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A5C20404A8100EC2A2C /* MEKCachedSearchViewController.m */; };
 		BA8F07412010D937005FA2E6 /* UIViewController+VideoItemActions.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8F07402010D937005FA2E6 /* UIViewController+VideoItemActions.m */; };
 		BA9035052055301D00191D0A /* MEKLibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA9035042055301D00191D0A /* MEKLibraryViewController.m */; };
@@ -50,6 +50,9 @@
 		BAB56F21200E8BCD000DF5C6 /* MEKRecentVideoItemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F20200E8BCD000DF5C6 /* MEKRecentVideoItemTableViewController.m */; };
 		BAB56F31200EAA6D000DF5C6 /* MEKWebVideoLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB56F30200EAA6D000DF5C6 /* MEKWebVideoLoader.m */; };
 		BAB8154D205D461900767A4B /* MEKCompletePlaylistsController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB8154C205D461900767A4B /* MEKCompletePlaylistsController.m */; };
+		BAB81551205E567500767A4B /* MEKLocalSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB81550205E567500767A4B /* MEKLocalSearchResultsViewController.m */; };
+		BAB81557205FC8D700767A4B /* MEKCombinedSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB81556205FC8D700767A4B /* MEKCombinedSearchResultsViewController.m */; };
+		BAB8155A2060027D00767A4B /* MEKResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB815592060027D00767A4B /* MEKResultsViewController.m */; };
 		BABD356B1FDEAF740036B27F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356A1FDEAF740036B27F /* AppDelegate.m */; };
 		BABD356E1FDEAF740036B27F /* MEKVideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BABD356D1FDEAF740036B27F /* MEKVideoPlayerViewController.m */; };
 		BABD35741FDEAF740036B27F /* YouTubeListener.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BABD35721FDEAF740036B27F /* YouTubeListener.xcdatamodeld */; };
@@ -140,8 +143,8 @@
 		BA753A53203D8A5700EC2A2C /* MEKSearchViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKSearchViewController.m; sourceTree = "<group>"; };
 		BA753A55203EEBC300EC2A2C /* MEKLoaderTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKLoaderTableViewCell.h; sourceTree = "<group>"; };
 		BA753A56203EEBC300EC2A2C /* MEKLoaderTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKLoaderTableViewCell.m; sourceTree = "<group>"; };
-		BA753A58203F12E600EC2A2C /* MEKSearchResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKSearchResultsViewController.h; sourceTree = "<group>"; };
-		BA753A59203F12E600EC2A2C /* MEKSearchResultsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKSearchResultsViewController.m; sourceTree = "<group>"; };
+		BA753A58203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKGlobalSearchResultsViewController.h; sourceTree = "<group>"; };
+		BA753A59203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKGlobalSearchResultsViewController.m; sourceTree = "<group>"; };
 		BA753A5B20404A8100EC2A2C /* MEKCachedSearchViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKCachedSearchViewController.h; sourceTree = "<group>"; };
 		BA753A5C20404A8100EC2A2C /* MEKCachedSearchViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKCachedSearchViewController.m; sourceTree = "<group>"; };
 		BA8F073F2010D937005FA2E6 /* UIViewController+VideoItemActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+VideoItemActions.h"; sourceTree = "<group>"; };
@@ -172,6 +175,12 @@
 		BAB8154B205D461900767A4B /* MEKCompletePlaylistsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKCompletePlaylistsController.h; sourceTree = "<group>"; };
 		BAB8154C205D461900767A4B /* MEKCompletePlaylistsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKCompletePlaylistsController.m; sourceTree = "<group>"; };
 		BAB8154E205D482A00767A4B /* MEKTableViewControllerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKTableViewControllerProtocol.h; sourceTree = "<group>"; };
+		BAB8154F205E567500767A4B /* MEKLocalSearchResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKLocalSearchResultsViewController.h; sourceTree = "<group>"; };
+		BAB81550205E567500767A4B /* MEKLocalSearchResultsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKLocalSearchResultsViewController.m; sourceTree = "<group>"; };
+		BAB81555205FC8D700767A4B /* MEKCombinedSearchResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKCombinedSearchResultsViewController.h; sourceTree = "<group>"; };
+		BAB81556205FC8D700767A4B /* MEKCombinedSearchResultsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKCombinedSearchResultsViewController.m; sourceTree = "<group>"; };
+		BAB815582060027D00767A4B /* MEKResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKResultsViewController.h; sourceTree = "<group>"; };
+		BAB815592060027D00767A4B /* MEKResultsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKResultsViewController.m; sourceTree = "<group>"; };
 		BABD35661FDEAF740036B27F /* YouTubeListener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeListener.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABD35691FDEAF740036B27F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BABD356A1FDEAF740036B27F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -521,8 +530,14 @@
 				BA3376022059ADE900CAFA46 /* MEKHistoryVideoItemTableViewController.m */,
 				BA9035032055301D00191D0A /* MEKLibraryViewController.h */,
 				BA9035042055301D00191D0A /* MEKLibraryViewController.m */,
-				BA753A58203F12E600EC2A2C /* MEKSearchResultsViewController.h */,
-				BA753A59203F12E600EC2A2C /* MEKSearchResultsViewController.m */,
+				BA753A58203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.h */,
+				BA753A59203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m */,
+				BAB8154F205E567500767A4B /* MEKLocalSearchResultsViewController.h */,
+				BAB81550205E567500767A4B /* MEKLocalSearchResultsViewController.m */,
+				BAB81555205FC8D700767A4B /* MEKCombinedSearchResultsViewController.h */,
+				BAB81556205FC8D700767A4B /* MEKCombinedSearchResultsViewController.m */,
+				BAB815582060027D00767A4B /* MEKResultsViewController.h */,
+				BAB815592060027D00767A4B /* MEKResultsViewController.m */,
 			);
 			path = VideoItemTableViewControllers;
 			sourceTree = "<group>";
@@ -794,6 +809,7 @@
 				BA33760D205AB1FF00CAFA46 /* MEKPlaylistActionController.m in Sources */,
 				BAB56F1E200E87CA000DF5C6 /* MEKModalPlaylistsViewController.m in Sources */,
 				BAF1F3AD20322A3400C5918C /* MEKYouTubeServerParser.m in Sources */,
+				BAB81557205FC8D700767A4B /* MEKCombinedSearchResultsViewController.m in Sources */,
 				BA8F07412010D937005FA2E6 /* UIViewController+VideoItemActions.m in Sources */,
 				BA70A6812005FEE2002AE1B4 /* VideoItemMO+CoreDataProperties.m in Sources */,
 				BA4942D2200B3A33007D8819 /* UIImage+Cache.m in Sources */,
@@ -838,13 +854,15 @@
 				BA05C85D2040612700F18DB3 /* MEKVideoItemTableViewController.m in Sources */,
 				BA753A54203D8A5800EC2A2C /* MEKSearchViewController.m in Sources */,
 				BAD976E5205D2942000BFD7C /* MEKPlaylistActionController+Alerts.m in Sources */,
-				BA753A5A203F12E600EC2A2C /* MEKSearchResultsViewController.m in Sources */,
+				BA753A5A203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m in Sources */,
 				BA49AB522000A8CE00D6578D /* MEKPlayerController.m in Sources */,
 				BAF16FEC204BEBCF00D0C9FA /* MEKAsyncCombinedCache.m in Sources */,
 				BAF1F39F20307D0200C5918C /* MEKY2MateParser.m in Sources */,
 				BAB56F15200BB7AB000DF5C6 /* MEKDownloadController.m in Sources */,
 				BA70A6682005F442002AE1B4 /* MEKPlaylistTableViewCell.m in Sources */,
+				BAB81551205E567500767A4B /* MEKLocalSearchResultsViewController.m in Sources */,
 				BAACE6482016C78900432BF2 /* MEKVideoItemDownloadController.m in Sources */,
+				BAB8155A2060027D00767A4B /* MEKResultsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

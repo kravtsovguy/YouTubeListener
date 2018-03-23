@@ -92,6 +92,11 @@ typedef NS_ENUM(NSUInteger, MEKYouTubeActionType)
     [self loadDataForAction:action withParams:params];
 }
 
+- (void)cancel
+{
+    [self.downloadController cancelAllDownloads];
+}
+
 - (NSNumber*)parseISO8601Time:(NSString*)duration
 {
     NSInteger hours = 0;
