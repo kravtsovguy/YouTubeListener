@@ -117,13 +117,6 @@
     self.searchController = searchController;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-//    self.searchController.active = NO;
-//    [self.tableView reloadData];
-}
-
 #pragma mark - UITableViewDataSource
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
@@ -136,6 +129,11 @@
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return self.filteredQueries.count;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @"History";
 }
 
 #pragma mark - UITableViewDelegate
@@ -180,7 +178,7 @@
 
 - (void)updateSearchResultsForSearchController:(nonnull UISearchController *)searchController
 {
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView reloadData];
 
     if (searchController.searchBar.selectedScopeButtonIndex == 0)
     {
