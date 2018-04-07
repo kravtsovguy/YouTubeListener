@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MEKPropertyDownloadControllerProtocol.h"
+#import "MEKPropertyManagedObjectContextProtocol.h"
 
 @class VideoItemMO;
-@class MEKVideoItemDownloadController;
 
-static const CGFloat MEKPlayerViewHeightSizeMaximized = 320;
-static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;
+extern CGFloat const MEKPlayerViewHeightSizeMaximized;
+extern CGFloat const MEKPlayerViewHeightSizeMinimized;
 
 @protocol MEKVideoPlayerViewControllerDelegate <NSObject>
 
@@ -22,13 +23,11 @@ static const CGFloat MEKPlayerViewHeightSizeMinimized = 60;
 
 @end
 
-@interface MEKVideoPlayerViewController : UIViewController
+@interface MEKVideoPlayerViewController : UIViewController <MEKPropertyDownloadControllerProtocol, MEKPropertyManagedObjectContextProtocol>
 
 @property (nonatomic, weak) id<MEKVideoPlayerViewControllerDelegate> delegate;
-@property (nonatomic, readonly) MEKVideoItemDownloadController *downloadController;
 
 - (instancetype)initWithVideoItem: (VideoItemMO*) item;
-
 - (void)minimizeWithDuration: (NSTimeInterval) duration;
 - (void)maximizeWithDuration: (NSTimeInterval) duration;
 

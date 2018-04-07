@@ -77,12 +77,12 @@
         _addButton = [UIButton new];
         [_addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
         _addButton.tintColor = lightBlack;
-        [_addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [_addButton addTarget:self action:@selector(p_addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:_addButton];
         
         _downloadButton = [[MEKDowloadButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
         _downloadButton.tintColor = lightBlack;
-        [_downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [_downloadButton addTarget:self action:@selector(p_downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:_downloadButton];
         
         _downloadInfoLabel = [UILabel new];
@@ -218,12 +218,12 @@
 
 #pragma mark - Selectors
 
-- (void)addButtonPressed:(UIButton *)button
+- (void)p_addButtonPressed:(UIButton *)button
 {
     [self.videoItemActionController videoItemAddToLibrary:self.item];
 }
 
-- (void)downloadButtonPressed:(UIButton *)button
+- (void)p_downloadButtonPressed:(UIButton *)button
 {
     if (!self.downloadButton.isLoading)
     {

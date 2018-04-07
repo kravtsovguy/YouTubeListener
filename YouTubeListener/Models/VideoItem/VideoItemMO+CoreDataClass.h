@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-static NSString * _Nonnull const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
+extern NSString * _Nonnull const VideoItemHTTPLiveStreaming;
 
 typedef NS_ENUM (NSUInteger, VideoItemQuality) {
     VideoItemQualitySmall144  = 17,
@@ -23,23 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PlaylistMO;
 @class VideoItemMO;
-
-@protocol MEKVideoItemDelegate <NSObject>
-
-@optional
-- (void)videoItemAddToLibrary: (VideoItemMO*) item;
-- (void)videoItemRemoveFromLibrary: (VideoItemMO*) item;
-- (void)videoItemRemove: (VideoItemMO*) item;
-- (void)videoItemRemoveDownload: (VideoItemMO*) item;
-- (void)videoItemOpenURL: (VideoItemMO*) item;
-- (void)videoItem: (VideoItemMO*) item removeFromPlaylist: (PlaylistMO*) playlist;
-- (void)videoItemAddToPlaylist: (VideoItemMO*) item;
-- (void)videoItem: (VideoItemMO*) item addToPlaylist: (PlaylistMO*) playlist;
-- (void)videoItemDownload: (VideoItemMO*) item;
-- (void)videoItem: (VideoItemMO*) item downloadWithQuality: (VideoItemQuality) quality;
-- (void)videoItemCancelDownload: (VideoItemMO*) item;
-
-@end
 
 @interface VideoItemMO : NSManagedObject
 

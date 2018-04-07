@@ -10,7 +10,6 @@
 #import "MEKVideoItemActionProtocol.h"
 #import "MEKPlaylistActionProtocol.h"
 
-@class MEKAlertController;
 @class MEKVideoItemActionController;
 @class MEKPlaylistActionController;
 

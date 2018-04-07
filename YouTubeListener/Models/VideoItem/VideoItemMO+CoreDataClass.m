@@ -9,6 +9,9 @@
 
 #import "VideoItemMO+CoreDataClass.h"
 
+
+NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
+
 @interface VideoItemMO()
 
 - (NSURL*)pathUrlWithQuality: (VideoItemQuality) quality;

@@ -8,7 +8,7 @@
 
 #import "MEKCachedSearchViewController.h"
 
-static NSString * const MEKSearchQueriesDefaults = @"searchQueries";
+static NSString *const MEKSearchQueriesDefaults = @"searchQueries";
 
 @interface MEKCachedSearchViewController () <MEKSearchViewControllerDelegate>
 

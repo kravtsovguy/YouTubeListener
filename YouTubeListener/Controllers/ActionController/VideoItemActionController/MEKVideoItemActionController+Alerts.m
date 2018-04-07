@@ -25,7 +25,7 @@
     }
     else
     {
-        [self.downloadLoader loadVideoItem:item];
+        [self.qualityLoader loadVideoItem:item];
     }
 }
 
@@ -120,7 +120,7 @@
     [qualities enumerateObjectsUsingBlock:^(NSNumber * _Nonnull qualityNumber, NSUInteger idx, BOOL * _Nonnull stop) {
         VideoItemQuality quality = qualityNumber.integerValue;
         NSString *qualityString = [VideoItemMO getQualityString:quality];
-        NSString *title = [NSString stringWithFormat:@"%@%@", qualityString, currentQuality == quality ? @" (Currend)" : @""];
+        NSString *title = [NSString stringWithFormat:@"%@%@", qualityString, currentQuality == quality ? @" (Current)" : @""];
 
         [actions addObject: [self.alertController actionWithTitle:title handler:^{
             [self.delegate videoItem:item playWithQuality:quality];

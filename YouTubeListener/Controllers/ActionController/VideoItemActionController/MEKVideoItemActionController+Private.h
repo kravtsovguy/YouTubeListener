@@ -11,7 +11,6 @@
 
 @interface MEKVideoItemActionController () <MEKWebVideoLoaderOutputProtocol>
 
-@property (nonatomic, strong) MEKWebVideoLoader *downloadLoader;
-@property (nonatomic, strong) MEKWebVideoLoader *playLoader;
+@property (nonatomic, strong) MEKWebVideoLoader *qualityLoader;
 
 @end

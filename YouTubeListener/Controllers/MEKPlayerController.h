@@ -10,13 +10,15 @@
 
 @class VideoItemMO;
 
-static const NSTimeInterval MEKPlayerViewAnimationDuration = 0.4;
+extern NSTimeInterval const MEKPlayerViewAnimationDuration;
+
 
 typedef NS_ENUM (NSInteger, MEKPlayerVisibleState) {
     MEKPlayerVisibleStateNone = 0,
     MEKPlayerVisibleStateMinimized = 1,
     MEKPlayerVisibleStateMaximized = 2,
 };
+
 
 @interface MEKPlayerController : NSObject
 

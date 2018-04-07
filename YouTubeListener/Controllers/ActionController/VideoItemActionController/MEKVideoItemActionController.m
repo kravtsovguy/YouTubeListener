@@ -21,11 +21,8 @@
     self = [super init];
     if (self)
     {
-        _downloadLoader = [[MEKWebVideoLoader alloc] init];
-        _downloadLoader.output = self;
-
-        _playLoader = [[MEKWebVideoLoader alloc] init];
-        _playLoader.output = self;
+        _qualityLoader = [[MEKWebVideoLoader alloc] init];
+        _qualityLoader.output = self;
     }
     return self;
 }
@@ -41,12 +38,6 @@
 
 - (void)videoItemPlay:(VideoItemMO *)item
 {
-    if (!item.urls && !item.downloadedURLs)
-    {
-        [self.playLoader loadVideoItem:item];
-        return;
-    }
-
     [item addToHistoryForUserDefaults:self.userDefaults];
 
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
@@ -150,14 +141,9 @@
 
 - (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
-    if (loader == self.downloadLoader)
+    if (loader == self.qualityLoader)
     {
         [self showDownloadQualityDialog:item];
-    }
-
-    if (loader == self.playLoader)
-    {
-        [self videoItemPlay:item];
     }
 }
 

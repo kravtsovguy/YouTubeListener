@@ -10,6 +10,10 @@
 #import "AppDelegate.h"
 #import "MEKVideoPlayerViewController.h"
 
+
+NSTimeInterval const MEKPlayerViewAnimationDuration = 0.4;
+
+
 @interface MEKPlayerController () <UIScrollViewDelegate, MEKVideoPlayerViewControllerDelegate>
 
 @property (nonatomic, strong) UIView *overlayView;
@@ -25,6 +29,7 @@
 - (void)closePlayer;
 
 @end
+
 
 @implementation MEKPlayerController
 

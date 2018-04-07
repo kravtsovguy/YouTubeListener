@@ -10,27 +10,31 @@
 #import "MEKWebVideoLoader.h"
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
-#import <Masonry/Masonry.h>
-#import "MEKModalPlaylistsViewController.h"
 #import "UIImage+Cache.h"
-#import "UIViewController+VideoItemActions.h"
 #import "AppDelegate.h"
 #import "VideoItemMO+CoreDataClass.h"
-#import "PlaylistMO+CoreDataClass.h"
 #import "MEKVideoItemDownloadController.h"
+#import "MEKCombinedActionController.h"
+#import "MEKVideoItemActionController+Alerts.h"
+
+#import <Masonry/Masonry.h>
 
 @import MediaPlayer;
 
 
-static const CGFloat MEKPlayerViewVideoRatio = 16.0f / 9.0f;
-static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
+CGFloat const MEKPlayerViewHeightSizeMaximized = 320;
+CGFloat const MEKPlayerViewHeightSizeMinimized = 60;
+CGFloat const MEKPlayerViewVideoRatio = 16.0f / 9.0f;
+VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
-@interface MEKVideoPlayerViewController () <MEKWebVideoLoaderOutputProtocol, MEKVideoItemDelegate, MEKVideoItemDownloadControllerDelegate, MEKModalPlaylistsViewControllerDelegate>
+@interface MEKVideoPlayerViewController () <MEKVideoItemActionProtocol, MEKVideoItemDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol>
 
+@property (nonatomic, strong) MEKCombinedActionController *actionController;
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
 @property (nonatomic, strong) MEKWebVideoLoader *loader;
 
 
+@property (nonatomic, copy) NSDictionary *itemJSON;
 @property (nonatomic, strong) VideoItemMO *item;
 @property (nonatomic, assign) BOOL maximized;
 @property (nonatomic, assign) VideoItemQuality quality;
@@ -43,9 +47,9 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 @property (nonatomic, strong) UILabel *authorLabel;
 @property (nonatomic, strong) UIButton *closeButton;
 @property (nonatomic, strong) UIButton *addButton;
-@property (nonatomic, strong) MEKDowloadButton *downloadButton;
 @property (nonatomic, strong) UIButton *qualityButton;
-@property (nonatomic, strong) UIButton *youtubeButton;
+@property (nonatomic, strong) MEKDowloadButton *downloadButton;
+@property (nonatomic, strong) UIButton *moreButton;
 
 @end
 
@@ -58,6 +62,10 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     self = [super init];
     if (self)
     {
+        _actionController = [[MEKCombinedActionController alloc] init];
+        _actionController.videoItemActionController.delegate = self;
+
+        _itemJSON = [item toDictionary];
         _item = item;
         _quality = MEKPlayerViewDefaultQuality;
         
@@ -75,9 +83,15 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 
 - (MEKVideoItemDownloadController *)downloadController
 {
+    return self.actionController.downloadController;
+}
+
+- (NSManagedObjectContext *)coreDataContext
+{
     UIApplication *application = [UIApplication sharedApplication];
     AppDelegate *delegate = (AppDelegate*)application.delegate;
-    return delegate.downloadController;
+
+    return delegate.persistentContainer.viewContext;
 }
 
 #pragma mark - UIViewController
@@ -102,33 +116,33 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     [self.closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
     self.closeButton.tintColor = lightBlack;
     self.closeButton.imageEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
-    [self.closeButton addTarget:self action:@selector(closeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.closeButton addTarget:self action:@selector(p_closeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.closeButton];
     
     self.addButton = [UIButton new];
     [self.addButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
     self.addButton.tintColor = lightBlack;
-    [self.addButton addTarget:self action:@selector(addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.addButton addTarget:self action:@selector(p_addButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.addButton];
-    
+
     self.downloadButton = [MEKDowloadButton new];
     self.downloadButton.tintColor = lightBlack;
-    [self.downloadButton addTarget:self action:@selector(downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.downloadButton addTarget:self action:@selector(p_downloadButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.downloadButton];
     
     self.qualityButton = [UIButton new];
     [self.qualityButton setImage:[UIImage imageNamed:@"gear"] forState:UIControlStateNormal];
     self.qualityButton.tintColor = lightBlack;
-    [self.qualityButton addTarget:self action:@selector(qualityButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.qualityButton addTarget:self action:@selector(p_qualityButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.qualityButton];
     
-    self.youtubeButton = [UIButton new];
-    [self.youtubeButton setImage:[UIImage imageNamed:@"youtube"] forState:UIControlStateNormal];
-    self.youtubeButton.tintColor = lightBlack;
-    [self.youtubeButton addTarget:self action:@selector(youtubeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.youtubeButton];
+    self.moreButton = [UIButton new];
+    [self.moreButton setImage:[UIImage imageNamed:@"more"] forState:UIControlStateNormal];
+    self.moreButton.tintColor = lightBlack;
+    [self.moreButton addTarget:self action:@selector(p_moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.moreButton];
     
-    [self setButtonsHidden:YES];
+    [self p_setButtonsHidden:YES];
     
     UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
@@ -137,7 +151,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     self.blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view insertSubview:self.blurEffectView atIndex:0];
     
-    UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];
+    UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(p_backgroundTapped:)];
     [self.view addGestureRecognizer:singleTapRecognizer];
     
     self.playerController = [MEKPlayerViewController new];
@@ -151,10 +165,10 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     
     self.loader = [MEKWebVideoLoader new];
     self.loader.output = self;
-    
-    BOOL isSetUI = [self setUIwithVideoItem:self.item];
-    BOOL isSetVideo = [self setVideoWithQuality:self.quality];
-    
+
+    BOOL isSetUI = [self p_setUIwithVideoItem:self.item];
+    BOOL isSetVideo = [self p_setVideoWithQuality:self.quality];
+
     if (!isSetUI || !isSetVideo)
     {
         [self.loader loadVideoItem:self.item];
@@ -164,9 +178,9 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+
     self.downloadController.delegate = self;
-    [self setUIwithVideoItem:self.item];
+    [self p_setUIwithVideoItem:self.item];
 }
 
 - (void)updateViewConstraints
@@ -198,7 +212,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
         {
             make.top.equalTo(self.titleLabel.mas_bottom).with.offset(15);
             make.left.equalTo(self.view.mas_left).with.offset(10);
-            make.right.equalTo(self.youtubeButton.mas_left).with.offset(-10);
+            make.right.equalTo(self.addButton.mas_left).with.offset(-10);
         }
         else
         {
@@ -224,21 +238,28 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
         make.height.equalTo(@(MEKPlayerViewHeightSizeMinimized));
     }];
     
-    [self.qualityButton mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.addButton.mas_top);
-        make.right.equalTo(self.addButton.mas_left).with.offset(-20);
-        make.width.equalTo(@30);
-        make.height.equalTo(@30);
-    }];
-    
     [self.addButton mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.downloadButton.mas_top);
-        make.right.equalTo(self.downloadButton.mas_left).with.offset(-20);
+        make.top.equalTo(self.qualityButton.mas_top);
+        make.right.equalTo(self.qualityButton.mas_left).with.offset(-20);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
+
+    [self.downloadButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.qualityButton.mas_top);
+        make.right.equalTo(self.qualityButton.mas_left).with.offset(-20);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
+
+    [self.qualityButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.moreButton.mas_top);
+        make.right.equalTo(self.moreButton.mas_left).with.offset(-20);
         make.width.equalTo(@30);
         make.height.equalTo(@30);
     }];
     
-    [self.downloadButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+    [self.moreButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         if (self.maximized)
         {
             make.top.equalTo(self.titleLabel.mas_bottom).with.offset(10);
@@ -247,15 +268,8 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
         {
             make.top.equalTo(self.playerController.view.mas_bottom).with.offset(10);
         }
-        
+
         make.right.equalTo(self.view.mas_right).with.offset(-20);
-        make.width.equalTo(@30);
-        make.height.equalTo(@30);
-    }];
-    
-    [self.youtubeButton mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.qualityButton.mas_top);
-        make.right.equalTo(self.qualityButton.mas_left).with.offset(-20);
         make.width.equalTo(@30);
         make.height.equalTo(@30);
     }];
@@ -280,7 +294,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     } completion:nil];
     
     [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        [self maximizeUI];
+        [self p_maximizeUI];
     } completion:nil];
 }
 
@@ -299,21 +313,21 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     } completion:nil];
     
     [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations: ^{
-        [self minimizeUI];
+        [self p_minimizeUI];
     } completion:nil];
 }
 
 #pragma mark - Private
 
-- (void)setButtonsHidden: (BOOL) hidden
+- (void)p_setButtonsHidden: (BOOL) hidden
 {
     self.downloadButton.hidden = hidden;
     self.addButton.hidden = hidden;
     self.qualityButton.hidden = hidden;
-    self.youtubeButton.hidden = hidden;
+    self.moreButton.hidden = hidden;
 }
 
-- (BOOL)setUIwithVideoItem: (VideoItemMO*) item
+- (BOOL)p_setUIwithVideoItem: (VideoItemMO*) item
 {
     if (!item)
     {
@@ -331,13 +345,17 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
                                               MPMediaItemPropertyArtist : item.author
                                               };
         
-        [self setButtonsHidden:NO];
+        [self p_setButtonsHidden:NO];
     }
     else
     {
         return NO;
     }
-    
+
+    BOOL isAddedToLibrary = [item addedToLibrary:self.coreDataContext];
+    self.addButton.hidden = isAddedToLibrary;
+    self.downloadButton.hidden = !isAddedToLibrary;
+
     double progress = [self.downloadController progressForVideoItem:item];
     if ([item hasDownloaded])
     {
@@ -361,7 +379,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     return YES;
 }
 
-- (BOOL)setVideoWithQuality: (VideoItemQuality) quality
+- (BOOL)p_setVideoWithQuality: (VideoItemQuality) quality
 {
     if (!self.item)
     {
@@ -392,7 +410,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     return YES;
 }
 
-- (void)maximizeUI
+- (void)p_maximizeUI
 {
     self.view.layer.cornerRadius = 10;
     self.view.backgroundColor = [UIColor whiteColor];
@@ -403,7 +421,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
 }
 
-- (void)minimizeUI
+- (void)p_minimizeUI
 {
     self.view.layer.cornerRadius = 0;
     self.view.backgroundColor = [UIColor clearColor];
@@ -414,9 +432,7 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     self.authorLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightLight];
 }
 
-#pragma mark - Selectors
-
-- (void)backgroundTapped:(UIGestureRecognizer *)gestureRecognizer
+- (void)p_backgroundTapped:(UIGestureRecognizer *)gestureRecognizer
 {
     if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerOpen)])
     {
@@ -424,45 +440,34 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     }
 }
 
-- (void)youtubeButtonPressed:(UIButton *)button
+- (void)p_moreButtonPressed:(UIButton *)button
 {
-    UIApplication *application = [UIApplication sharedApplication];
-    NSURL *url = self.item.originURL;
-    [application openURL:url options:@{} completionHandler:^(BOOL success) {
-        [self.playerController.player pause];
-    }];
+    [self.actionController.videoItemActionController showActionDialog:self.item];
 }
 
-- (void)qualityButtonPressed:(UIButton *)button
+- (void)p_qualityButtonPressed:(UIButton *)button
 {
-    [self vi_showQualityDialogForCurrentQuality:self.quality handler:^(VideoItemQuality quality) {
-        if (self.quality == quality)
-        {
-            return;
-        }
-
-        [self setVideoWithQuality:quality];
-    }];
+    [self.actionController.videoItemActionController showPlayQualityDialog:self.item withCurrentQuality:self.quality];
 }
 
-- (void)addButtonPressed:(UIButton *)button
+- (void)p_addButtonPressed:(UIButton *)button
 {
-    [self videoItemAddToPlaylist:self.item];
+    [self.actionController.videoItemActionController videoItemAddToLibrary:self.item];
 }
 
-- (void)downloadButtonPressed:(UIButton *)button
+- (void)p_downloadButtonPressed:(MEKDowloadButton *)downloadButton
 {
-    if (!self.downloadButton.isLoading)
+    if (!downloadButton.isLoading)
     {
-        [self videoItemDownload:self.item];
+        [self.actionController.videoItemActionController showDownloadQualityDialog:self.item];
     }
     else
     {
-        [self videoItemCancelDownload:self.item];
+        [self.actionController.videoItemActionController videoItemCancelDownload:self.item];
     }
 }
 
-- (void)closeButtonPressed: (UIButton*) button
+- (void)p_closeButtonPressed: (UIButton*) button
 {
     if ([self.delegate respondsToSelector:@selector(videoPlayerViewControllerClosed)])
     {
@@ -470,41 +475,48 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     }
 }
 
+#pragma mark - MEKVideoItemActionProtocol
+
+- (void)videoItemAddToLibrary:(VideoItemMO *)item
+{
+    [self p_setUIwithVideoItem:item];
+}
+
+- (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
+{
+    item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
+    [item setupWithDictionary:self.itemJSON];
+    self.item = item;
+
+    [self p_setUIwithVideoItem:item];
+}
+
+- (void)videoItemRemoveDownload:(VideoItemMO *)item
+{
+    [self p_setUIwithVideoItem:item];
+}
+
+- (void)videoItem:(VideoItemMO *)item playWithQuality:(VideoItemQuality)quality
+{
+    if (self.quality == quality)
+    {
+        return;
+    }
+
+    if ([self p_setVideoWithQuality:quality])
+    {
+        return;
+    }
+
+    [self.loader loadVideoItem:self.item];
+}
+
 #pragma mark - MEKWebVideoLoaderOutputProtocol
 
 - (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
-    [self setUIwithVideoItem:self.item];
-    [self setVideoWithQuality:self.quality];
-}
-
-#pragma mark - MEKVideoItemDelegate
-
-- (void)videoItemAddToPlaylist:(VideoItemMO *)item
-{
-    [self vi_choosePlaylistForVideoItem:item];
-}
-
-- (void)videoItemAddToPlaylist:(VideoItemMO *)item playlist:(PlaylistMO *)playlist
-{
-    [playlist addVideoItem:item];
-}
-
-- (void)videoItemDownload: (VideoItemMO*) item
-{
-    [self vi_showDownloadingDialogForVideoItem:item handler:^(VideoItemQuality quality) {
-        [self videoItemDownload:item withQuality:quality];
-    }];
-}
-
-- (void)videoItemDownload:(VideoItemMO *)item withQuality:(VideoItemQuality)quality
-{
-    [self.downloadController downloadVideoItem:item withQuality:quality];
-}
-
-- (void)videoItemCancelDownload:(VideoItemMO *)item
-{
-    [self.downloadController cancelDownloadingVideoItem:item];
+    [self p_setUIwithVideoItem:self.item];
+    [self p_setVideoWithQuality:self.quality];
 }
 
 #pragma mark - MEKVideoItemDownloadControllerDelegate
@@ -525,22 +537,8 @@ static const VideoItemQuality MEKPlayerViewDefaultQuality = VideoItemQualityMedi
     {
         return;
     }
-    
-    if (error)
-    {
-        [self videoItemDownloadControllerProgress:0 forVideoItem:item];
-    }
-    else
-    {
-        [self videoItemDownloadControllerProgress:1 forVideoItem:item];
-    }
-}
 
-#pragma mark - MEKModalPlaylistsViewControllerDelegate
-
-- (void)modalPlaylistsViewControllerDidChoosePlaylist:(PlaylistMO *)playlist forVideoItem:(VideoItemMO *)item
-{
-    [self videoItemAddToPlaylist:item playlist:playlist];
+    [self videoItemDownloadControllerProgress:error ? 0 : 1 forVideoItem:item];
 }
 
 @end

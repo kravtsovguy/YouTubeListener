@@ -9,8 +9,8 @@
 #import "MEKYouTubeAPI.h"
 #import "MEKDownloadController.h"
 
-static NSString * const MEKYouTubeAPI_KEY = @"AIzaSyBSvhGaZjoGncHa_gs7jr7DliFPTrtq1do";
-static NSString * const MEKYouTubeAPI_BASE = @"https://www.googleapis.com/youtube/v3/";
+static NSString *const MEKYouTubeAPI_KEY = @"AIzaSyBSvhGaZjoGncHa_gs7jr7DliFPTrtq1do";
+static NSString *const MEKYouTubeAPI_BASE = @"https://www.googleapis.com/youtube/v3/";
 
 typedef NS_ENUM(NSUInteger, MEKYouTubeActionType)
 {
