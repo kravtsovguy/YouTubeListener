@@ -26,8 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItemMO : NSManagedObject
 
-+ (NSArray<NSNumber*>*)getAllQualities;
-+ (NSString*)getQualityString: (VideoItemQuality) quality;
++ (NSArray<NSNumber*>*)allQualities;
++ (NSString*)qualityString: (VideoItemQuality) quality;
 
 + (NSString*)entityName;
 
@@ -37,9 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Instance Accessors
 + (NSArray<VideoItemMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
-+ (VideoItemMO*)getVideoItemForURL: (NSURL*) videoURL withContext: (NSManagedObjectContext*) context;
-+ (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
-+ (NSArray<VideoItemMO*>*)getVideoItemsWithContext: (NSManagedObjectContext*) context;
++ (VideoItemMO*)videoItemForURL: (NSURL*) videoURL withContext: (NSManagedObjectContext*) context;
++ (VideoItemMO*)videoItemForId: (NSString*) videoId withContext: (NSManagedObjectContext*) context;
++ (NSArray<VideoItemMO*>*)videoItemsWithContext: (NSManagedObjectContext*) context;
 + (NSArray<VideoItemMO*>*)addedVideoItemsWithContext: (NSManagedObjectContext*) context;
 + (NSArray<VideoItemMO*>*)videoItemsFromJSON:(NSArray<NSDictionary *> *)videosJSON withContext: (NSManagedObjectContext*) context;
 

@@ -37,7 +37,7 @@
     UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                             style:UIAlertActionStyleCancel handler:nil];
     
-    for (NSNumber *quality in [VideoItemMO getAllQualities])
+    for (NSNumber *quality in [VideoItemMO allQualities])
     {
         NSNumber *size = item.sizes[quality];
         UIAlertAction *action = [self vi_createActionForQuality:quality.integerValue withSize:size handler:handler];
@@ -58,7 +58,7 @@
     UIAlertAction *cancedlAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                             style:UIAlertActionStyleCancel handler:nil];
     
-    for (NSNumber *quality in [VideoItemMO getAllQualities])
+    for (NSNumber *quality in [VideoItemMO allQualities])
     {
         UIAlertAction *action = [self vi_createActionForQuality:quality.integerValue withCurrentQuality:currentQuality handler:handler];
         [alert addAction:action];
@@ -73,7 +73,7 @@
 
 - (UIAlertAction*)vi_createActionForQuality: (VideoItemQuality) quality withSize: (NSNumber*) size handler:(void (^)(VideoItemQuality))handler;
 {
-    NSString *qualityString = [VideoItemMO getQualityString:quality];
+    NSString *qualityString = [VideoItemMO qualityString:quality];
     NSString *name = qualityString;
     
     if (![size isEqualToNumber:@(0)])
@@ -93,7 +93,7 @@
 
 - (UIAlertAction*)vi_createActionForQuality: (VideoItemQuality) quality withCurrentQuality: (VideoItemQuality) currentQuality handler:(void (^)(VideoItemQuality))handler;
 {
-    NSString *qualityString = [VideoItemMO getQualityString:quality];
+    NSString *qualityString = [VideoItemMO qualityString:quality];
     NSString *name = qualityString;
     if (currentQuality == quality)
     {

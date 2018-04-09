@@ -97,10 +97,10 @@
 {
     NSMutableArray *actions = @[].mutableCopy;
 
-    NSArray<NSNumber *> *qualities = [VideoItemMO getAllQualities];
+    NSArray<NSNumber *> *qualities = [VideoItemMO allQualities];
     [qualities enumerateObjectsUsingBlock:^(NSNumber * _Nonnull qualityNumber, NSUInteger idx, BOOL * _Nonnull stop) {
         VideoItemQuality quality = qualityNumber.integerValue;
-        NSString *qualityString = [VideoItemMO getQualityString:quality];
+        NSString *qualityString = [VideoItemMO qualityString:quality];
         NSNumber *size = item.sizes[qualityNumber];
         NSString *title = [NSString stringWithFormat:@"%@ (%.1f MB)", qualityString, size.doubleValue];
 
@@ -116,10 +116,10 @@
 {
     NSMutableArray *actions = @[].mutableCopy;
 
-    NSArray<NSNumber *> *qualities = [VideoItemMO getAllQualities];
+    NSArray<NSNumber *> *qualities = [VideoItemMO allQualities];
     [qualities enumerateObjectsUsingBlock:^(NSNumber * _Nonnull qualityNumber, NSUInteger idx, BOOL * _Nonnull stop) {
         VideoItemQuality quality = qualityNumber.integerValue;
-        NSString *qualityString = [VideoItemMO getQualityString:quality];
+        NSString *qualityString = [VideoItemMO qualityString:quality];
         NSString *title = [NSString stringWithFormat:@"%@%@", qualityString, currentQuality == quality ? @" (Current)" : @""];
 
         [actions addObject: [self.alertController actionWithTitle:title handler:^{

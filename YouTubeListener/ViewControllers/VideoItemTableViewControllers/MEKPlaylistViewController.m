@@ -37,7 +37,7 @@
 
 - (void)updateData
 {
-    self.videoItems = [self.playlist getVideoItems];
+    self.videoItems = [self.playlist videoItems];
 }
 
 #pragma mark - UIViewController

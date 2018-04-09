@@ -35,7 +35,7 @@
 
 #pragma mark - Creation
 
-+ (PlaylistMO*)getEmptyWithContext: (NSManagedObjectContext*) context
++ (PlaylistMO*)emptyWithContext: (NSManagedObjectContext*) context
 {
     PlaylistMO *item =  [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
     
@@ -44,10 +44,10 @@
 
 + (PlaylistMO*)playlistWithName: (NSString*) name withContext: (NSManagedObjectContext*) context
 {
-    if ([self getPlaylistForName:name withContext:context])
+    if ([self playlistForName:name withContext:context])
         return nil;
     
-    PlaylistMO *playlist = [self getEmptyWithContext:context];
+    PlaylistMO *playlist = [self emptyWithContext:context];
     
     playlist.name = name;
     playlist.items = [NSArray new];
@@ -61,7 +61,7 @@
 
 - (BOOL)rename: (NSString*) name
 {
-    if ([PlaylistMO getPlaylistForName:name withContext:self.managedObjectContext])
+    if ([PlaylistMO playlistForName:name withContext:self.managedObjectContext])
     {
         return NO;
     }
@@ -103,22 +103,22 @@
 
 #pragma mark - Accessors
 
-- (NSArray<VideoItemMO*>*)getVideoItems
+- (NSArray<VideoItemMO*>*)videoItems
 {
     NSMutableArray *items = [NSMutableArray new];
     
     for (NSString *videoId in self.items)
     {
-        [items addObject:[VideoItemMO getVideoItemForId:videoId withContext:self.managedObjectContext]];
+        [items addObject:[VideoItemMO videoItemForId:videoId withContext:self.managedObjectContext]];
     }
     
     return items;
 }
 
-- (VideoItemMO*)getFirstVideoItem
+- (VideoItemMO*)firstVideoItem
 {
     NSString *videoId = self.items.firstObject;
-    VideoItemMO *item = [VideoItemMO getVideoItemForId:videoId withContext:self.managedObjectContext];
+    VideoItemMO *item = [VideoItemMO videoItemForId:videoId withContext:self.managedObjectContext];
     return item;
 }
 
@@ -143,7 +143,7 @@
     return result;
 }
 
-+ (NSArray<PlaylistMO*>*)getPlaylistsWithContext: (NSManagedObjectContext*) context
++ (NSArray<PlaylistMO*>*)playlistsWithContext: (NSManagedObjectContext*) context
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
     NSSortDescriptor *nameDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)];
@@ -154,7 +154,7 @@
     return result;
 }
 
-+ (PlaylistMO*)getPlaylistForName: (NSString*) name withContext: (NSManagedObjectContext*) context
++ (PlaylistMO*)playlistForName: (NSString*) name withContext: (NSManagedObjectContext*) context
 {
     NSFetchRequest *fetchRequest = [self fetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"name == [c] %@", name];

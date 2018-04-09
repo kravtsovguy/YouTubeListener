@@ -7,7 +7,6 @@
 //
 
 #import "MEKVideoPlayerViewController.h"
-#import "MEKWebVideoLoader.h"
 #import "MEKPlayerViewController.h"
 #import "MEKDowloadButton.h"
 #import "UIImage+Cache.h"
@@ -27,11 +26,10 @@ CGFloat const MEKPlayerViewHeightSizeMinimized = 60;
 CGFloat const MEKPlayerViewVideoRatio = 16.0f / 9.0f;
 VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
-@interface MEKVideoPlayerViewController () <MEKVideoItemActionProtocol, MEKVideoItemDownloadControllerDelegate, MEKWebVideoLoaderOutputProtocol>
+@interface MEKVideoPlayerViewController () <MEKVideoItemActionProtocol, MEKVideoItemDownloadControllerDelegate>
 
 @property (nonatomic, strong) MEKCombinedActionController *actionController;
 @property (nonatomic, strong) MEKPlayerViewController *playerController;
-@property (nonatomic, strong) MEKWebVideoLoader *loader;
 
 
 @property (nonatomic, copy) NSDictionary *itemJSON;
@@ -162,17 +160,8 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.view.layer.borderWidth = 0.5;
     self.view.layer.cornerRadius = 10;
     self.view.layer.masksToBounds = YES;
-    
-    self.loader = [MEKWebVideoLoader new];
-    self.loader.output = self;
 
-    BOOL isSetUI = [self p_setUIwithVideoItem:self.item];
-    BOOL isSetVideo = [self p_setVideoWithQuality:self.quality];
-
-    if (!isSetUI || !isSetVideo)
-    {
-        [self.loader loadVideoItem:self.item];
-    }
+    [self p_setupWithVideoItem:self.item usingQuality:self.quality forceUpdate:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -180,7 +169,7 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     [super viewWillAppear:animated];
 
     self.downloadController.delegate = self;
-    [self p_setUIwithVideoItem:self.item];
+    [self p_setupWithVideoItem:self.item usingQuality:self.quality];
 }
 
 - (void)updateViewConstraints
@@ -327,42 +316,59 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.moreButton.hidden = hidden;
 }
 
-- (BOOL)p_setUIwithVideoItem: (VideoItemMO*) item
+- (BOOL)p_setupWithVideoItem: (VideoItemMO *) item usingQuality: (VideoItemQuality) quality forceUpdate: (BOOL)force
 {
     if (!item)
     {
         return NO;
     }
-    
-    self.item = item;
-    
-    if (self.item.title && self.item.author)
+
+    if (item.isFault)
     {
-        self.titleLabel.text = item.title;
-        self.authorLabel.text = item.author;
-        
-        self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
-                                              MPMediaItemPropertyArtist : item.author
-                                              };
-        
-        [self p_setButtonsHidden:NO];
+        item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
+        [item setupWithDictionary:self.itemJSON];
     }
-    else
+
+    BOOL shouldLoadVideo = force || (item != self.item && quality != self.quality);
+
+    if (![self p_setupUIwithVideoItem:item] || (shouldLoadVideo && ![self p_playVideoItem:item usingQuality:quality]))
+    {
+        [self.actionController.videoItemActionController videoItemLoadInfo:item];
+        return NO;
+    }
+
+    self.item = item;
+    self.quality = quality;
+
+    return YES;
+}
+- (BOOL)p_setupWithVideoItem: (VideoItemMO *) item usingQuality: (VideoItemQuality) quality
+{
+    return [self p_setupWithVideoItem:item usingQuality:quality forceUpdate:NO];
+}
+
+- (BOOL)p_setupUIwithVideoItem: (VideoItemMO *) item
+{
+    if (!item || !item.videoId)
     {
         return NO;
     }
+
+    self.titleLabel.text = item.title;
+    self.authorLabel.text = item.author;
+
+    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
+                                          MPMediaItemPropertyArtist : item.author
+                                          };
+
+    [self p_setButtonsHidden:NO];
 
     BOOL isAddedToLibrary = [item addedToLibrary:self.coreDataContext];
     self.addButton.hidden = isAddedToLibrary;
     self.downloadButton.hidden = !isAddedToLibrary;
 
     double progress = [self.downloadController progressForVideoItem:item];
-    if ([item hasDownloaded])
-    {
-        progress = 1;
-    }
-    
-    [self.downloadButton setProgress:progress];
+    [self.downloadButton setProgress:[item hasDownloaded] ? 1 : progress];
     
     [UIImage ch_downloadImageFromUrl:self.item.thumbnailSmall completion:^(UIImage *image, BOOL fromCache) {
         
@@ -379,29 +385,21 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     return YES;
 }
 
-- (BOOL)p_setVideoWithQuality: (VideoItemQuality) quality
+- (BOOL)p_playVideoItem:(VideoItemMO *) item usingQuality:(VideoItemQuality) quality
 {
-    if (!self.item)
+    if (!item)
     {
         return NO;
     }
     
-    self.quality = quality;
-    
-    NSURL *downloadedURL = self.item.downloadedURLs[@(quality)];
-    NSURL *webURL = self.item.urls[@(quality)];
-
-    if (!webURL)
-    {
-        webURL = self.item.urls[VideoItemHTTPLiveStreaming];
-    }
-    
-    if (!downloadedURL && !webURL)
-    {
-        return NO;
-    }
-    
+    NSURL *downloadedURL = item.downloadedURLs[@(quality)];
+    NSURL *webURL = item.urls[@(quality)] ?: item.urls[VideoItemHTTPLiveStreaming];
     NSURL *url = downloadedURL ?: webURL;
+
+    if (!url)
+    {
+        return NO;
+    }
     
     self.playerController.player = [AVPlayer playerWithURL:url];
     self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
@@ -417,7 +415,6 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.blurEffectView.alpha = 0;
     self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
     self.titleLabel.numberOfLines = 2;
-    
     self.authorLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
 }
 
@@ -428,7 +425,6 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.blurEffectView.alpha = 1;
     self.titleLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightRegular];
     self.titleLabel.numberOfLines = 1;
-    
     self.authorLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightLight];
 }
 
@@ -479,44 +475,27 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
 - (void)videoItemAddToLibrary:(VideoItemMO *)item
 {
-    [self p_setUIwithVideoItem:item];
+    [self p_setupWithVideoItem:item usingQuality:self.quality];
 }
 
 - (void)videoItemRemoveFromLibrary:(VideoItemMO *)item
 {
-    item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
-    [item setupWithDictionary:self.itemJSON];
-    self.item = item;
-
-    [self p_setUIwithVideoItem:item];
+    [self p_setupWithVideoItem:item usingQuality:self.quality];
 }
 
 - (void)videoItemRemoveDownload:(VideoItemMO *)item
 {
-    [self p_setUIwithVideoItem:item];
+    [self p_setupWithVideoItem:item usingQuality:self.quality];
 }
 
 - (void)videoItem:(VideoItemMO *)item playWithQuality:(VideoItemQuality)quality
 {
-    if (self.quality == quality)
-    {
-        return;
-    }
-
-    if ([self p_setVideoWithQuality:quality])
-    {
-        return;
-    }
-
-    [self.loader loadVideoItem:self.item];
+    [self p_setupWithVideoItem:item usingQuality:quality];
 }
 
-#pragma mark - MEKWebVideoLoaderOutputProtocol
-
-- (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
+- (void)videoItemLoadInfo:(VideoItemMO *)item
 {
-    [self p_setUIwithVideoItem:self.item];
-    [self p_setVideoWithQuality:self.quality];
+    [self p_setupWithVideoItem:item usingQuality:self.quality forceUpdate:YES];
 }
 
 #pragma mark - MEKVideoItemDownloadControllerDelegate

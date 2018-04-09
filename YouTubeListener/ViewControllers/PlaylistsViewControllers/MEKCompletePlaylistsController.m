@@ -16,7 +16,7 @@
 
 - (void)updateData
 {
-    self.playlists = [PlaylistMO getPlaylistsWithContext:self.coreDataContext];
+    self.playlists = [PlaylistMO playlistsWithContext:self.coreDataContext];
 }
 
 #pragma mark - UIViewController

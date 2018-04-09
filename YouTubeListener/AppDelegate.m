@@ -41,7 +41,7 @@
 {
     MEKLibraryViewController *libraryViewController = [MEKLibraryViewController new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:libraryViewController];
-    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemFeatured tag:0];
+    navigationController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemBookmarks tag:0];
     [navigationController.tabBarItem setValue:libraryViewController.title forKey:@"internalTitle"];
     navigationController.navigationBar.prefersLargeTitles = YES;
 

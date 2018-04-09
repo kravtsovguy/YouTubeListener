@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString*)downloadsPlaylistName;
 
 // Creation
-+ (PlaylistMO*)getEmptyWithContext: (NSManagedObjectContext*) context;
++ (PlaylistMO*)emptyWithContext: (NSManagedObjectContext*) context;
 + (PlaylistMO*)playlistWithName: (NSString*) name withContext: (NSManagedObjectContext*) context;
 
 // Editing
@@ -30,14 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)deleteVideoItem: (VideoItemMO*) item;
 
 // Accessors
-- (NSArray<VideoItemMO*>*)getVideoItems;
-- (VideoItemMO*)getFirstVideoItem;
+- (NSArray<VideoItemMO*>*)videoItems;
+- (VideoItemMO*)firstVideoItem;
 - (BOOL)containsVideoItem: (VideoItemMO*) item;
 
 // Instance Accessors
 + (NSArray<PlaylistMO*>*)executeFetchRequest: (NSFetchRequest*) request withContext: (NSManagedObjectContext*) context;
-+ (NSArray<PlaylistMO*>*)getPlaylistsWithContext: (NSManagedObjectContext*) context;
-+ (PlaylistMO*)getPlaylistForName: (NSString*) name withContext: (NSManagedObjectContext*) context;
++ (NSArray<PlaylistMO*>*)playlistsWithContext: (NSManagedObjectContext*) context;
++ (PlaylistMO*)playlistForName: (NSString*) name withContext: (NSManagedObjectContext*) context;
 
 // Basic
 - (BOOL)saveObject;

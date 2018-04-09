@@ -20,7 +20,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
 
 @implementation VideoItemMO
 
-+ (NSArray<NSNumber *> *)getAllQualities
++ (NSArray<NSNumber *> *)allQualities
 {
     NSArray *qualities = @[@(VideoItemQualityHD720),
                            @(VideoItemQualityMedium360),
@@ -30,7 +30,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     return qualities;
 }
 
-+ (NSString *)getQualityString:(VideoItemQuality)quality
++ (NSString *)qualityString:(VideoItemQuality)quality
 {
     NSString *qualityString = @"";
     
@@ -95,7 +95,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     return result;
 }
 
-+ (VideoItemMO*)getVideoItemForURL:(NSURL *)videoURL withContext:(NSManagedObjectContext *)context
++ (VideoItemMO*)videoItemForURL:(NSURL *)videoURL withContext:(NSManagedObjectContext *)context
 {
     if (!videoURL)
     {
@@ -111,7 +111,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     return item;
 }
 
-+ (VideoItemMO*)getVideoItemForId: (NSString*) videoId withContext:(nonnull NSManagedObjectContext *)context
++ (VideoItemMO*)videoItemForId: (NSString*) videoId withContext:(nonnull NSManagedObjectContext *)context
 {
     if (!videoId)
     {
@@ -127,7 +127,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     return item;
 }
 
-+ (NSArray<VideoItemMO*>*)getVideoItemsWithContext:(NSManagedObjectContext *)context
++ (NSArray<VideoItemMO*>*)videoItemsWithContext:(NSManagedObjectContext *)context
 {
     NSArray *result = [self executeFetchRequest:[self fetchRequest] withContext:context];
     return result;
@@ -260,13 +260,13 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
 
 - (void)removeFromLibrary:(NSManagedObjectContext *)context
 {
-    VideoItemMO *item = [[self class] getVideoItemForId:self.videoId withContext:context];
+    VideoItemMO *item = [[self class] videoItemForId:self.videoId withContext:context];
     [item deleteObject];
 }
 
 #pragma mark - Downloading Public
 
-- (NSString *)getPathDirectory
+- (NSString *)pathDirectory
 {
     NSString * path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     path = [path stringByAppendingPathComponent:self.videoId];
@@ -301,7 +301,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     NSError *error;
-    BOOL isRemoved = [fileManager removeItemAtPath:[self getPathDirectory] error:&error];
+    BOOL isRemoved = [fileManager removeItemAtPath:[self pathDirectory] error:&error];
     
     return isRemoved;
 }
@@ -355,7 +355,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     }
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [self getPathDirectory];
+    NSString *path = [self pathDirectory];
     
     NSError *error;
     NSArray *files = [fileManager contentsOfDirectoryAtPath:path error:&error];
@@ -395,7 +395,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
 
 - (NSURL *)pathUrlWithQuality:(VideoItemQuality)quality
 {
-    NSString * path = [self getPathDirectory];
+    NSString * path = [self pathDirectory];
     path = [path stringByAppendingPathComponent:@(quality).stringValue];
     path = [path stringByAppendingPathExtension:@"mp4"];
     return [NSURL fileURLWithPath:path];

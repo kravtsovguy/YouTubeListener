@@ -21,8 +21,14 @@
     self = [super init];
     if (self)
     {
+        _loader = [[MEKWebVideoLoader alloc] init];
+        _loader.output = self;
+
         _qualityLoader = [[MEKWebVideoLoader alloc] init];
         _qualityLoader.output = self;
+
+        _playLoader = [[MEKWebVideoLoader alloc] init];
+        _playLoader.output = self;
     }
     return self;
 }
@@ -36,9 +42,23 @@
 
 #pragma mark MEKVideoItemActionProtocol
 
+-(void)videoItemLoadInfo:(VideoItemMO *)item
+{
+    if (!item.videoId || !item.urls)
+    {
+        [self.loader loadVideoItem:item];
+        return;
+    }
+
+    if ([self.delegate respondsToSelector:_cmd])
+    {
+        [self.delegate videoItemLoadInfo:item];
+    }
+}
+
 - (void)videoItemPlay:(VideoItemMO *)item
 {
-    [item addToHistoryForUserDefaults:self.userDefaults];
+    [self videoItemAddToHistory:item];
 
     [self.playerController openVideoItem:item withVisibleState:MEKPlayerVisibleStateMinimized];
 
@@ -56,14 +76,21 @@
         return;
     }
 
-    VideoItemMO *item = [VideoItemMO getVideoItemForURL:url withContext:self.coreDataContext];
+    VideoItemMO *item = [VideoItemMO videoItemForURL:url withContext:self.coreDataContext];
     if (!item)
     {
         item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
         item.originURL = url;
+
+        [self.playLoader loadVideoItem:item];
     }
 
     [self videoItemPlay:item];
+}
+
+- (void)videoItemAddToHistory:(VideoItemMO *)item
+{
+    [item addToHistoryForUserDefaults:self.userDefaults];
 }
 
 - (void)videoItemAddToLibrary:(VideoItemMO *)item
@@ -141,9 +168,19 @@
 
 - (void)webVideoLoader:(id<MEKWebVideoLoaderInputProtocol>)loader didLoadItem:(VideoItemMO *)item
 {
+    if (loader == self.loader)
+    {
+        [self videoItemLoadInfo:item];
+    }
+
     if (loader == self.qualityLoader)
     {
         [self showDownloadQualityDialog:item];
+    }
+
+    if (loader == self.playLoader)
+    {
+        [self videoItemPlay:item];
     }
 }
 

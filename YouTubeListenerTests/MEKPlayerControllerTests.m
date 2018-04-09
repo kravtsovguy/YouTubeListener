@@ -114,7 +114,7 @@
     OCMExpect(ClassMethod([videoLoader parserForURL:url])).andReturn(videoParser);
     
     OCMExpect(self.playerController.coreDataContext).andReturn(context);
-    OCMExpect(ClassMethod([item getVideoItemForURL:url withContext:context])).andReturn(item);
+    OCMExpect(ClassMethod([item videoItemForURL:url withContext:context])).andReturn(item);
     
     OCMExpect([self.playerController openVideoItem:item withVisibleState:state]);
 
@@ -129,7 +129,7 @@
     OCMExpect(ClassMethod([videoLoader parserForURL:url])).andReturn(videoParser);
     
     OCMExpect(self.playerController.coreDataContext).andReturn(context);
-    OCMExpect(ClassMethod([item getVideoItemForURL:url withContext:OCMOCK_ANY])).andReturn(nil);
+    OCMExpect(ClassMethod([item videoItemForURL:url withContext:OCMOCK_ANY])).andReturn(nil);
     
     OCMExpect(self.playerController.coreDataContext).andReturn(context);
     OCMExpect(ClassMethod([item connectedEntityWithContext:context])).andReturn(item);

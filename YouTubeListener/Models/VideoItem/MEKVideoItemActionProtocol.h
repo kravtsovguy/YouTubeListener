@@ -15,9 +15,12 @@ typedef NS_ENUM(NSUInteger, VideoItemQuality);
 
 @optional
 
+- (void)videoItemLoadInfo: (VideoItemMO *)item;
+
 - (void)videoItemPlay: (VideoItemMO *)item;
 - (void)videoItemPlayURL: (NSURL *)url;
 
+- (void)videoItemAddToHistory: (VideoItemMO *)item;
 - (void)videoItemAddToLibrary: (VideoItemMO *) item;
 - (void)videoItemRemoveFromLibrary: (VideoItemMO *) item;
 

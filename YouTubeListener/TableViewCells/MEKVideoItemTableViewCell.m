@@ -195,7 +195,7 @@
     if ([item hasDownloaded])
     {
         VideoItemQuality quality = item.downloadedQuality;
-        NSString *qualityString = [VideoItemMO getQualityString:quality];
+        NSString *qualityString = [VideoItemMO qualityString:quality];
         NSNumber *size = item.downloadedSizes.allValues.firstObject;
 
         self.downloadInfoLabel.text = [NSString stringWithFormat:@"(%@ | %@MB)", qualityString, size];

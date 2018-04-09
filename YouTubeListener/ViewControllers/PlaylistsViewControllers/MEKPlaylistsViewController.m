@@ -89,7 +89,7 @@
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     PlaylistMO *playlist = self.playlists[indexPath.row];
-    NSArray<VideoItemMO *> *videoItemArray = [playlist getVideoItems];
+    NSArray<VideoItemMO *> *videoItemArray = [playlist videoItems];
 
     if (self.offlineMode)
     {
