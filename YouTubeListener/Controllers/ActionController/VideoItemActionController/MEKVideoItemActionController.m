@@ -77,15 +77,16 @@
     }
 
     VideoItemMO *item = [VideoItemMO videoItemForURL:url withContext:self.coreDataContext];
-    if (!item)
+    if (item)
     {
-        item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
-        item.originURL = url;
-
-        [self.playLoader loadVideoItem:item];
+        [self videoItemPlay:item];
+        return;
     }
 
-    [self videoItemPlay:item];
+    item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
+    item.originURL = url;
+
+    [self.playLoader loadVideoItem:item];
 }
 
 - (void)videoItemAddToHistory:(VideoItemMO *)item
