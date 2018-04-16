@@ -143,32 +143,27 @@ typedef NS_ENUM(NSUInteger, MEKYouTubeActionType)
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     NSArray *items = json[@"items"];
 
-    if ([key isEqualToString:@"search"])
+    if ([key isEqualToString:@"search"] && [self.delegate respondsToSelector:@selector(youTubeVideosDidSearch:nextPageToken:)])
     {
         NSMutableArray *videoIds = @[].mutableCopy;
 
-        for (NSDictionary *item in items)
-        {
+        [items enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
             NSString *videoId = item[@"id"][@"videoId"] ?: item[@"id"][@"id"];
             [videoIds addObject:videoId];
-        }
+        }];
 
-        if ([self.delegate respondsToSelector:@selector(youTubeVideosDidSearch:nextPageToken:)])
-        {
-            NSString *nextPageToken = json[@"nextPageToken"];
+        NSString *nextPageToken = json[@"nextPageToken"];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.delegate youTubeVideosDidSearch:videoIds nextPageToken:nextPageToken];
-            });
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate youTubeVideosDidSearch:videoIds nextPageToken:nextPageToken];
+        });
     }
 
-    if ([key isEqualToString:@"videos"])
+    if ([key isEqualToString:@"videos"] && [self.delegate respondsToSelector:@selector(youTubeVideosDidLoad:)])
     {
         NSMutableArray *videos = @[].mutableCopy;
 
-        for (NSDictionary *item in items)
-        {
+        [items enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
             NSMutableDictionary *video = @{}.mutableCopy;
             video[@"id"] = item[@"id"];
             video[@"title"] = item[@"snippet"][@"title"];
@@ -179,14 +174,11 @@ typedef NS_ENUM(NSUInteger, MEKYouTubeActionType)
             video[@"length_seconds"] = [self parseISO8601Time:item[@"contentDetails"][@"duration"]].stringValue;
             video[@"source"] = [NSString stringWithFormat:@"https://youtu.be/%@", item[@"id"]];
             [videos addObject:video];
-        }
+        }];
 
-        if ([self.delegate respondsToSelector:@selector(youTubeVideosDidLoad:)])
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.delegate youTubeVideosDidLoad:videos];
-            });
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate youTubeVideosDidLoad:videos];
+        });
     }
 
     return YES;

@@ -8,6 +8,7 @@
 
 #import "MEKVideoItemActionController.h"
 #import "MEKWebVideoLoader.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @interface MEKVideoItemActionController () <MEKWebVideoLoaderOutputProtocol>
 

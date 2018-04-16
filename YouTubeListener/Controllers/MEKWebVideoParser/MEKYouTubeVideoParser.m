@@ -9,6 +9,7 @@
 #import "MEKYouTubeVideoParser.h"
 #import "AppDelegate.h"
 #import "MEKDownloadController.h"
+#import "VideoItemMO+CoreDataClass.h"
 #import <XCDYouTubeKit/XCDYouTubeVideoWebpage.h>
 #import <XCDYouTubeKit/XCDYouTubePlayerScript.h>
 #import <XCDYouTubeKit/XCDYouTubeVideo.h>
@@ -20,10 +21,17 @@
 
 - (XCDYouTubeVideo*)videoFromHTML: (NSString*) html
 {
+    //Парсинг html-страницы
     XCDYouTubeVideoWebpage *webpage = [[XCDYouTubeVideoWebpage alloc] initWithHTMLString:html];
+
+    //Загрузка скрипта для дешифрования сигнатуры (без сигнатуры невозможно получить ссылку на файл)
     NSString *script = [NSString stringWithContentsOfURL:webpage.javaScriptPlayerURL encoding:NSUTF8StringEncoding error:nil];
     XCDYouTubePlayerScript *playerScript = [[XCDYouTubePlayerScript alloc] initWithString:script];
+
+    //Получение id видео
     NSString *videoId = webpage.videoInfo[@"vid"] ?: webpage.videoInfo[@"video_id"];
+
+    //Получение информации о видео
     XCDYouTubeVideo *video = [[XCDYouTubeVideo alloc] initWithIdentifier:videoId info:webpage.videoInfo playerScript:playerScript response:nil error:nil];
 
     return video;

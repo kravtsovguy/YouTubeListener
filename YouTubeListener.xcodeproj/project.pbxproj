@@ -37,7 +37,6 @@
 		BA753A57203EEBC300EC2A2C /* MEKLoaderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A56203EEBC300EC2A2C /* MEKLoaderTableViewCell.m */; };
 		BA753A5A203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A59203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m */; };
 		BA753A5D20404A8100EC2A2C /* MEKCachedSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA753A5C20404A8100EC2A2C /* MEKCachedSearchViewController.m */; };
-		BA8F07412010D937005FA2E6 /* UIViewController+VideoItemActions.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8F07402010D937005FA2E6 /* UIViewController+VideoItemActions.m */; };
 		BA9035052055301D00191D0A /* MEKLibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA9035042055301D00191D0A /* MEKLibraryViewController.m */; };
 		BAACE6482016C78900432BF2 /* MEKVideoItemDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAACE6472016C78900432BF2 /* MEKVideoItemDownloadController.m */; };
 		BAACE64A201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BAACE649201804F100432BF2 /* MEKVideoItemDownloadControllerTests.m */; };
@@ -147,8 +146,6 @@
 		BA753A59203F12E600EC2A2C /* MEKGlobalSearchResultsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKGlobalSearchResultsViewController.m; sourceTree = "<group>"; };
 		BA753A5B20404A8100EC2A2C /* MEKCachedSearchViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKCachedSearchViewController.h; sourceTree = "<group>"; };
 		BA753A5C20404A8100EC2A2C /* MEKCachedSearchViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKCachedSearchViewController.m; sourceTree = "<group>"; };
-		BA8F073F2010D937005FA2E6 /* UIViewController+VideoItemActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+VideoItemActions.h"; sourceTree = "<group>"; };
-		BA8F07402010D937005FA2E6 /* UIViewController+VideoItemActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+VideoItemActions.m"; sourceTree = "<group>"; };
 		BA8F07452011409F005FA2E6 /* MEKWebVideoParserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKWebVideoParserProtocol.h; sourceTree = "<group>"; };
 		BA9035032055301D00191D0A /* MEKLibraryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MEKLibraryViewController.h; sourceTree = "<group>"; };
 		BA9035042055301D00191D0A /* MEKLibraryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MEKLibraryViewController.m; sourceTree = "<group>"; };
@@ -366,8 +363,6 @@
 				BA4942CE200AB2EB007D8819 /* UIImageView+Cache.m */,
 				BA4942D0200B3A33007D8819 /* UIImage+Cache.h */,
 				BA4942D1200B3A33007D8819 /* UIImage+Cache.m */,
-				BA8F073F2010D937005FA2E6 /* UIViewController+VideoItemActions.h */,
-				BA8F07402010D937005FA2E6 /* UIViewController+VideoItemActions.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -637,7 +632,7 @@
 		BABD355E1FDEAF740036B27F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Matvey Kravtsov";
 				TargetAttributes = {
 					BA54540B20127D4B0027E2E6 = {
@@ -810,7 +805,6 @@
 				BAB56F1E200E87CA000DF5C6 /* MEKModalPlaylistsViewController.m in Sources */,
 				BAF1F3AD20322A3400C5918C /* MEKYouTubeServerParser.m in Sources */,
 				BAB81557205FC8D700767A4B /* MEKCombinedSearchResultsViewController.m in Sources */,
-				BA8F07412010D937005FA2E6 /* UIViewController+VideoItemActions.m in Sources */,
 				BA70A6812005FEE2002AE1B4 /* VideoItemMO+CoreDataProperties.m in Sources */,
 				BA4942D2200B3A33007D8819 /* UIImage+Cache.m in Sources */,
 				BAF16FDA20495F8100D0C9FA /* MEKMemoryCache.m in Sources */,
@@ -942,6 +936,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -949,6 +944,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -997,6 +993,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1004,6 +1001,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

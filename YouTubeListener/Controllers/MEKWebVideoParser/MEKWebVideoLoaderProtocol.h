@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "VideoItemMO+CoreDataClass.h"
+
+@class VideoItemMO;
 
 @protocol MEKWebVideoLoaderInputProtocol <NSObject>
 

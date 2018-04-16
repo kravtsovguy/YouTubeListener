@@ -62,6 +62,7 @@
     [self.globalResultsViewController.viewIfLoaded removeFromSuperview];
 
     [self.view addSubview:activeResultsController.view];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setCurrentType:(MEKResultsType)currentType

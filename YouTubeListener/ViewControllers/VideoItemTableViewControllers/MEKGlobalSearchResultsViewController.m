@@ -40,6 +40,12 @@ static NSUInteger const MEKResultsCount = 10;
     [self p_reset];
 }
 
+- (void)setVideoItems:(NSArray *)videoItems
+{
+    super.videoItems = videoItems;
+    self.infoView.infoLabel.text = @"searching...";
+}
+
 #pragma mark - MEKVideoItemActionProtocol
 
 - (void)videoItemRemoveFromLibrary:(VideoItemMO *)item

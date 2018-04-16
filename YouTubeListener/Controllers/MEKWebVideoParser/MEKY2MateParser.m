@@ -7,6 +7,7 @@
 //
 
 #import "MEKY2MateParser.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @implementation MEKY2MateParser
 

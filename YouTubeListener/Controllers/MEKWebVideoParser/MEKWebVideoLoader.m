@@ -10,6 +10,7 @@
 #import "MEKWebDownloadController.h"
 #import "MEKDownloadController.h"
 #import "MEKYouTubeVideoParser.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @interface MEKWebVideoLoader () <MEKDownloadControllerDelegate, MEKWebDownloadControllerDelegate>
 

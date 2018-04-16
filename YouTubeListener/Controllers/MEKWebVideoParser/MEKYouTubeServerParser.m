@@ -7,6 +7,7 @@
 //
 
 #import "MEKYouTubeServerParser.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @implementation MEKYouTubeServerParser
 

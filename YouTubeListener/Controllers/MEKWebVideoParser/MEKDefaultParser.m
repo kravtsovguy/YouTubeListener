@@ -7,6 +7,7 @@
 //
 
 #import "MEKDefaultParser.h"
+#import "VideoItemMO+CoreDataClass.h"
 
 @implementation MEKDefaultParser
 
