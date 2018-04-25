@@ -196,6 +196,7 @@ NSString *const VideoItemHTTPLiveStreaming = @"HTTPLiveStreaming";
     self.thumbnailSmall = [NSURL URLWithString:json[@"thumbnail_small"]];
     self.thumbnailBig = [NSURL URLWithString:json[@"thumbnail_large"]];
     self.originURL = [NSURL URLWithString:json[@"source"]];
+    self.urls = json[@"urls"];
 }
 
 - (NSDictionary *)toDictionary

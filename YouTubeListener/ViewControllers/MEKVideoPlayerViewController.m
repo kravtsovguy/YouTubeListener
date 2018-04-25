@@ -513,6 +513,10 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
 - (void)videoItemLoadInfo:(VideoItemMO *)item
 {
+    NSMutableDictionary *json = [item toDictionary].mutableCopy;
+    json[@"urls"] = item.urls;
+    self.itemJSON = json;
+    
     [self p_setupWithVideoItem:item usingQuality:self.quality];
 }
 
