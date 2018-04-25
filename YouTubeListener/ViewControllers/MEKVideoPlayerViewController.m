@@ -391,7 +391,7 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
         return NO;
     }
     
-    NSURL *currentURL = [self p_urlOfCurrentlyPlayingInPlayer:self.playerController.player];
+    NSURL *currentURL = [self p_currentUrlForPlayer:self.playerController.player];
     
     NSURL *downloadedURL = item.downloadedURLs[@(quality)];
     NSURL *webURL = item.urls[@(quality)] ?: item.urls[VideoItemHTTPLiveStreaming];
@@ -402,7 +402,10 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
         return NO;
     }
     
-    if (![url.absoluteString isEqualToString:currentURL.absoluteString])
+    BOOL isEqualToWeb = [currentURL.absoluteString isEqualToString:webURL.absoluteString];
+    BOOL isEqualToDownloaded = [currentURL.absoluteString isEqualToString:downloadedURL.absoluteString];
+    
+    if (!isEqualToWeb && !isEqualToDownloaded)
     {
         self.playerController.player = [AVPlayer playerWithURL:url];
         self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
@@ -412,7 +415,7 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     return YES;
 }
 
--(NSURL *)p_urlOfCurrentlyPlayingInPlayer:(AVPlayer *)player
+-(NSURL *)p_currentUrlForPlayer:(AVPlayer *)player
 {
     AVAsset *currentPlayerAsset = player.currentItem.asset;
     if (![currentPlayerAsset isKindOfClass:AVURLAsset.class])
