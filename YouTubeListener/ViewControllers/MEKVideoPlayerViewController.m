@@ -161,7 +161,7 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.view.layer.cornerRadius = 10;
     self.view.layer.masksToBounds = YES;
 
-    [self p_setupWithVideoItem:self.item usingQuality:self.quality forceUpdate:YES];
+    [self p_setupWithVideoItem:self.item usingQuality:self.quality];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -316,7 +316,7 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.moreButton.hidden = hidden;
 }
 
-- (BOOL)p_setupWithVideoItem: (VideoItemMO *) item usingQuality: (VideoItemQuality) quality forceUpdate: (BOOL)force
+- (BOOL)p_setupWithVideoItem: (VideoItemMO *) item usingQuality: (VideoItemQuality) quality
 {
     if (!item)
     {
@@ -328,10 +328,12 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
         item = [VideoItemMO disconnectedEntityWithContext:self.coreDataContext];
         [item setupWithDictionary:self.itemJSON];
     }
-
-    BOOL shouldLoadVideo = force || (item != self.item && quality != self.quality);
-
-    if (![self p_setupUIwithVideoItem:item] || (shouldLoadVideo && ![self p_playVideoItem:item usingQuality:quality]))
+    
+    BOOL shouldLoad = NO;
+    shouldLoad |= ![self p_setupUIwithVideoItem:item];
+    shouldLoad |= ![self p_playVideoItem:item usingQuality:quality];
+    
+    if (shouldLoad)
     {
         [self.actionController.videoItemActionController videoItemLoadInfo:item];
         return NO;
@@ -341,10 +343,6 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.quality = quality;
 
     return YES;
-}
-- (BOOL)p_setupWithVideoItem: (VideoItemMO *) item usingQuality: (VideoItemQuality) quality
-{
-    return [self p_setupWithVideoItem:item usingQuality:quality forceUpdate:NO];
 }
 
 - (BOOL)p_setupUIwithVideoItem: (VideoItemMO *) item
@@ -357,8 +355,9 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
     self.titleLabel.text = item.title;
     self.authorLabel.text = item.author;
 
-    self.playerController.playingInfo = @{MPMediaItemPropertyTitle : item.title,
-                                          MPMediaItemPropertyArtist : item.author
+    self.playerController.playingInfo = @{
+                                          MPMediaItemPropertyTitle : item.title,
+                                          MPMediaItemPropertyArtist : item.author,
                                           };
 
     [self p_setButtonsHidden:NO];
@@ -392,6 +391,8 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
         return NO;
     }
     
+    NSURL *currentURL = [self p_urlOfCurrentlyPlayingInPlayer:self.playerController.player];
+    
     NSURL *downloadedURL = item.downloadedURLs[@(quality)];
     NSURL *webURL = item.urls[@(quality)] ?: item.urls[VideoItemHTTPLiveStreaming];
     NSURL *url = downloadedURL ?: webURL;
@@ -401,11 +402,25 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
         return NO;
     }
     
-    self.playerController.player = [AVPlayer playerWithURL:url];
-    self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
-    [self.playerController.player play];
+    if (![url.absoluteString isEqualToString:currentURL.absoluteString])
+    {
+        self.playerController.player = [AVPlayer playerWithURL:url];
+        self.playerController.player.actionAtItemEnd = AVPlayerActionAtItemEndPause;
+        [self.playerController.player play];
+    }
     
     return YES;
+}
+
+-(NSURL *)p_urlOfCurrentlyPlayingInPlayer:(AVPlayer *)player
+{
+    AVAsset *currentPlayerAsset = player.currentItem.asset;
+    if (![currentPlayerAsset isKindOfClass:AVURLAsset.class])
+    {
+        return nil;
+    }
+
+    return [(AVURLAsset *)currentPlayerAsset URL];
 }
 
 - (void)p_maximizeUI
@@ -495,7 +510,7 @@ VideoItemQuality const MEKPlayerViewDefaultQuality = VideoItemQualityMedium360;
 
 - (void)videoItemLoadInfo:(VideoItemMO *)item
 {
-    [self p_setupWithVideoItem:item usingQuality:self.quality forceUpdate:YES];
+    [self p_setupWithVideoItem:item usingQuality:self.quality];
 }
 
 #pragma mark - MEKVideoItemDownloadControllerDelegate
