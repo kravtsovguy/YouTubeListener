@@ -41,7 +41,6 @@
 		240B2559B270C0497F375F56B84C5266 /* EXPMatchers+beSupersetOf.h in Headers */ = {isa = PBXBuildFile; fileRef = 1580C2E7521B98FE208714F5E2D9FCDF /* EXPMatchers+beSupersetOf.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		24FF4A3B66A2F383BA14790790108406 /* EXPMatchers+haveCountOf.m in Sources */ = {isa = PBXBuildFile; fileRef = E4D8AACF47B84EC38036C64F213AF1C8 /* EXPMatchers+haveCountOf.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		2523657BEE249A532CDFD495AC911F39 /* EXPMatchers+beLessThanOrEqualTo.m in Sources */ = {isa = PBXBuildFile; fileRef = 592414FD1D69713C9EB304B4C88281C8 /* EXPMatchers+beLessThanOrEqualTo.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		258CE426D257941187A90884B22D38A1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3C4AB3C33047F99E189E9C58C45D71 /* Foundation.framework */; };
 		26EE69036F8E1D37693B1CC6F4EE184B /* EXPMatchers+raiseWithReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C3008EB56646F79970D0015D067792D /* EXPMatchers+raiseWithReason.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2858702E979011C83F32DD7417BE3050 /* EXPMatchers+haveCountOf.h in Headers */ = {isa = PBXBuildFile; fileRef = 782DBA604B43E2953D2AFF4C9DD30E9F /* EXPMatchers+haveCountOf.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		28BC58EE3C7374C4C2DEF6D029011C84 /* EXPMatchers+beInTheRangeOf.m in Sources */ = {isa = PBXBuildFile; fileRef = E137CBE43C913DDDF40C9D46D8F2B119 /* EXPMatchers+beInTheRangeOf.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -66,10 +65,8 @@
 		4EB308BF802E6F21BABDA8B8718CC7AB /* NSValue+Expecta.m in Sources */ = {isa = PBXBuildFile; fileRef = CB10BE13F597C3C98F30B3FA49F78240 /* NSValue+Expecta.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		51AB4A6FA03001136B4E82FBDB3AE19B /* XCDYouTubeLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C2802E76CCE6D52150E3969747F291A /* XCDYouTubeLogger.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		523F69012549DCADB26D11EFB6593B5B /* Masonry.h in Headers */ = {isa = PBXBuildFile; fileRef = BDE9EFE8F7482641928C7ECD6B5AA4D1 /* Masonry.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		52EE472D455F7E3BE6B033B17F292844 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA52BBEC81E1F004849A4E5FA90AC049 /* MediaPlayer.framework */; };
 		5329BE09734B1F03EF22BE39A97D51DD /* EXPMatcherHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D12E834881A0BA39C1648CD769F954 /* EXPMatcherHelpers.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		53464AAD32E1DA4780BF51730BA03325 /* OCMBlockCaller.m in Sources */ = {isa = PBXBuildFile; fileRef = C928014C36C94EBF9F89710C31DDD880 /* OCMBlockCaller.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		549DD20071D058219C5C7FDCBA4FFA3A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3C4AB3C33047F99E189E9C58C45D71 /* Foundation.framework */; };
 		5504E1CA910F4258DDAFD0C25AF8D490 /* ExpectaSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCDA7BBAC2FC1EBF6FDDB960F83755D /* ExpectaSupport.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5554A3B1DCF4E7B2F20C3BC441D36493 /* XCDYouTubeKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB58A57126171E1BF7735CBF4D00EB9 /* XCDYouTubeKit-dummy.m */; };
 		5649F42543F309D40B3A502A20FE253D /* OCObserverMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6A6B82B40BF6E95326F09509D4C6D2 /* OCObserverMockObject.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -81,7 +78,6 @@
 		5DDD30521A688DD230E86D4063DE9ACE /* NSValue+OCMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = D33AF7BF67D1E166C4FAE739FFCF09B6 /* NSValue+OCMAdditions.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5EBFADB0ACACA114B98082EBD8FDA650 /* MASViewConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BA32DC7EE06A64C7EAD1794280FA49E /* MASViewConstraint.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		61CCEA01CBE8EFFA5515E7A0D8635AAE /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D1CCE205FA17B2F314BE3D50E4BC6EA /* MASCompositeConstraint.m */; };
-		6209E20926D79222E59F58B962BFAA1E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9513C59D0079E757DE542B4BE10C34E6 /* UIKit.framework */; };
 		63CDCCAC82CBC33021220531D93213A2 /* EXPMatcherHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = AE28DE5C2BF0BEEB3F03C30E0CF1D858 /* EXPMatcherHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		643DE0287F1066D083368EAC928DF078 /* EXPFloatTuple.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BC96D6C4E80AA1690A2CF86A5FB900C /* EXPFloatTuple.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		64D92EB797C2CB0A09A128B190DA6E77 /* EXPMatchers+beSubclassOf.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C206F448B5892EA16AF6F59FCF22D8C /* EXPMatchers+beSubclassOf.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -190,7 +186,6 @@
 		EA9A79135185FA9B8D8E0460B13083A0 /* OCMPassByRefSetter.m in Sources */ = {isa = PBXBuildFile; fileRef = 74ED89246A55EE20AD1AD5FEF64322E1 /* OCMPassByRefSetter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		ED087996824EE3256B222E3BAEBAB14D /* EXPUnsupportedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E6E971FF60B08B5DC5B61FC7249DAF /* EXPUnsupportedObject.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		EEF2431E11B79FD1DC92269290EFD7C4 /* XCDYouTubeVideoPlayerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A52F0DD049BF6A69A52CDDF5D40FB4 /* XCDYouTubeVideoPlayerViewController.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		F0B56A7D38A399A2F67F9920C9526A66 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3C4AB3C33047F99E189E9C58C45D71 /* Foundation.framework */; };
 		F261D98AE9E878D134AA810D28E6B84D /* OCMVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C9AF9453FAA80884596E70C05B3A05 /* OCMVerifier.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F76C42A3EEA7F274B51B593374D9E6A1 /* OCMIndirectReturnValueProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5787C249B5CED6A842DF05E2FBC4CE07 /* OCMIndirectReturnValueProvider.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F77DFA9A51A4F147887D4D5F65A2C37A /* OCMInvocationStub.m in Sources */ = {isa = PBXBuildFile; fileRef = E7FD8C99CFEDFC9C80B3C10513A8FABF /* OCMInvocationStub.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -201,7 +196,6 @@
 		F9181CD269B33C9EDD91B8FB3A54C168 /* OCMObserverRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = DE6D8DC0E5BAD5A18281C0FC86D603F3 /* OCMObserverRecorder.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F9195123C863E423DF77D4F6D8B37C2C /* EXPMatchers+beKindOf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AE2D50EC066B0FA8B4F5459D60FA47F /* EXPMatchers+beKindOf.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FB415F79751F1A1F2203183C3CEE0723 /* NSArray+MASShorthandAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 61686EFE0EA9469E15E8F13ECEEBA988 /* NSArray+MASShorthandAdditions.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		FB5548CE53EE4B5BA23A8DE283CFECC4 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1ED0FD89F95502B34712F75CA9801E /* JavaScriptCore.framework */; };
 		FC96D4190A02EF3042E65B760FDCF972 /* NSNotificationCenter+OCMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F81683077FD96BBAF90297C62E2C7591 /* NSNotificationCenter+OCMAdditions.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FC9ACAFA4E12B4D41007910974A7FCC9 /* EXPMatchers+beGreaterThanOrEqualTo.h in Headers */ = {isa = PBXBuildFile; fileRef = 846CFAA564983247288EB3AE5FF31143 /* EXPMatchers+beGreaterThanOrEqualTo.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FCC7872E4A0286DF5A01DE195F59B67B /* OCMExpectationRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BE0C4496021CF67CA418FC4DEA43B67 /* OCMExpectationRecorder.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -495,9 +489,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				258CE426D257941187A90884B22D38A1 /* Foundation.framework in Frameworks */,
-				FB5548CE53EE4B5BA23A8DE283CFECC4 /* JavaScriptCore.framework in Frameworks */,
-				52EE472D455F7E3BE6B033B17F292844 /* MediaPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -505,8 +496,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0B56A7D38A399A2F67F9920C9526A66 /* Foundation.framework in Frameworks */,
-				6209E20926D79222E59F58B962BFAA1E /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,7 +519,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				549DD20071D058219C5C7FDCBA4FFA3A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
