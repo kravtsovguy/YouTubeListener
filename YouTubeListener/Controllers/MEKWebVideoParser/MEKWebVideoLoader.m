@@ -73,7 +73,28 @@
     NSURLRequest *request = [parser generateRequestForVideoItem:item];
     NSDictionary *params = @{@"item" : item, @"parser" : parser};
 
-    id <MEKDownloadControllerInputProtocol> downloadController = [parser shouldUseWebBrowser] ? self.webDownloadController :  self.downloadController;
+    id <MEKDownloadControllerInputProtocol> downloadController = self.downloadController;
+
+    switch (parser.loadType)
+    {
+        case MEKLoadNone:
+            downloadController = nil;
+            break;
+        case MEKLoadURL:
+            downloadController = self.downloadController;
+            break;
+        case MEKLoadWebBrowser:
+            downloadController = self.webDownloadController;
+            break;
+    }
+
+    if (!downloadController)
+    {
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self downloadControllerDidFinish:nil withTempUrl:nil forKey:item.videoId withParams:params];
+        });
+    }
+
     [downloadController downloadDataFromRequest:request forKey:item.videoId withParams:params];
 
     return YES;
@@ -88,7 +109,7 @@
     VideoItemMO *item = params[@"item"];
     id<MEKWebVideoParserProtocol> parser = params[@"parser"];
     
-    BOOL isParsed = [parser parseQueryContent:content toVideoItem:&item];
+    BOOL isParsed = [parser parseQueryContent:content toVideoItem:item];
 
     if (isParsed)
     {

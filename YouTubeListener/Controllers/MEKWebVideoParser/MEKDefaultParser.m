@@ -29,14 +29,14 @@
     return request;
 }
 
-- (BOOL)parseQueryContent: (NSString*) content toVideoItem:(VideoItemMO **)itemRef
+- (BOOL)parseQueryContent: (NSString*) content toVideoItem:(VideoItemMO *)item
 {
     return NO;
 }
 
-- (BOOL)shouldUseWebBrowser
+- (MEKLoadType)loadType
 {
-    return NO;
+    return MEKLoadURL;
 }
 
 @end

@@ -8,15 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, MEKLoadType) {
+    MEKLoadNone,
+    MEKLoadURL,
+    MEKLoadWebBrowser,
+};
+
 @class VideoItemMO;
 
 @protocol MEKWebVideoParserProtocol <NSObject>
 
 @required
+@property (nonatomic, readonly) MEKLoadType loadType;
+
 - (NSString*)generateIdForVideoItem: (VideoItemMO*) item;
 - (NSURL*)generateUrlForVideoItem: (VideoItemMO*)item;
 - (NSURLRequest*)generateRequestForVideoItem: (VideoItemMO*)item;
-- (BOOL)parseQueryContent: (NSString*) content toVideoItem: (VideoItemMO**) item;
-- (BOOL)shouldUseWebBrowser;
+- (BOOL)parseQueryContent: (NSString*) content toVideoItem: (VideoItemMO*) item;
 
 @end
