@@ -7,8 +7,6 @@
 //
 
 #import "MEKYouTubeVideoParser.h"
-#import "AppDelegate.h"
-#import "MEKDownloadController.h"
 #import "VideoItemMO+CoreDataClass.h"
 #import <XCDYouTubeKit/XCDYouTubeClient.h>
 

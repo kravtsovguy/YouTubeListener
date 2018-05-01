@@ -8,7 +8,16 @@ DEPENDENCIES:
   - Expecta
   - Masonry
   - OCMock
-  - XCDYouTubeKit
+  - XCDYouTubeKit (from `https://github.com/kravtsovguy/XCDYouTubeKit.git`)
+
+EXTERNAL SOURCES:
+  XCDYouTubeKit:
+    :git: https://github.com/kravtsovguy/XCDYouTubeKit.git
+
+CHECKOUT OPTIONS:
+  XCDYouTubeKit:
+    :commit: 968f88506e2eabb6e2df4fa17335e3bb483fb918
+    :git: https://github.com/kravtsovguy/XCDYouTubeKit.git
 
 SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
@@ -16,6 +25,6 @@ SPEC CHECKSUMS:
   OCMock: 2cd0716969bab32a2283ff3a46fd26a8c8b4c5e3
   XCDYouTubeKit: dccfe0c17dd5c5187969ec27e93069573badb08f
 
-PODFILE CHECKSUM: 4928b13871a2d5f425838506b9bfd7e807837943
+PODFILE CHECKSUM: 83b1e2fb69bb1c6e3490fc6f0b6f90324bad0440
 
 COCOAPODS: 1.4.0
