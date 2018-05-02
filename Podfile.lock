@@ -16,7 +16,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   XCDYouTubeKit:
-    :commit: 968f88506e2eabb6e2df4fa17335e3bb483fb918
+    :commit: ce8af314bb8c3ce4fd5f45e720d7f1c90ac2d1ea
     :git: https://github.com/kravtsovguy/XCDYouTubeKit.git
 
 SPEC CHECKSUMS:
