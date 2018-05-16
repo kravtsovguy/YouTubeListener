@@ -10,6 +10,12 @@ DEPENDENCIES:
   - OCMock
   - XCDYouTubeKit (from `https://github.com/kravtsovguy/XCDYouTubeKit.git`)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Expecta
+    - Masonry
+    - OCMock
+
 EXTERNAL SOURCES:
   XCDYouTubeKit:
     :git: https://github.com/kravtsovguy/XCDYouTubeKit.git
@@ -27,4 +33,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 83b1e2fb69bb1c6e3490fc6f0b6f90324bad0440
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.2
